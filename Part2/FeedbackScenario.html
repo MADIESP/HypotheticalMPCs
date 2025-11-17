@@ -1,0 +1,60 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  /* make question text larger + centered */
+  .question-label {
+    font-size: 20px;        /* adjust size as you like */
+    font-weight: bold;
+    text-align: center;
+    display: block;         /* ensures centering works */
+    margin-bottom: 20px;
+  }
+
+  /* hide the specify box initially */
+  #specify-field {
+    display: none;
+    margin-top: 15px;
+  }
+
+  /* optional: center the radio buttons */
+  .otree-form-field .controls {
+    text-align: center;
+  }
+</style>
+
+<!-- Render each field manually -->
+<div class="form-group" style="font-size:20px;">
+  <label class="question-label">
+    Did the categories presented cover all the ways you would have wanted to classify how
+Robin, Taylor, and Charlie used the $1,000 payment?
+  </label>
+  {{ formfield 'categories_cover_scenario' }}
+</div>
+
+<div id="specify-field" style="font-size:20px;">
+  {{ formfield 'categories_specify_scenario' }}
+</div>
+
+<button class="btn btn-danger custom-submit" style="display: block; margin: 20px auto;">Submit</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const radios = document.querySelectorAll("input[name=categories_cover_scenario]");
+  const specifyDiv = document.getElementById("specify-field");
+  const textarea = document.querySelector("textarea[name=categories_specify_scenario]");
+
+  radios.forEach(r => {
+    r.addEventListener("change", function() {
+      if (this.value === "1") { // Yes
+        specifyDiv.style.display = "block";
+      } else {
+        specifyDiv.style.display = "none";
+        if (textarea) textarea.value = "";
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}

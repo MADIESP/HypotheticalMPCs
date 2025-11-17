@@ -1,0 +1,44 @@
+{% block content %}
+    <style>
+    h1 {text-align: center;}
+    p {text-align: center;}
+
+    </style>
+
+ {% if new_debt > 0 %}
+        <p style="font-weight: bold; font-size: 1.3em;">
+            You indicated you would take on ${{ new_debt }} in new debt because of the payment.
+        </p>
+        <p>
+            Please report how these <b> ${{ new_debt }} </b> would be allocated across the following categories:
+        </p>
+    {% elif new_debt < 0 %}
+        <p style="font-weight: bold; font-size: 1.3em;">
+            You indicated you would take ${{ abs_new_debt }} less in new debt because of the payment.
+        </p>
+        <p>
+            Please report how this <b>reduction </b> is distributed across the following categories:
+        </p>
+    {% endif %}
+
+    <table class="table table-striped">
+        <tr><th>Category</th><th>Amount ($)</th></tr>
+        <tr><td>{{ form.revolving_credit_new.label }}</td><td>{{ form.revolving_credit_new }}</td></tr>
+        <tr><td>{{ form.mortgage_new.label }}</td><td>{{ form.mortgage_new }}</td></tr>
+        <tr><td>{{ form.student_loans_new.label }}</td><td>{{ form.student_loans_new }}</td></tr>
+        <tr><td>{{ form.auto_loans_new.label }}</td><td>{{ form.auto_loans_new }}</td></tr>
+        <tr><td>{{ form.other_loans_new.label }}</td><td>{{ form.other_loans_new }}</td></tr>
+        <tr><td>{{ form.unpaid_bills_new.label }}</td><td>{{ form.unpaid_bills_new }}</td></tr>
+    </table>
+
+<br>
+     <button class="btn btn-danger" id='button1' style="margin-left: 75%; display: block;"> Submit </button>
+
+
+
+
+
+
+
+{% endblock %}
+

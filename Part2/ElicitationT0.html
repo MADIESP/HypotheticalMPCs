@@ -1,0 +1,245 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  h2 { text-align: center; margin-bottom: 10px; }
+  p { text-align: center; font-size: 1.2em; margin-bottom: 15px; }
+
+  .slider-container {
+    width: 75%;
+    margin: 15px auto;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+  }
+
+  .slider-label {
+    font-size: 1.05em;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  input[type=range] {
+    width: 80%;
+    height: 10px;
+    accent-color: #007bff;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    margin-top: -8px;
+  }
+
+  input[type=range]::-moz-range-thumb,
+  input[type=range]::-ms-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+  }
+
+  /* Centered input field, label removed */
+  .form-group {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .form-group label {
+    display: none;
+  }
+
+  .form-group input {
+    display: inline-block;
+    margin: 0 auto;
+    width: 100px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  .details-text {
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .checking-display {
+    text-align: center;
+    font-size: 1.3em;
+    color: blue;
+    font-weight: bold;
+    margin-top: 25px;
+  }
+
+  .warning-message {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+    display: none;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 25px auto 10px;
+  }
+</style>
+
+
+<p>
+  <b>Suppose that today you and your household receive a one-time payment of
+  <span style="color: blue; font-weight: bold;">$1000</span>.</b>
+</p>
+
+<p><b>How would this one-time payment cause you and your household to adjust your behavior over the next three months?</b></p>
+<p><b> For each row, please move the slider to the right or type a number in the box to indicate the amount by which your behavior would change. </b></p>
+<p>Any amount you do not use in the next three months is considered  <span style="color: blue; font-weight: bold;">savings</span>, and is adjusted automatically.</p>
+
+<p style="font-style: italic; text-align: center;">
+  Click on “Details” under each category for a reminder of its definition.
+</p>
+
+<form method="post">
+
+    <div id="sliders-wrapper">
+
+        {% for cat in ['spending', 'debt_repay'] %}
+        <div class="slider-container">
+            <div class="slider-label">
+                {% if cat == 'spending' %}Spending
+                {% else %}Debt repayment
+                {% endif %}
+            </div>
+            <input type="range" id="{{ cat }}_slider" min="-1500" max="1500" value="-1500" step="10">
+
+            <!-- formfield centered and label hidden -->
+            <div class="form-group">
+              {{ formfield cat }}
+            </div>
+
+            <details class="details-text">
+                <summary>Details</summary>
+                {% if cat == 'spending' %}
+                  Change in the amount of nondurable goods (e.g., food, clothes, health and beauty products, vacation, entertainment), durable goods (e.g., vehicles, furniture, household appliances), and services (e.g., babysitting, house-cleaning, tutoring) that you purchase compared to what you would have purchased without the payment.
+                {% else %}
+                  Change in the amount you repay on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities) compared to what you would have repaid without the payment.
+                {% endif %}
+            </details>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="checking-display">
+      Savings: <span id="savings">$</span>
+    </div>
+
+    <div id="warning-message" class="warning-message">
+      Please adjust the slider or enter a value for every category before submitting.
+    </div>
+
+    <button type="submit" class="btn btn-danger">Submit</button>
+</form>
+
+<script>
+const totalPayment = 1000;
+const initialValue = -1500;
+let hasMoved = false;
+
+const categories = ['spending', 'debt_repay'];
+
+// Set up sliders and inputs
+categories.forEach(cat => {
+    const slider = document.getElementById(`${cat}_slider`);
+    const input = document.getElementById(`id_${cat}`);
+
+    // initialize values
+    input.value = '';
+    slider.value = initialValue;
+    slider.dataset.touched = "false";
+    input.dataset.touched = "false";
+
+    // slider → input
+    slider.addEventListener('input', () => {
+        input.value = slider.value;
+        slider.dataset.touched = "true";
+        input.dataset.touched = "true";
+        hasMoved = true;
+        updateSavings();
+    });
+
+    // input → slider
+    input.addEventListener('input', () => {
+        if (input.value === '' || input.value === '-') return;
+        let val = parseFloat(input.value);
+        if (isNaN(val)) val = initialValue;
+        if (val > 1500) val = 1500;
+        if (val < -1500) val = -1500;
+        input.value = val;
+        slider.value = val;
+        slider.dataset.touched = "true";
+        input.dataset.touched = "true";
+        hasMoved = true;
+        updateSavings();
+    });
+});
+
+// update checking account
+function updateSavings() {
+    // Check if all sliders have been moved
+    const allMoved = categories.every(cat => {
+        const slider = document.getElementById(`${cat}_slider`);
+        return slider.dataset.touched === "true";
+    });
+
+    // If not all sliders moved, keep showing just "$"
+    if (!allMoved) {
+        document.getElementById('savings').textContent = '$';
+        return;
+    }
+
+    // Once all moved, update the checking account balance
+    let totalUsed = 0;
+    categories.forEach(cat => {
+        const val = parseFloat(document.getElementById(`id_${cat}`).value) || 0;
+        if (['spending', 'asset', 'debt_repay'].includes(cat)) totalUsed += val;
+        else totalUsed -= val;
+    });
+    const remaining = totalPayment - totalUsed;
+    document.getElementById('savings').textContent = `$${remaining.toFixed(2)}`;
+}
+
+
+// validate on submit
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+        let allTouched = true;
+        categories.forEach(cat => {
+            const slider = document.getElementById(`${cat}_slider`);
+            if (slider.dataset.touched !== "true") allTouched = false;
+        });
+        if (!allTouched) {
+            e.preventDefault();
+            document.getElementById('warning-message').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            document.getElementById('warning-message').style.display = 'none';
+        }
+    });
+});
+
+// initially show only $
+document.getElementById('savings').textContent = '$';
+</script>
+
+{% endblock %}

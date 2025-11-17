@@ -1,0 +1,44 @@
+{% block content %}
+    <style>
+    h1 {text-align: center;}
+    p {text-align: center;}
+
+    </style>
+
+ {% if repay_debt > 0 %}
+        <p style="font-weight: bold; font-size: 1.3em;">
+            You indicated  you increased your debt repayment by  ${{ repay_debt }} because of the covid stimulus payment.
+        </p>
+        <p>
+            Please report how you allocated these <b> ${{ repay_debt }} </b> across the following categories:
+        </p>
+    {% elif repay_debt < 0 %}
+        <p style="font-weight: bold; font-size: 1.3em;">
+            You indicated  decreased your debt repayment by ${{ abs_repay_debt }} because of the covid stimulus payment.
+        </p>
+        <p>
+            Please report how this <b>reduction </b>  was distributed across the following categories:
+        </p>
+    {% endif %}
+
+    <table class="table table-striped">
+        <tr><th>Category</th><th>Amount ($)</th></tr>
+        <tr><td>{{ form.revolving_credit_repay.label }}</td><td>{{ form.revolving_credit_repay }}</td></tr>
+        <tr><td>{{ form.mortgage_repay.label }}</td><td>{{ form.mortgage_repay }}</td></tr>
+        <tr><td>{{ form.student_loans_repay.label }}</td><td>{{ form.student_loans_repay }}</td></tr>
+        <tr><td>{{ form.auto_loans_repay.label }}</td><td>{{ form.auto_loans_repay }}</td></tr>
+        <tr><td>{{ form.other_loans_repay.label }}</td><td>{{ form.other_loans_repay }}</td></tr>
+        <tr><td>{{ form.unpaid_bills_repay.label }}</td><td>{{ form.unpaid_bills_repay }}</td></tr>
+    </table>
+
+<br>
+     <button class="btn btn-danger" id='button1' style="margin-left: 75%; display: block;"> Submit </button>
+
+
+
+
+
+
+
+{% endblock %}
+

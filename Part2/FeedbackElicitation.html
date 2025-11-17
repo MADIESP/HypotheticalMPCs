@@ -1,0 +1,77 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  h6 { text-align: center; margin-bottom: 20px; font-size:22px; }
+  .question-block { margin-bottom: 25px; }
+  .slider-label { font-weight: bold; margin-bottom: 8px; }
+  .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      margin-top: -8px;
+  }
+  .radio-block { margin-top: 25px; }
+  #specify-field { display: none; margin-top: 10px; }
+</style>
+
+<h6>For questions 1 and 2, please answer on a scale from 0 to 10:</h6>
+<h6 style="text-align:center;">0 =  Not difficult at all</h6>
+<h6 style="text-align:center;">10 =  Extremely difficult</h6>
+
+<div class="question-block" style="font-size:20px;">
+  <b>1. How difficult was it to understand the different categories?</b>
+  {{ formfield 'understanding_difficulty' }}
+</div>
+
+{% if player.subsession.Treatment in [1, 2] %}
+  <!-- Treatment 1 wording -->
+  <div class="question-block" style="font-size:20px;">
+    <b>2. How difficult was it to think through how to allocate the payment across the different categories (for example, remembering what you usually do, imagining future behavior, or making trade-offs)?</b>
+    {{ formfield 'mental_effort' }}
+  </div>
+
+  <div class="radio-block" style="font-size:20px;">
+    <b>3. Did the categories presented cover all the ways you and your household might use this payment, or were there expenses that you found difficult to classify?</b>
+    {{ formfield 'categories_cover' }}
+  </div>
+
+{% elif player.subsession.Treatment == 3 %}
+  <!-- Treatment 2 wording -->
+  <div class="question-block" style="font-size:20px;">
+    <b>2. How difficult was it to remember how you used the covid stimulus payment?</b>
+    {{ formfield 'mental_effort' }}
+  </div>
+
+  <div class="radio-block" style="font-size:20px;">
+    <b>3. Did the categories presented cover all the ways you and your household  used this payment, or were there expenses that you found difficult to classify?</b>
+    {{ formfield 'categories_cover' }}
+  </div>
+{% endif %}
+
+<div id="specify-field" style="font-size:20px;">
+  {{ formfield 'categories_specify' }}
+</div>
+
+<br>
+<button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Submit</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const radios = document.querySelectorAll("input[name=categories_cover]");
+  const specifyDiv = document.getElementById("specify-field");
+
+  radios.forEach(r => {
+    r.addEventListener("change", function() {
+      if (this.value === "1") {
+        specifyDiv.style.display = "block";
+      } else {
+        specifyDiv.style.display = "none";
+        document.querySelector("textarea[name=categories_specify]").value = "";
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}

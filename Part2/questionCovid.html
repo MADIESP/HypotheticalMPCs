@@ -1,0 +1,84 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  h2 { text-align: center; }
+  p { text-align: justify; }
+
+  .stimulus-question label {
+      font-size: 20px !important;
+      line-height: 1.4;
+      margin-bottom: 8px !important;
+      display: inline-block;
+  }
+
+  .stimulus-question input[type="radio"] {
+      transform: scale(1.25);
+      margin-right: 8px;
+      vertical-align: middle;
+  }
+
+  .stimulus-question .radio-inline,
+  .stimulus-question .radio label {
+      font-size: 20px !important;
+  }
+</style>
+
+
+
+
+<h5>Have you and your household ever received a Covid Stimulus check?</h5>
+
+<div class="stimulus-question">
+    {{ form.q1_received_stimulus }}
+</div>
+
+<div id="q2-container" style="display:none; margin-top: 20px;">
+    <h5>What was the approximate amount of the last Covid stimulus check that you and your household received?</h5>
+    {{ form.q2_amount }}
+</div>
+<br>
+
+<!-- the default oTree form submit button -->
+<button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Submit</button>
+
+<script>
+    const q1Radios = document.querySelectorAll('input[name="q1_received_stimulus"]');
+    const q2Container = document.getElementById('q2-container');
+    const q2Input = q2Container.querySelector('input');
+    const form = document.querySelector('form');
+
+    // Toggle Q2 display
+    q1Radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === '1') {
+                q2Container.style.display = 'block';
+                q2Input.required = true; // make Q2 mandatory
+            } else {
+                q2Container.style.display = 'none';
+                q2Input.value = '';
+                q2Input.required = false; // make Q2 optional again
+            }
+        });
+    });
+
+    // Handle reloads where Yes is already checked
+    window.addEventListener('load', () => {
+        const checked = document.querySelector('input[name="q1_received_stimulus"]:checked');
+        if (checked && checked.value === '1') {
+            q2Container.style.display = 'block';
+            q2Input.required = true;
+        }
+    });
+
+    // Optional: prevent form submission if Q1=Yes and Q2 is empty
+    form.addEventListener('submit', function(event) {
+        const q1Checked = document.querySelector('input[name="q1_received_stimulus"]:checked');
+        if (q1Checked && q1Checked.value === '1' && !q2Input.value) {
+            alert("Please enter the approximate amount of your last Covid stimulus check.");
+            event.preventDefault(); // stop submission
+        }
+    });
+</script>
+
+{% endblock %}

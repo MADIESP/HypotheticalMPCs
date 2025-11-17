@@ -1,0 +1,55 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+  <style>
+    h2 {text-align: center;}
+    p {text-align: justify; font-size:20px;}
+
+    </style>
+
+
+
+<div class="text-justify">
+
+    <br>
+    <p> You reported that you and your household received a Covid stimulus check of <b> ${{participant.q2_amount}}. </b> </p>
+
+    <p> Now consider ways in which you and your household used this additional income over the <b> next three months </b> after you received the payment: </p>
+
+   <ul>
+    <li style="font-size:20px;">
+        <strong>Change in spending:</strong>  Change in the amount of nondurable goods
+	(e.g., food, clothes, health and beauty products, vacation, entertainment),
+	durable goods (e.g., vehicles, furniture, household appliances),
+	and services (e.g., babysitting, house-cleaning, tutoring) that you purchased compared to what you would have purchased without the payment.
+    </li>
+    <br>
+    <li style="font-size:20px;">
+        <strong>Change in net assets:</strong> Change in the amount of assets that you purchased or sold (e.g., mutual funds, retirement accounts, stocks, bonds, treasury bills, life insurance, CDs, real estate, investments in own business)  compared to what you would have done without the payment, resulting in a change in your total assets.
+    </li>
+    <br>
+    <li style="font-size:20px;">
+        <strong>Change in debt repayment:</strong> Change in the amount you repaid on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities) compared to what you would have repaid without the payment.
+    </li>
+    <br>
+       <li style="font-size:20px;">
+        <strong>Change in uptake of new debt:</strong> Change in the amount of new debt you incurred in the form of credit card debt,
+           mortgages, student loans, auto loans, other loans, or unpaid bills
+           compared to what you would have incurred without the payment.
+    </li>
+    <br>
+    <li style="font-size:20px;">
+        <strong>Change in labor income caused by a change in time worked:</strong> Change in labor income caused by a change in the number of work hours, work opportunities, or gig economy jobs that you accepted compared to what you would have accepted without the payment.
+    </li>
+</ul>
+
+<br>
+    <!--<p> We would like to understand how you and your household would allocate this one-time payment across these different categories in the next three months. </p>  -->
+    <!-- <p>  After adjusting your behavior in response to the payment, any remaining amount will stay in your <b> checking account </b> for future use.</p>  -->
+
+    <br>
+    <button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Next</button>
+
+
+    </div>
+{% endblock %}

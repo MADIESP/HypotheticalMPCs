@@ -1,0 +1,36 @@
+{% block content %}
+<style>
+    /* Center all headers and paragraphs */
+    h2, p {
+        text-align: center;
+    }
+
+    /* Style the Start button */
+    #button1 {
+        display: block;
+        margin: 30px auto;       /* centers the button */
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    /* Optional: spacing between paragraphs */
+    p {
+        margin: 10px 0;
+        line-height: 1.5;
+        font-size: 20px;
+    }
+</style>
+
+
+
+<p>For this part of the survey, you can earn additional money by answering correctly.</p>
+<p>You will see 3 different hypothetical scenarios of people who received an unexpected $1,000 payment.</p>
+<p>For each scenario, you will be asked to classify how they used the $1,000 payment.</p>
+<p>If your answer is correct, you will earn one point, which will later be converted to dollars at the rate: X.</p>
+
+<p>Click the button below to start.</p>
+
+<button class="btn btn-danger" id="button1">Start</button>
+
+{% endblock %}

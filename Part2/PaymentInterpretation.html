@@ -1,0 +1,76 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .question-label {
+    font-size: 19px;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    margin: 25px 0 15px 0;
+  }
+
+  .otree-form-field .controls {
+    text-align: center;
+  }
+
+  #explain-field {
+    display: none;
+    margin-top: 15px;
+  }
+</style>
+
+<p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight: bold;">
+  Earlier, you were asked to imagine that you and your household receive an unexpected one-time payment of $1,000.
+  We would like to understand how you interpreted this scenario.
+</p>
+
+<div class="form-group">
+  <label class="question-label">
+    1) In your mind, who was the $1,000 payment primarily intended for?
+  </label>
+  {{ formfield 'payment_intended_for' }}
+</div>
+
+<div class="form-group">
+  <label class="question-label">
+    2) Who did you imagine had access to the $1,000 payment?
+  </label>
+  {{ formfield 'payment_access' }}
+</div>
+
+<div class="form-group">
+  <label class="question-label">
+    3) Do you think your answers would have been different if the $1,000 had been deposited directly into your personal account and could not be accessed by other household members?
+  </label>
+  {{ formfield 'payment_different_if_personal' }}
+</div>
+
+<div id="explain-field">
+  {{ formfield 'payment_different_explain' }}
+</div>
+
+<button class="btn btn-danger custom-submit" style="display:block; margin:20px auto;">
+  Submit
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const radios = document.querySelectorAll("input[name=payment_different_if_personal]");
+  const explainDiv = document.getElementById("explain-field");
+  const textarea = document.querySelector("textarea[name=payment_different_explain]");
+
+  radios.forEach(r => {
+    r.addEventListener("change", function() {
+      if (this.value === "Yes") {
+        explainDiv.style.display = "block";
+      } else {
+        explainDiv.style.display = "none";
+        if (textarea) textarea.value = "";
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}
