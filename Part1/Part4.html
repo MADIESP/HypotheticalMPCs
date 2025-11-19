@@ -1,27 +1,112 @@
 {% block content %}
-    <style>
+
+<style>
     h1 {text-align: center;}
     p {text-align: justify;}
+    table.asset-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 25px;
+    }
+    table.asset-table td {
+        padding: 6px 10px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .asset-label {
+        font-weight: 500;
+        padding-right: 5px;
+    }
+</style>
 
-    </style>
-
-
-<p style="font-weight: bold; font-size: 1.3em;text-align: center";>
-Now, we would like to learn more about your household's financial decisions, spending, savings, and attitudes toward money.  </p>
-
-
+<p style="font-weight: bold; font-size: 1.3em; text-align: center;">
+    Now, we would like to learn more about your household's financial decisions,
+    spending, savings, and attitudes toward money.
 </p>
+
 <br>
-<p>
-        {{ formfields }}
-    </p>
-     <button class="btn btn-danger" id='button1' style="margin-left: 75%; display: block;"> Submit </button>
 
+{# ---------------- 1. Questions BEFORE assets/debts ---------------- #}
+{% formfield player.financial_decision_making %}
+{% formfield player.financial_awareness %}
+{% formfield player.grocery_shopping %}
+{% formfield player.major_purchase %}
+{% formfield player.household_income_bracket %}
+{% formfield player.household_income_exact %}
 
+<br><br>
 
+{# ---------------- 2. ASSETS TABLE ---------------- #}
+<b>6. Which types of assets does your household currently hold? (Select Yes for each you hold)</b>
+<table class="asset-table">
+    <tr>
+        <td>{{ formfield player.has_cash }}</td>
+        <td>{{ formfield player.has_savings }}</td>
+        <td>{{ formfield player.has_money_market }}</td>
+    </tr>
+    <tr>
+        <td>{{ formfield player.has_stocks }}</td>
+        <td>{{ formfield player.has_retirement }}</td>
+        <td>{{ formfield player.has_life_insurance }}</td>
+        </tr>
+    <tr>
+        <td>{{ formfield player.has_real_estate }}</td>
+        <td>{{ formfield player.has_other_assets }}</td>
+    </tr>
+</table>
 
+<br>
 
+{# ---------------- 3. DEBTS TABLE ---------------- #}
+<b>7. Which types of debt does your household currently owe? (Select Yes for each you owe)</b>
+<table class="asset-table">
+    <tr>
+        <td>{{ formfield player.debt_credit_card }}</td>
+        <td>{{ formfield player.debt_mortgage }}</td>
+        <td>{{ formfield player.debt_auto }}</td>
+    </tr>
+    <tr>
+         <td>{{ formfield player.debt_student }}</td>
+        <td>{{ formfield player.debt_personal }}</td>
+        <td>{{ formfield player.debt_unpaid_bills }}</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
 
+<br>
+
+{# ---------------- 4. Questions AFTER assets/debts ---------------- #}
+{% formfield player.fico_score %}
+{% formfield player.bill_payment_ability %}
+{% formfield player.credit_card_payment %}
+{% formfield player.housing_payment %}
+{% formfield player.patience_scale %}
+{% formfield player.risk_scale %}
+
+<br><br>
+
+<button class="btn btn-danger" style="margin-left: 75%; display: block;">
+    Submit
+</button>
+
+{# ---------------- 5. Hidden formfields to avoid validation errors ---------------- #}
+<div style="display:none;">
+    {{ formfield player.has_cash }}
+    {{ formfield player.has_savings }}
+    {{ formfield player.has_money_market }}
+    {{ formfield player.has_stocks }}
+    {{ formfield player.has_retirement }}
+    {{ formfield player.has_life_insurance }}
+    {{ formfield player.has_real_estate }}
+    {{ formfield player.has_other_assets }}
+
+    {{ formfield player.debt_credit_card }}
+    {{ formfield player.debt_mortgage }}
+    {{ formfield player.debt_auto }}
+    {{ formfield player.debt_student }}
+    {{ formfield player.debt_personal }}
+    {{ formfield player.debt_unpaid_bills }}
+</div>
 
 {% endblock %}
-

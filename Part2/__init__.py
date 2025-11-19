@@ -167,6 +167,18 @@ class Player(BasePlayer):
         blank=True,
     )
 
+    deposit_account = models.IntegerField(
+        label="",
+        choices=[
+            [1, "On an account to which only I have access"],
+            [2, "On a joint account shared with other household members"],
+            [3, "On an account to which I do not have access"],
+            [4, "Not sure"],
+        ],
+        widget=widgets.RadioSelect
+    )
+
+
 # FUNCTIONS
 
 def creating_session(subsession: Subsession):
@@ -643,10 +655,20 @@ class PaymentInterpretation(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment == 1 or player.subsession.Treatment == 2
+class PaymentInterpretationT2(Page):
+    form_model = 'player'
+    form_fields = [
+        'deposit_account',
+        'payment_different_if_personal',
+        'payment_different_explain',
+    ]
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 3
 class End(Page):
     form_model = 'player'
 
 
 
-page_sequence = [questionCovid, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation ,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario, PaymentInterpretation,End]
+page_sequence = [questionCovid, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation ,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario, PaymentInterpretation,PaymentInterpretationT2,End]

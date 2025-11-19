@@ -54,21 +54,16 @@ class Player(BasePlayer):
 
     # --- Household info ---
     household_size = models.IntegerField(
-        label="<b> 6. How many people, including yourself, currently live in your household?</b>",
+        label="<b> 6. How many people, including yourself, currently live in your household? <br> <i> By 'household' we mean everyone who usually lives with you in your primary residence including yourself (but excluding roommates and renters). </i></b>",
         choices=[[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
                  [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 or more"]],
         widget=widgets.RadioSelectHorizontal
     )
 
-    primary_financial_manager = models.IntegerField(
-        label="<b> 7. Would you say that you are the primary person who manages the economic and financial affairs of the household?</b>",
-        choices=[[1, "Yes"], [2, "No"]],
-        widget=widgets.RadioSelectHorizontal
-    )
 
     # --- Employment ---
     employment_status = models.IntegerField(
-        label="<b> 8. What is your current employment status?</b>",
+        label="<b> 7. What is your current employment status?</b>",
         choices=[[1, "Full-time employee"], [2, "Part-time employee"], [3, "Self-employed or small business owner"],
                  [4, "Unemployed and looking for work"], [5, "Temporarily laid off"], [6, "Student"],
                  [7, "Not currently working and not looking for work"], [8, "Retiree"]],
@@ -76,7 +71,7 @@ class Player(BasePlayer):
     )
 
     occupation_employed = models.IntegerField(
-        label="<b> 9. Which category best describes your main occupation?</b>",
+        label="<b> 8. Which category best describes your main occupation?</b>",
         choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
                  [4, "Sales and related"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
@@ -87,21 +82,21 @@ class Player(BasePlayer):
     )
 
     job_flexibility_hours = models.IntegerField(
-        label="<b> 10. To what extent can you choose or change your work hours (start and end times, number of hours)?</b>",
+        label="<b> 9. To what extent can you choose or change your work hours (start and end times, number of hours)?</b>",
         choices=[[1, "Not at all"], [2, "A little"], [3, "Somewhat"], [4, "A lot"], [5, "Completely"]],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
 
     job_flexibility_overtime = models.IntegerField(
-        label="<b> 11. Is it possible for you to take extra shifts, accept overtime, or pick up additional hours on short notice?</b>",
+        label="<b> 10. Is it possible for you to take extra shifts, accept overtime, or pick up additional hours on short notice?</b>",
         choices=[[1, "No"], [2, "Yes, but rarely"], [3, "Yes, sometimes"], [4, "Yes, frequently"]],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
 
     occupation_unemployed = models.IntegerField(
-        label="<b> 9. Which category best describes your most recent main occupation?</b>",
+        label="<b> 8. Which category best describes your most recent main occupation?</b>",
         choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
                  [4, "Sales and related"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
@@ -152,21 +147,21 @@ class Player(BasePlayer):
     household_income_exact = models.FloatField(blank=True,
                                                label="<b> More precisely, how much would you say it is? </b>")
 
-    household_assets = models.IntegerField(
-        label="<b> 6. Which of the following types of assets does your household currently hold? (Check all that apply)</b>",
-        choices=[[1, 'Cash/checking accounts'], [2, 'Savings accounts'], [3, 'Money market/CDs'], [4, 'Stocks, bonds, or mutual funds'], [5, 'Retirement accounts (e.g., 401(k), IRA)'],
-                 [6, 'Life insurance with cash value'], [7, 'Real estate (other than your primary residence)'], [8, 'Other']],
-        widget=widgets.RadioSelectHorizontal,
-        blank=True
-    )
+    has_cash = models.BooleanField(label="<b>Cash/checking accounts</b>")
+    has_savings = models.BooleanField(label="<b>Savings accounts</b>")
+    has_money_market = models.BooleanField(label="<b>Money market/CDs</b>")
+    has_stocks = models.BooleanField(label="<b>Stocks, bonds, or mutual funds</b>")
+    has_retirement = models.BooleanField(label="<b>Retirement accounts (e.g., 401(k), IRA)</b>")
+    has_life_insurance = models.BooleanField(label="<b>Life insurance with cash value</b>")
+    has_real_estate = models.BooleanField(label="<b>Real estate (other than primary residence)</b>")
+    has_other_assets = models.BooleanField(label="<b>Other</b>")
 
-    household_debts = models.IntegerField(
-        label="<b> 7. Which of the following types of debt does your household currently owe? (Check all that apply)</b>",
-        choices=[[1, 'Credit card debt'], [2, 'Mortgage/home equity loans'], [3, 'Auto loans'], [4, 'Student loans'],
-                 [5, 'Personal/other loans'], [6, 'Unpaid bills (utilities, medical, legal, etc.)']],
-        widget=widgets.RadioSelectHorizontal,
-        blank=True
-    )
+    debt_credit_card = models.BooleanField(label="<b>Credit card debt</b>")
+    debt_mortgage = models.BooleanField(label="<b>Mortgage/home equity loans</b>")
+    debt_auto = models.BooleanField(label="<b>Auto loans</b>")
+    debt_student = models.BooleanField(label="<b>Student loans</b>")
+    debt_personal = models.BooleanField(label="<b>Personal/other loans</b>")
+    debt_unpaid_bills = models.BooleanField(label="<b>Unpaid bills (utilities, medical, legal, etc.)</b>")
 
     fico_score = models.IntegerField(
         label="<b> 8. What is the highest FICO credit score in your household?</b>",
@@ -175,8 +170,13 @@ class Player(BasePlayer):
     )
 
     bill_payment_ability = models.IntegerField(
-        label="<b> 9. How many of your household's bills are you usually able to pay every month?</b>",
-        choices=[[1, "All within the month"], [2, "Prioritize overdue"], [3, "Decide which to pay"], [4, "Other"]],
+        label="<b>9. How many of your household's bills are usually overdue?</b>",
+        choices=[
+            [1, "None - all bills are paid on time"],
+            [2, "A few are overdue, but by less than a month"],
+            [3, "Around half are overdue"],
+            [4, "Most are overdue"]
+        ],
         widget=widgets.RadioSelectHorizontal
     )
 
@@ -224,7 +224,7 @@ class Part1(Page):
 
 class Part2(Page):
     form_model = 'player'
-    form_fields = ['household_size','primary_financial_manager','employment_status']
+    form_fields = ['household_size','employment_status']
 
 
 
@@ -247,7 +247,7 @@ class Part3(Page):
 
     # Only display Part3 if the player has answered employment_status in Part2
     def is_displayed(player):
-        return player.employment_status is not None
+        return player.employment_status is not None and player.employment_status != 6
 
 
 
@@ -260,8 +260,26 @@ class Part4(Page):
         'major_purchase',
         'household_income_bracket',
         'household_income_exact',
-        'household_assets',
-        'household_debts',
+
+        # ---- New ASSET BooleanFields ----
+        'has_cash',
+        'has_savings',
+        'has_money_market',
+        'has_stocks',
+        'has_retirement',
+        'has_life_insurance',
+        'has_real_estate',
+        'has_other_assets',
+
+        # ---- New DEBT BooleanFields ----
+        'debt_credit_card',
+        'debt_mortgage',
+        'debt_auto',
+        'debt_student',
+        'debt_personal',
+        'debt_unpaid_bills',
+
+        # ---- Remaining fields ----
         'fico_score',
         'bill_payment_ability',
         'credit_card_payment',
@@ -269,5 +287,6 @@ class Part4(Page):
         'patience_scale',
         'risk_scale'
     ]
+
 page_sequence = [Instructions, Part1, Part2,Part3,Part4]
 #page_sequence = [ Part1]

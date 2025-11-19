@@ -116,7 +116,7 @@
         <div class="slider-container">
             <div class="slider-label">
                 {% if cat == 'spending' %}Spending
-                {% elif cat == 'asset' %}Net assets
+                {% elif cat == 'asset' %} Assets
                 {% elif cat == 'debt_repay' %}Debt repayment
                 {% elif cat == 'debt_new' %}New debt taken
                 {% else %}Labor income (caused by a change in time worked){% endif %}
@@ -133,11 +133,11 @@
                 {% if cat == 'spending' %}
                   Change in the amount of nondurable goods (e.g., food, clothes, health and beauty products, vacation, entertainment), durable goods (e.g., vehicles, furniture, household appliances), and services (e.g., babysitting, house-cleaning, tutoring) that you purchase compared to what you would have purchased without the payment.
                 {% elif cat == 'asset' %}
-                  Change in the amount of assets that you purchase or sell (e.g., mutual funds, retirement accounts, stocks, bonds, treasury bills, life insurance, certificates of deposit, real estate, or investments in your own business) compared to what you would have done without the payment, resulting in a change in your total assets.
+                  Change in the amount of assets that you purchase or sell (e.g., mutual funds, retirement accounts or pension plan, stocks, bonds, treasury bills, life insurance, certificates of deposit, real estate, or investments in your own business) compared to what you would have done without the payment, resulting in a change in your total assets.
                 {% elif cat == 'debt_repay' %}
                   Change in the amount you repay on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities) compared to what you would have repaid without the payment.
                 {% elif cat == 'debt_new' %}
-                  Change in the amount of new debt you incur in the form of credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills compared to what you would have incurred without the payment.
+                  Change in the amount of new debt you take on in the form of credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills compared to what you would have taken on without the payment.
                 {% else %}
                   Change in labor income caused by a change in the number of work hours, work opportunities, or gig economy jobs that you accept compared to what you would have accepted without the payment.
                 {% endif %}

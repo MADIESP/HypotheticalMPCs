@@ -1,0 +1,128 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .question-label {
+    font-size: 19px;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    margin: 25px 0 15px 0;
+  }
+
+  .otree-form-field .controls {
+    text-align: center;
+  }
+
+  #q2-field, #explain-field {
+    display: none;
+    margin-top: 15px;
+  }
+</style>
+
+<p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight: bold;">
+  Earlier you reported that you and your household received a Covid stimulus check of ${{ participant.q2_amount }}.
+</p>
+
+<!-- Question 1 -->
+<div class="form-group">
+  <label class="question-label">
+    1) On which bank account was the payment deposited?
+  </label>
+  {{ formfield 'deposit_account' }}
+</div>
+
+<!-- Question 2 (conditional on Q1) -->
+<div id="q2-field" class="form-group">
+  <label class="question-label">
+    2) Do you think your use of the payment would have been different if the ${{ participant.q2_amount }}
+    had been deposited directly into your personal account and could not be accessed by other household members?
+  </label>
+  {{ formfield 'payment_different_if_personal' }}
+</div>
+
+<!-- Explanation (conditional on Q2=yes) -->
+<div id="explain-field" class="form-group">
+  {{ formfield 'payment_different_explain' }}
+</div>
+
+<button class="btn btn-danger custom-submit" style="display:block; margin:20px auto;">
+  Submit
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const q2Field = document.getElementById("q2-field");
+  const explainDiv = document.getElementById("explain-field");
+
+  function getCheckedValue(name) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : null;
+  }
+
+  function hideElement(el) {
+    if (el) el.style.display = "none";
+  }
+  function showElement(el) {
+    if (el) el.style.display = "block";
+  }
+  function clearInputsInside(el) {
+    if (!el) return;
+    const inputs = el.querySelectorAll("input, textarea");
+    inputs.forEach(i => {
+      if (i.type === "radio" || i.type === "checkbox") {
+        i.checked = false;
+      } else {
+        i.value = "";
+      }
+    });
+  }
+
+  function updateQ2Visibility() {
+    const depVal = getCheckedValue("deposit_account");
+    // Show Q2 only if deposit_account ∈ {2,3,4}
+    if (depVal !== null && ["2","3","4","2.0","3.0","4.0"].includes(depVal)) {
+      showElement(q2Field);
+    } else {
+      hideElement(q2Field);
+      hideElement(explainDiv);
+      // clear any answers that might remain
+      clearInputsInside(q2Field);
+      clearInputsInside(explainDiv);
+    }
+  }
+
+  function updateExplainVisibility() {
+    const diffVal = getCheckedValue("payment_different_if_personal");
+    // Accept both numeric-encoded (e.g. "1") and string-encoded (e.g. "Yes")
+    const isYes = diffVal !== null && (diffVal === "1" || diffVal.toLowerCase?.() === "yes");
+    if (isYes) {
+      showElement(explainDiv);
+    } else {
+      hideElement(explainDiv);
+      clearInputsInside(explainDiv);
+    }
+  }
+
+  // delegation: one listener for changes anywhere in the form
+  document.addEventListener("change", function(e) {
+    // if deposit_account changed, update Q2 visibility
+    if (e.target && e.target.name === "deposit_account") {
+      updateQ2Visibility();
+      // when Q2 becomes visible, also evaluate whether explain should show (in case back button)
+      updateExplainVisibility();
+    }
+
+    // if payment_different_if_personal changed, update explain visibility
+    if (e.target && e.target.name === "payment_different_if_personal") {
+      updateExplainVisibility();
+    }
+  });
+
+  // initialize on load (handles browser back navigation where radio may already be checked)
+  updateQ2Visibility();
+  updateExplainVisibility();
+});
+</script>
+
+{% endblock %}
