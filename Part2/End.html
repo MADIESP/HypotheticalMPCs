@@ -1,15 +1,60 @@
 {% block content %}
-    <style>
-    h2 {text-align: center;}
-    p {text-align: center;}
 
-    </style>
+<style>
+    .end-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fafafa;
+    }
 
-<h2> The survey is now over. </h2>
-    <h2> Thank you for your participation! </h2>
+    .end-container h2 {
+        margin-bottom: 10px;
+    }
 
+    .end-container h3 {
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-weight: normal;
+    }
 
+    .payoff {
+        font-size: 1.1em;
+        margin: 8px 0;
+    }
 
+    .total {
+        font-size: 1.4em;
+        font-weight: bold;
+        margin-top: 25px;
+    }
+     .amount {
+        color: #c00000;   /* dark red, readable */
+        font-weight: bold;
+    }
+</style>
+
+<div class="end-container">
+
+    <h2>The survey is now over</h2>
+    <h2>Thank you for your participation!</h2>
+
+    <div class="total">
+        You will receive a total of   <span class="amount">{{ participant.payoff }}</span>
+    </div>
+
+    <br>
+    <h4>Payment breakdown</h4>
+
+    <p class="payoff"><span class="amount">$3</span> for participating in the experiment</p>
+    <p class="payoff">
+        <span class="amount">+${{ participant.payoff_questions }}</span> for answering
+        {{ participant.payoff_questions }} question(s) correctly
+    </p>
+
+</div>
 
 {% endblock %}
-

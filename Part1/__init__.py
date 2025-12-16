@@ -25,7 +25,7 @@ class Player(BasePlayer):
 
     gender = models.IntegerField(
         label="<b> 2. What is your gender? </b>",
-        choices=[[1, "Man"], [2, "Woman"], [3, "Other"]],
+        choices=[[1, "Man"], [2, "Woman"], [3, "Other/prefer not to say"]],
         widget=widgets.RadioSelectHorizontal
     )
 
@@ -38,7 +38,7 @@ class Player(BasePlayer):
 
     education = models.IntegerField(
         label="<b> 4. What is your highest level of education?</b>",
-        choices=[[1, "Eighth Grade or lower"], [2, "Some High School"], [3, "High School degree/GED"],
+        choices=[[1, "8th Grade or lower"], [2, "Some High School"], [3, "High School degree/GED"],
                  [4, "Some College"], [5, "2-year College Degree"], [6, "4-year College Degree"],
                  [7, "Master's Degree"], [8, "Doctoral Degree"], [9, "Professional Degree (JD or MD)"]],
         widget=widgets.RadioSelect
@@ -54,16 +54,81 @@ class Player(BasePlayer):
 
     # --- Household info ---
     household_size = models.IntegerField(
-        label="<b> 6. How many people, including yourself, currently live in your household? <br> <i> By 'household' we mean everyone who usually lives with you in your primary residence including yourself (but excluding roommates and renters). </i></b>",
-        choices=[[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
+        label=(
+            "<b>6. How many people, "
+            "<span style='color:red;'>including yourself</span>, "
+            "currently live in your household?<br>"
+            "<i>By 'household' we mean everyone who usually lives with you in your primary residence "
+            "<span style='color:red;'>including yourself</span> "
+            "(but excluding roommates and renters).</i></b>"
+        ),
+    choices=[[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
                  [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 or more"]],
         widget=widgets.RadioSelectHorizontal
     )
 
+    household_children = models.IntegerField(
+        label=(
+            "<b>7. And how many of them are below age 21? </b>"
+        ),
+        choices=[[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5 or more"]],
+        widget=widgets.RadioSelectHorizontal
+    )
+
+    residence_owner = models.IntegerField(
+        label=(
+            "<b>8. Do you and your household own or rent your primary residence?  </b>"
+        ),
+        choices=[[1, "Own"], [2, "Rent"]],
+        widget=widgets.RadioSelectHorizontal
+    )
+    rent_amount = models.IntegerField(
+        label=(
+            "<b> Please provide an estimate of the monthly rent "
+            "(excluding utilities) that you pay for your primary residence.</b>"
+        ),
+        choices=[
+            [1, "$0–$399"],
+            [2, "$400–$499"],
+            [3, "$500–$649"],
+            [4, "$650–$799"],
+            [5, "$800–$949"],
+            [6, "$950–$1,099"],
+            [7, "$1,100–$1,299"],
+            [8, "$1,300–$1,499"],
+            [9, "$1,500–$2,499"],
+            [10, "$2,500 or more"],
+        ],
+        blank=True
+    )
+
+    home_value = models.IntegerField(
+        label=(
+            "<b> Please provide an estimate of the value of your "
+            "primary residence (if you were to sell it today). </b>"
+        ),
+        choices=[
+            [1, "$0–$49,999"],
+            [2, "$50,000–$99,999"],
+            [3, "$100,000–$149,999"],
+            [4, "$150,000–$199,999"],
+            [5, "$200,000–$249,999"],
+            [6, "$250,000–$299,999"],
+            [7, "$300,000–$349,999"],
+            [8, "$350,000–$449,999"],
+            [9, "$450,000–$649,999"],
+            [10, "$650,000 or more"],
+        ],
+        blank = True
+    )
+
+
+
+
 
     # --- Employment ---
     employment_status = models.IntegerField(
-        label="<b> 7. What is your current employment status?</b>",
+        label="<b> 9. What is your current employment status?</b>",
         choices=[[1, "Full-time employee"], [2, "Part-time employee"], [3, "Self-employed or small business owner"],
                  [4, "Unemployed and looking for work"], [5, "Temporarily laid off"], [6, "Student"],
                  [7, "Not currently working and not looking for work"], [8, "Retiree"]],
@@ -71,7 +136,7 @@ class Player(BasePlayer):
     )
 
     occupation_employed = models.IntegerField(
-        label="<b> 8. Which category best describes your main occupation?</b>",
+        label="<b> 10. Which category best describes your main occupation?</b>",
         choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
                  [4, "Sales and related"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
@@ -82,21 +147,21 @@ class Player(BasePlayer):
     )
 
     job_flexibility_hours = models.IntegerField(
-        label="<b> 9. To what extent can you choose or change your work hours (start and end times, number of hours)?</b>",
+        label="<b> 11. To what extent can you choose or change your work hours (start and end times, number of hours)?</b>",
         choices=[[1, "Not at all"], [2, "A little"], [3, "Somewhat"], [4, "A lot"], [5, "Completely"]],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
 
     job_flexibility_overtime = models.IntegerField(
-        label="<b> 10. Is it possible for you to take extra shifts, accept overtime, or pick up additional hours on short notice?</b>",
+        label="<b> 12. Is it possible for you to take extra shifts, accept overtime, or pick up additional hours on short notice?</b>",
         choices=[[1, "No"], [2, "Yes, but rarely"], [3, "Yes, sometimes"], [4, "Yes, frequently"]],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
 
     occupation_unemployed = models.IntegerField(
-        label="<b> 8. Which category best describes your most recent main occupation?</b>",
+        label="<b> 10. Which category best describes your most recent main occupation?</b>",
         choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
                  [4, "Sales and related"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
@@ -107,6 +172,9 @@ class Player(BasePlayer):
     )
 
     # --- Household financial questions ---
+
+
+
     financial_decision_making = models.IntegerField(
         label="<b> 1. Which of the following best describes how financial decisions are made in your household?</b>",
         choices=[[1, "Someone else makes all"], [2, "Someone else makes most"], [3, "Shared equally"],
@@ -206,6 +274,13 @@ class Player(BasePlayer):
         widget=widgets.RadioSelectHorizontal,
     )
 
+    # --- 15. Attention Check 1 ---
+    attention1 = models.IntegerField(
+        label="<b> 14. This is a question to check whether you are paying attention and reading the questions carefully. Please select  “Agree” to continue </b>",
+        choices=[[1, "Strongly disagree"], [2, "Disagree"], [3, "Neither agree nor disagree"] ,[4, "Agree"], [5, "Strongly agree"]],
+        widget=widgets.RadioSelectHorizontal,
+    )
+
 # FUNCTIONS
 def gender(player):
     player.participant.gender = player.gender
@@ -224,9 +299,14 @@ class Part1(Page):
 
 class Part2(Page):
     form_model = 'player'
-    form_fields = ['household_size','employment_status']
+    form_fields = ['household_size','household_children', 'residence_owner', 'rent_amount', 'home_value', 'employment_status']
 
+    def error_message(self, values):
+        if values['residence_owner'] == 2 and values['rent_amount'] is None:
+            return "Please provide your monthly rent."
 
+        if values['residence_owner'] == 1 and values['home_value'] is None:
+            return "Please provide the value of your home."
 
 class Part3(Page):
     form_model = 'player'
@@ -285,7 +365,8 @@ class Part4(Page):
         'credit_card_payment',
         'housing_payment',
         'patience_scale',
-        'risk_scale'
+        'risk_scale',
+        'attention1'
     ]
 
 page_sequence = [Instructions, Part1, Part2,Part3,Part4]

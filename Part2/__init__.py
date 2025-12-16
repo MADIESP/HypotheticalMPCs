@@ -100,11 +100,18 @@ class Player(BasePlayer):
         ],
         widget=widgets.RadioSelect
     )
+    attention2 = models.IntegerField(
+        label="",
+        choices=[[1, "Not at all concerned"],
+                 [2, "Slightly concerned"],[3, "Moderately concerned"],[4, "Very concerned"],[5, "Extremely concerned"]],
+        widget=widgets.RadioSelectHorizontal,
+    )
 
     categories_specify = models.LongStringField(
         label="Please specify:",
         blank=True
     )
+
     #Scenarios
 
     spending_Robin = models.IntegerField(min=-1500, max=1500)
@@ -112,16 +119,22 @@ class Player(BasePlayer):
     debt_repay_Robin = models.IntegerField(min=-1500, max=1500)
     debt_new_Robin = models.IntegerField(min=-1500, max=1500)
     labor_Robin = models.IntegerField(min=-1500, max=1500)
+    correct_Robin=models.BooleanField()
+    correct_RobinT0 = models.BooleanField()
     spending_Taylor = models.IntegerField(min=-10000, max=10000)
     asset_Taylor = models.IntegerField(min=-10000, max=10000)
     debt_repay_Taylor = models.IntegerField(min=-10000, max=10000)
     debt_new_Taylor = models.IntegerField(min=-10000, max=10000)
     labor_Taylor = models.IntegerField(min=-10000, max=10000)
+    correct_Taylor = models.BooleanField()
+    correct_TaylorT0 = models.BooleanField()
     spending_Charlie = models.IntegerField(min=-1500, max=1500)
     asset_Charlie = models.IntegerField(min=-1500, max=1500)
     debt_repay_Charlie = models.IntegerField(min=-1500, max=1500)
     debt_new_Charlie = models.IntegerField(min=-1500, max=1500)
     labor_Charlie = models.IntegerField(min=-1500, max=1500)
+    correct_Charlie = models.BooleanField()
+    correct_CharlieT0 = models.BooleanField()
     categories_cover_scenario = models.IntegerField(
         label="",
         choices=[
@@ -199,8 +212,80 @@ def debt(player):
 def debtBaseline(player):
     player.participant.debt_repay = player.debt_repay
 
+def correct_Robin(player):
 
-# PAGES
+    if player.spending_Robin == 500 and player.debt_repay_Robin==200 and player.asset_Robin==0 and player.debt_new_Robin == 0 and player.labor_Robin==0:
+        correct_Robin = True
+    else:
+        correct_Robin = False
+
+    player.correct_Robin = correct_Robin
+
+
+def correct_RobinT0(player):
+    if player.spending_Robin == 500 and player.debt_repay_Robin == 200:
+        correct_Robin = True
+    else:
+        correct_Robin = False
+
+    player.correct_Robin = correct_Robin
+
+
+def correct_Taylor(player):
+    if player.spending_Taylor == 0 and player.debt_repay_Taylor == 0 and player.asset_Taylor == 8000   and player.debt_new_Taylor == 5000 and player.labor_Taylor == 0:
+        correct_Taylor = True
+    else:
+        correct_Taylor = False
+
+    player.correct_Taylor = correct_Taylor
+
+def correct_TaylorT0(player):
+    if player.spending_Taylor == 8000 and player.debt_repay_Taylor == 0 or player.spending_Taylor == 8000 and player.debt_repay_Taylor == -5000 or player.spending_Taylor == 0 and player.debt_repay_Taylor == -5000 or player.spending_Taylor == 0 and player.debt_repay_Taylor ==0:
+        correct_Taylor = True
+    else:
+        correct_Taylor = False
+
+    player.correct_Taylor = correct_Taylor
+
+def correct_Charlie(player):
+    if player.spending_Charlie == 200 and player.debt_repay_Charlie == 600 and player.asset_Charlie == 0   and player.debt_new_Charlie == 200 and player.labor_Charlie == 0:
+        correct_Charlie = True
+    else:
+        correct_Charlie = False
+
+    player.correct_Charlie = correct_Charlie
+
+def correct_CharlieT0(player):
+    if player.spending_Charlie == 200 and player.debt_repay_Charlie == 600 or player.spending_Charlie == 200 and player.debt_repay_Charlie == 400:
+        correct_Charlie = True
+    else:
+        correct_Charlie = False
+
+    player.correct_Charlie = correct_Charlie
+
+def set_payoff(player):
+
+    if player.correct_Charlie== False and player.correct_Taylor==False and player.correct_Robin== False:
+        player.participant.payoff = 3
+    elif player.correct_Charlie== False and player.correct_Taylor==False and player.correct_Robin== True or player.correct_Charlie== False and player.correct_Taylor==True and player.correct_Robin== False or player.correct_Charlie== True and player.correct_Taylor==False and player.correct_Robin== False:
+        player.participant.payoff = 4
+    elif player.correct_Charlie== False and player.correct_Taylor==True and player.correct_Robin== True or player.correct_Charlie== True and player.correct_Taylor==True and player.correct_Robin== False or player.correct_Charlie== True and player.correct_Taylor==False and player.correct_Robin== True:
+        player.participant.payoff = 5
+    elif player.correct_Charlie== True and player.correct_Taylor==True and player.correct_Robin== True:
+        player.participant.payoff = 6
+
+def set_payoff_questions(player):
+
+    points=player.participant.payoff - 3
+
+    player.participant.payoff_questions=points
+
+
+
+
+
+
+    # PAGES
 class instructionsT0(Page):
     form_model = 'player'
 
@@ -447,6 +532,7 @@ class FeedbackElicitation(Page):
         'understanding_difficulty',
         'mental_effort',
         'categories_cover',
+        'attention2',
         'categories_specify',
     ]
 
@@ -464,6 +550,7 @@ class Robin(Page):
         'debt_new_Robin',
         'labor_Robin',
     ]
+
 
     def vars_for_template(player: Player):
         gender = player.participant.gender
@@ -485,6 +572,9 @@ class Robin(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+
+    def before_next_page(player, timeout_happened):
+        correct_Robin(player)
 
 class RobinT0(Page):
     form_model = 'player'
@@ -514,6 +604,9 @@ class RobinT0(Page):
     def is_displayed(player: Player):
         return player.subsession.Treatment == 1
 
+    def before_next_page(player, timeout_happened):
+        correct_RobinT0(player)
+
 class TaylorT0(Page):
     form_model = 'player'
     form_fields = [
@@ -541,6 +634,9 @@ class TaylorT0(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment == 1
+
+    def before_next_page(player, timeout_happened):
+        correct_TaylorT0(player)
 
 
 class Taylor(Page):
@@ -574,6 +670,9 @@ class Taylor(Page):
     def is_displayed(player: Player):
         return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
 
+    def before_next_page(player, timeout_happened):
+        correct_Taylor(player)
+
 class Charlie(Page):
     form_model = 'player'
     form_fields = [
@@ -605,6 +704,9 @@ class Charlie(Page):
     def is_displayed(player: Player):
         return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
 
+    def before_next_page(player, timeout_happened):
+        correct_Charlie(player)
+
 class CharlieT0(Page):
     form_model = 'player'
     form_fields = [
@@ -633,6 +735,9 @@ class CharlieT0(Page):
     def is_displayed(player: Player):
         return player.subsession.Treatment == 1
 
+    def before_next_page(player, timeout_happened):
+        correct_CharlieT0(player)
+
 
 
 class FeedbackScenario(Page):
@@ -641,6 +746,10 @@ class FeedbackScenario(Page):
         'categories_cover_scenario',
         'categories_specify_scenario',
     ]
+
+    def before_next_page(player, timeout_happened):
+        set_payoff(player)
+        set_payoff_questions(player)
 
 
 class PaymentInterpretation(Page):
