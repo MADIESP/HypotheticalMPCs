@@ -48,8 +48,13 @@
     {{ formfield 'mental_effort' }}
   </div>
 
+<div class="radio-block" style="font-size:20px;">
+    <b>3. This is a question to check whether you are paying attention and reading the questions carefully. Please select  “Slightly concerned” to continue.</b>
+    {{ formfield 'attention2' }}
+  </div>
+
   <div class="radio-block" style="font-size:20px;">
-    <b>3. Did the categories presented cover all the ways you and your household  used this payment, or were there expenses that you found difficult to classify?</b>
+    <b>4. Did the categories presented cover all the ways you and your household  used this payment, or were there expenses that you found difficult to classify?</b>
     {{ formfield 'categories_cover' }}
   </div>
 {% endif %}
