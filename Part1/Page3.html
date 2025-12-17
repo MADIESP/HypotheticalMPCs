@@ -1,0 +1,160 @@
+{% block content %}
+
+<style>
+    h1 { text-align: center; margin-bottom: 10px; }
+    h3 { text-align: center; margin-bottom: 20px; }
+
+    p.intro {
+        text-align: justify;
+        max-width: 700px;
+        margin: 0 auto 25px auto;
+        font-size: 1.1em;
+        line-height: 1.5;
+    }
+
+    form {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        margin-top: 18px;
+        text-align: justify;
+    }
+
+    .form-section p {
+        margin-bottom: 6px;
+    }
+
+    table.asset-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        margin-bottom: 25px;
+    }
+
+    table.asset-table td {
+        padding: 6px 10px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .btn-submit {
+        display: block;
+        margin: 35px auto 0 auto;
+    }
+</style>
+
+<h1>Welcome to Page 3!</h1>
+
+
+<p class="intro">
+    This last page is about your household’s <b>financial decisions and attitudes toward money</b>.
+</p>
+
+<form method="post">
+
+    <!-- 1 -->
+    <div class="form-section">
+        <p><b>1.</b> How are <b>financial decisions</b> made in your household?</p>
+        {% formfield player.financial_decision_making %}
+    </div>
+
+    <!-- 2 -->
+    <div class="form-section">
+        <p>
+            <b>2.</b> How <b>informed</b> are you about where the <b>money in your household</b> comes from and what it is spent on?</p>
+        </p>
+        {% formfield player.financial_awareness %}
+    </div>
+
+    <!-- 3 -->
+    <div class="form-section">
+        <p><b>3.</b> Who did the <b>last grocery shopping</b> for your household?</p>
+        {% formfield player.grocery_shopping %}
+    </div>
+
+    <!-- 4 -->
+    <div class="form-section">
+        <p><b>4.</b> Who made the <b>last major purchase</b> (costing more than $1,000) for your household?</p>
+        {% formfield player.major_purchase %}
+    </div>
+
+
+    <!-- ASSETS -->
+    <div class="form-section">
+        <p><b>5.</b> Do you or your household currently hold the following types of <b>assets?</b></p>
+
+        <table class="asset-table">
+            <tr>
+                <td>{% formfield player.has_cash %}</td>
+                <td>{% formfield player.has_savings %}</td>
+                <td>{% formfield player.has_money_market %}</td>
+            </tr>
+            <tr>
+                <td>{% formfield player.has_stocks %}</td>
+                <td>{% formfield player.has_retirement %}</td>
+                <td>{% formfield player.has_life_insurance %}</td>
+            </tr>
+            <tr>
+                <td>{% formfield player.has_real_estate %}</td>
+                <td>{% formfield player.has_other_assets %}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- DEBTS -->
+    <div class="form-section">
+        <p><b>6.</b> Do you or your household currently owe the following types of <b>debts?</b></p>
+
+        <table class="asset-table">
+            <tr>
+                <td>{% formfield player.debt_credit_card %}</td>
+                <td>{% formfield player.debt_mortgage %}</td>
+                <td>{% formfield player.debt_auto %}</td>
+            </tr>
+            <tr>
+                <td>{% formfield player.debt_student %}</td>
+                <td>{% formfield player.debt_personal %}</td>
+                <td>{% formfield player.debt_unpaid_bills %}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 7 -->
+    <div class="form-section">
+        <p><b>7.</b> What is the <b>highest FICO credit score</b> in your household?</p>
+        {% formfield player.fico_score %}
+    </div>
+
+    <!-- 8 -->
+    <div class="form-section">
+        <p><b>8.</b> How many of your <b>household’s bills</b> are usually overdue?</p>
+        {% formfield player.bill_payment_ability %}
+    </div>
+
+    <!-- 9 -->
+    <div class="form-section">
+        <p><b>9.</b> How often are you able to pay your household’s <b>credit card balances</b> in full?</p>
+        {% formfield player.credit_card_payment %}
+    </div>
+
+    <!-- 10 -->
+    <div class="form-section">
+        <p><b>10.</b> How often are you able to make your household’s <b>full rent, mortgage, or loan payments</b> on time?</p>
+        {% formfield player.housing_payment %}
+    </div>
+
+    <!-- Attention check -->
+    <div class="form-section">
+        <p><b>11.</b> Attention check: Please select “Agree” to continue.</p>
+        {% formfield player.attention1 %}
+    </div>
+
+    <button class="btn btn-danger btn-submit" type="submit">
+        Submit
+    </button>
+
+</form>
+
+{% endblock %}

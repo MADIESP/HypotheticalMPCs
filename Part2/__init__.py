@@ -536,6 +536,25 @@ class FeedbackElicitation(Page):
         'categories_specify',
     ]
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus == 2
+
+
+class FeedbackElicitationT2(Page):
+    form_model = 'player'
+    form_fields = [
+        'understanding_difficulty',
+        'mental_effort',
+        'categories_cover',
+        'attention2',
+        'categories_specify',
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return  player.subsession.Treatment == 3 and player.q1_received_stimulus==1
+
 class InstructionsScenarios(Page):
     form_model = 'player'
 
@@ -763,7 +782,7 @@ class PaymentInterpretation(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2
+        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus==2
 class PaymentInterpretationT2(Page):
     form_model = 'player'
     form_fields = [
@@ -773,11 +792,26 @@ class PaymentInterpretationT2(Page):
     ]
 
     @staticmethod
+    def error_message(player: Player, values):
+        # If deposit_account is NOT 2,3,4 → Q2 should be ignored
+        if values['deposit_account'] not in [2, 3, 4]:
+            return None
+
+        # If Q2 should be shown but is unanswered
+        if values['payment_different_if_personal'] is None:
+            return "Please answer Question 2."
+
+        # If Q2 == Yes, explanation is required
+        if values['payment_different_if_personal'] == 1 and not values['payment_different_explain']:
+            return "Please explain how your use of the payment would have been different."
+
+
+    @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 3
+        return player.subsession.Treatment == 3 and player.q1_received_stimulus==1
 class End(Page):
     form_model = 'player'
 
 
 
-page_sequence = [questionCovid, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation ,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario, PaymentInterpretation,PaymentInterpretationT2,End]
+page_sequence = [questionCovid, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario, PaymentInterpretation,PaymentInterpretationT2,End]

@@ -1,24 +1,52 @@
 {% block content %}
-    <style>
-    h2 {text-align: center;}
-    p {text-align: center;}
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    p {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 15px auto;
+        line-height: 1.5;
+    }
+    ul {
+        max-width: 600px;
+        margin: 20px auto;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    .start-button {
+        display: block;
+        margin: 30px auto 0 auto;
+    }
+</style>
 
-    </style>
+<h2>Welcome!</h2>
 
-<h2> Thank you for taking part in our survey! </h2>
+<p>
+    We are trying to understand how Americans <strong>make financial decisions</strong>.
+    Often, policymakers and financial planners do not fully understand people’s
+    <strong>concerns and goals</strong>, and your answers will help improve that understanding.
+    By answering this survey, you are contributing to research that can
+    <strong>help families like yours</strong>.
+</p>
 
-<br>
+<p><strong>This experiment has 3 parts:</strong></p>
 
-<p>We are trying to understand how and why Americans make financial decisions. </p>
-<p>By answering this survey, you are contributing to research that can help families like yours. </p>
-<p>Often, policymakers and financial planners do not fully understand people's concerns and goals. </p>
-<p>We are surveying people like you to learn more about household financial behavior and decision-making. </p>
+<ul>
+    <li><strong>Part 1:</strong> Some questions about you and your household.</li>
+    <li><strong>Part 2:</strong> Some questions about what you would do if you unexpectedly received some money.</li>
+    <li><strong>Part 3:</strong> A task where you’ll be asked to categorize different actions.
+        Correct answers will earn you <strong>extra bonus money</strong>.
+    </li>
+</ul>
 
-<p>Click the button below to start the survey.</p>
+<p>Thank you for taking the time to participate!</p>
 
-<button class="btn btn-danger" id='button1' style="margin-left: 75%; display: block;"> Start </button>
-
-
+<button class="btn btn-danger start-button" id="button1">
+    Start
+</button>
 
 {% endblock %}
-

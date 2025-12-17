@@ -1,0 +1,98 @@
+{% block content %}
+
+<style>
+    h1 { text-align: center; margin-bottom: 20px; }
+    p.intro { text-align: justify; max-width: 800px; margin: 0 auto 20px auto; font-size: 1.1em; line-height: 1.5; }
+    form { max-width: 800px; margin: 0 auto; }
+    .form-section { margin-top: 15px; }  /* slightly smaller spacing */
+    .form-section p { margin-bottom: 5px; } /* reduce gap below question */
+    .btn-submit { display: block; margin: 30px auto 0 auto; }
+    .dollar-input { display: flex; align-items: center; max-width: 200px; }
+    .dollar-input span { margin-right: 5px; font-weight: bold; }
+    .dollar-input input { margin: 0; } /* remove extra margin */
+</style>
+
+<h1>Welcome to Page 2!</h1>
+
+<p class="intro">
+    This second page is about your <b>household</b>. By 'household' we mean everyone who usually lives with you in your primary residence <b>including yourself</b> (but excluding roommates and renters).
+</p>
+
+<form method="post">
+
+    <!-- Household size -->
+    <div class="form-section">
+        <p><b>1.</b> How many people, <b>including yourself</b>, currently live in <b>your household?</b></p>
+        {% formfield player.household_size %}
+    </div>
+
+    <!-- Household children -->
+    <div class="form-section">
+        <p><b>2.</b> And how many of them are <b>below age 21?</b></p>
+        {% formfield player.household_children %}
+    </div>
+
+    <!-- Residence owner -->
+    <div class="form-section">
+        <p><b>3.</b> Do you and your household <b>own or rent</b> your primary residence?</p>
+        {% formfield player.residence_owner %}
+    </div>
+
+    <!-- Conditional rent/home questions -->
+    <div id="rent_question" class="form-section" style="display:none;">
+        <p><b>3.b.</b> Please provide an estimate of the monthly <b>rent</b> (excluding utilities) that you pay for your primary residence.</p>
+        {% formfield player.rent_amount %}
+    </div>
+
+    <div id="own_question" class="form-section" style="display:none;">
+        <p><b>3.b.</b> Please provide an estimate of the <b>value</b> of your primary residence (if you were to sell it today).</p>
+        {% formfield player.home_value %}
+    </div>
+
+    <!-- Household income bracket -->
+<div class="form-section">
+    <p style="text-align: justify;max-width: 700px;">
+        <b>4.</b> What was your <b>total household income</b>, before taxes and transfers, in 2024?
+    </p>
+    <p style="text-align: justify; font-size: 0.95em; font-style: italic; margin-top: 3px;max-width: 550px;">
+        Note that social <b>insurance benefits</b> (e.g., Social Security, Medicare, unemployment insurance)
+        are <b> included </b> in this definition of income.
+    </p>
+    {% formfield player.household_income_bracket %}
+</div>
+
+
+    <!-- More precise household income -->
+    <div class="form-section">
+        <p style="text-align: justify;">
+            <b>5.</b> More precisely, <b>how much</b> would you say it is?
+        </p>
+        <div class="dollar-input">
+            <span>$</span>
+            {% formfield player.household_income_exact %}
+        </div>
+    </div>
+
+
+    <button class="btn btn-danger btn-submit" type="submit">Submit</button>
+</form>
+
+<script>
+    function updateVisibility() {
+        const value = document.querySelector('input[name="residence_owner"]:checked')?.value;
+
+        document.getElementById("rent_question").style.display =
+            value === "2" ? "block" : "none";
+
+        document.getElementById("own_question").style.display =
+            value === "1" ? "block" : "none";
+    }
+
+    document.querySelectorAll('input[name="residence_owner"]').forEach(el => {
+        el.addEventListener("change", updateVisibility);
+    });
+
+    updateVisibility();
+</script>
+
+{% endblock %}
