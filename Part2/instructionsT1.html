@@ -1,55 +1,120 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-  <style>
-    h2 {text-align: center;}
-    p {text-align: justify; font-size:20px;}
+<style>
+    .content-box {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 30px;
+    }
 
-    </style>
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
 
+    p {
+        text-align: justify;
+        font-size: 1.05em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
 
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
 
-<div class="text-justify">
+    li {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
 
-    <br>
-    <p>Now suppose that today you learn that you and your household will receive an unexpected one-time payment of <b> $1,000. </b>
-      You can think of this payment as a government stimulus check, tax refund, bonus, inheritance, gift, or lottery win.
-    This one-time payment, which will not be taxed, will be available on your bank account or as a check in your mailbox within a few days.</p>
+    .header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.15em;
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+    }
 
-    <p> Consider ways in which you and your household could use this additional income over the <b> next three months </b> after you receive the payment: </p>
+    .btn-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+</style>
 
-   <ul>
-    <li style="font-size:20px;">
-        <strong>Change in spending:</strong>  Change in the amount of nondurable goods
-	(e.g., food, clothes, health and beauty products, vacation, entertainment),
-	durable goods (e.g., vehicles, furniture, household appliances),
-	and services (e.g., babysitting, house-cleaning, tutoring) that you purchase, compared to what you would have purchased without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in investment and assets:</strong>  Change in the amount of investment (e.g., real estate, investments in own business, crypto) you make and in assets that you hold (e.g., mutual funds, retirement accounts or pension plan, stocks, bonds, treasury bills, life insurance, CDs), compared to what you would have done without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in debt repayment:</strong> Change in the amount you repay on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities), compared to what you would have repaid without the payment.
-    </li>
-    <br>
-       <li style="font-size:20px;">
-        <strong>Change in uptake of new debt to finance extra expenditures:</strong>  Change in the amount of new debt you take on (e.g., credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills) to finance extra spending, investment, or other purchases, compared to what you would have taken on without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in labor income caused by a change in time worked:</strong> Change in labor income caused by a change in the number of work hours, work opportunities, or gig economy jobs that you accept, compared to what you would have accepted without the payment.
-    </li>
-</ul>
+<div class="content-box">
 
-<br>
-    <!--<p> We would like to understand how you and your household would allocate this one-time payment across these different categories in the next three months. </p>  -->
-    <p>  After adjusting your behavior in response to the payment, any remaining amount will stay in your <b> checking account </b> for future use.</p>
+    <h1>Welcome to Part 2!</h1>
 
-    <br>
-    <button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Next</button>
+    <p>
+        In this part, we ask you to imagine a <strong>hypothetical situation</strong> and tell us how you
+        and your household would respond.
+    </p>
 
+    <p>
+        Suppose that today you learn that you and your household will receive an
+        <strong>unexpected one-time payment of $1,000</strong>.
+        This payment will not be taxed and will arrive within a few days
+        (for example as a stimulus check, tax refund, bonus, inheritance, gift, or lottery win).
+    </p>
 
+    <p>
+        Please think about how you and your household would use this extra money over the
+        <strong>next three months</strong>, <b>compared to</b> what you would have done
+        <strong>without</strong> receiving the payment.
+    </p>
+
+    <p>In particular, you and your household could <b>use this money</b> to:</p>
+
+    <ul>
+        <li>
+            <div class="header">Change your spending</div>
+            <p>You could change your consumption of <strong>nondurable goods</strong>
+            (e.g., food, clothes, vacation, entertainment),
+            <strong>durable goods</strong> (e.g., vehicles, furniture, household appliances),
+            and <strong>services</strong> (e.g., babysitting, house-cleaning).</p>
+        </li>
+
+        <li>
+            <div class="header">Change your investments and assets</div>
+            <p>You could change the amount of <b>investment you make</b>
+            (e.g., real estate, investments in your own business, crypto)
+            and the amount of <b>assets that you hold</b>
+            (e.g., stocks, bonds, retirement or savings accounts).</p>
+        </li>
+
+        <li>
+            <div class="header">Change your debt repayment</div>
+            <p>You could change the <b>amount you repay</b> on revolving credit card debt,
+            mortgages, loans, or unpaid bills.</p>
+        </li>
+
+        <li>
+            <div class="header">Change your uptake of new debt</div>
+            <p>You could change the amount of <b>new debt you take on</b>
+            (e.g., credit card debt, mortgages, loans, unpaid bills)
+            to <b>finance extra</b> spending, investment, or other purchases.</p>
+        </li>
+
+        <li>
+            <div class="header">Change your labor income</div>
+            <p>You could change your labor earnings by changing the <b>number of work hours</b>,
+            <b>work opportunities</b>, or <b>gig economy jobs</b> that you accept.</p>
+        </li>
+    </ul>
+
+    <p>Any remaining amount could stay in your <strong>checking account</strong> for future use.</p>
+
+    <div class="btn-container">
+        <button class="btn btn-danger custom-submit">Next</button>
     </div>
+
+</div>
+
 {% endblock %}
