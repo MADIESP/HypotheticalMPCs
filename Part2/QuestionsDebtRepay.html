@@ -2,21 +2,27 @@
     <style>
     h1 {text-align: center;}
     p {text-align: center; font-size:20px;}
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #c82333;
+    }
 
     </style>
+<h2>Part 2 - Page 4/6</h2>
 
  {% if repay_debt > 0 %}
-        <p style="font-weight: bold; font-size: 1.3em;">
-            You indicated  you would increase your debt repayment by  ${{ repay_debt }} because of the payment.
+        <p style=" font-size: 1.2em;">
+            You indicated  you would <b> increase your debt repayment by  ${{ repay_debt }} </b> because of the payment.
         </p>
-        <p>
+        <p style=" font-size: 1.2em;">
             Please report how these <b> ${{ repay_debt }} </b> would be allocated across the following categories:
         </p>
     {% elif repay_debt < 0 %}
-        <p style="font-weight: bold; font-size: 1.3em;">
-            You indicated you would <b>decrease </b> your debt repayment by ${{ abs_repay_debt }} because of the payment.
+        <p style=" font-size: 1.2em;">
+            You indicated you would <b>decrease your debt repayment by ${{ abs_repay_debt }}</b>  because of the payment.
         </p>
-        <p>
+        <p style=" font-size: 1.2em;">>
             Please report how this reduction would be distributed across the following categories:
         </p>
     {% endif %}

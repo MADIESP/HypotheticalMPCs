@@ -2,14 +2,21 @@
     <style>
     h1 {text-align: center;}
     p {text-align: center;}
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #c82333;
+    }
 
     </style>
 
+<h2>Part 2 - Page 5/6</h2>
+
  {% if new_debt > 0 %}
-        <p style="font-weight: bold; font-size: 1.3em;">
-            You indicated you would take on ${{ new_debt }} in new debt because of the payment.
+        <p style=" font-size: 1.2em;">
+            You indicated you would <b>take on ${{ new_debt }} in new debt</b> because of the payment.
         </p>
-        <p>
+        <p style=" font-size: 1.2em;">
             Please report how these <b> ${{ new_debt }} </b> would be allocated across the following categories:
         </p>
     {% elif new_debt < 0 %}

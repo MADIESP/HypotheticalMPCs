@@ -194,8 +194,8 @@ class Player(BasePlayer):
 
     financial_decision_making = models.IntegerField(
         label="",
-        choices=[[1, "I make all"], [2, "I make most"], [3, "Shared equally with someone else"],
-                 [4, "Someone else make most"], [5, "Someone else make all"]],
+        choices=[[1, "I make all"], [2, "I make most"], [3, "I share them equally with other household members"],
+                 [4, " I make some but not most"], [5, "I make none"]],
         widget=widgets.RadioSelectHorizontal
     )
 
@@ -208,13 +208,13 @@ class Player(BasePlayer):
 
     grocery_shopping = models.IntegerField(
         label="",
-        choices=[[1, "I did"], [2, "Someone else"], [3, "Done with someone else"]],
+        choices=[[1, "I did without other household members"], [2, "I did with other household members"], [3, "Other household members did without me"]],
         widget=widgets.RadioSelectHorizontal
     )
 
     major_purchase = models.IntegerField(
         label="",
-        choices=[[1, "I did"], [2, "Someone else"], [3, "Made with someone else"]],
+        choices=[[1, "I did without other household members"], [2, "I did with other household members"], [3, "Other household members did without me"]],
         widget=widgets.RadioSelectHorizontal
     )
 
@@ -228,6 +228,7 @@ class Player(BasePlayer):
     has_life_insurance = models.BooleanField(label="<b>Life insurance </b>")
     has_real_estate = models.BooleanField(label="<b>Real estate</b><br>"
         "<span style='font-size:0.9em;'>(other than primary residence)</span>")
+    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
     has_other_assets = models.BooleanField(label="<b>Other</b>")
 
     debt_credit_card = models.BooleanField(label="<b>Credit card debt</b>")
@@ -248,9 +249,10 @@ class Player(BasePlayer):
         label="",
         choices=[
             [1, "None - all bills are paid on time"],
-            [2, "A few are overdue, but by less than a month"],
-            [3, "Around half are overdue"],
-            [4, "Most are overdue"]
+            [2, "A few are overdue, all by less than a month"],
+            [3, "A few are overdue, including some by more than a month"],
+            [4, "Around half are overdue"],
+            [5, "Most are overdue"]
         ],
         widget=widgets.RadioSelectHorizontal
     )

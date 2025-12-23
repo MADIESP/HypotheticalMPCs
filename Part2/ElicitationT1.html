@@ -8,6 +8,12 @@
     margin-bottom: 12px;
   }
 
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
+
   .slider-container {
     width: 75%;
     margin: 20px auto;
@@ -17,7 +23,6 @@
     text-align: center;
   }
 
-  /* CATEGORY HEADERS */
   .slider-label {
     font-weight: bold;
     font-size: 1.05em;
@@ -28,13 +33,6 @@
     border-radius: 5px;
   }
 
-  .slider-subtext {
-    font-size: 0.95em;
-    color: #721c24;
-    margin-bottom: 6px;
-  }
-
-  /* SLIDER */
   input[type=range] {
     width: 80%;
     height: 10px;
@@ -56,25 +54,30 @@
     text-align: center;
   }
 
-  /* CENTERED VALUE BOX */
   .value-box {
     display: flex;
     justify-content: center;
     margin-top: 6px;
   }
 
-  .slider-value label {
-    display: none !important;
+  /* hide oTree numeric input */
+  .slider-value input[type=number] {
+    display: none;
   }
 
-  .slider-value input {
+  /* hide oTree formfield labels */
+  .slider-value label {
+  display: none !important;
+  }
+
+  /* visible display input */
+  .slider-value input[type=text] {
     width: 90px;
     text-align: center;
     border-radius: 6px;
     border: 1px solid #ccc;
     padding: 4px;
     background-color: #f8f9fa;
-    cursor: default;
   }
 
   .details-text {
@@ -83,7 +86,6 @@
     margin-top: 4px;
   }
 
-  /* CONTEXTUAL NOTE ABOVE SLIDER */
   .context-note {
     text-align: center;
     font-size: 0.95em;
@@ -91,7 +93,6 @@
     margin-bottom: 6px;
   }
 
-  /* CHECKING ACCOUNT */
   .checking-display {
     text-align: center;
     font-size: 1.3em;
@@ -113,12 +114,18 @@
   }
 </style>
 
+<h2>Part 2 – Page 2/6</h2>
+
 <p>
-  How would this <b>unexpected $1,000 payment</b> change your behavior over the <b>next three months?</b>
+  How would this <b>unexpected $1,000 payment</b> change your behavior over the
+  <b>next three months?</b>
 </p>
 
 <p>
-  Please move <b>each slider at least once</b>. If there is no change, leave the slider in the middle.
+  Please <b>move each slider at least once</b>.
+</p>
+<p>
+  If there is no change, you must still move the slider and return it to <b>0</b>.
 </p>
 
 <form method="post">
@@ -126,32 +133,26 @@
   {% for cat in ['spending', 'asset', 'debt_repay', 'debt_new', 'labor'] %}
   <div class="slider-container">
 
-    <!-- CATEGORY HEADER -->
     <div class="slider-label">
-  {% if cat == 'spending' %}
-    Change your spending
-  {% elif cat == 'asset' %}
-    Change your investments and assets
-  {% elif cat == 'debt_repay' %}
-    Change your debt repayment
-  {% elif cat == 'debt_new' %}
-    Change your uptake of new debt (to finance extra expenditures)
-  {% else %}
-    Change your labor income (due to a change in time worked)
-  {% endif %}
-</div>
+      {% if cat == 'spending' %}
+        Change your spending
+      {% elif cat == 'asset' %}
+        Change your investments and assets
+      {% elif cat == 'debt_repay' %}
+        Change your debt repayment
+      {% elif cat == 'debt_new' %}
+        Change your uptake of new debt (to finance extra expenditures)
+      {% else %}
+        Change your labor income (due to a change in time worked)
+      {% endif %}
+    </div>
 
-
-
-
-    <!-- CONTEXTUAL NOTE ABOVE SLIDER FOR NEW DEBT AND LABOR -->
     {% if cat == 'debt_new' or cat == 'labor' %}
       <p class="context-note">
         For this category, any increase will be <b>added to your checking account</b>.
       </p>
     {% endif %}
 
-    <!-- SLIDER -->
     <input type="range"
            id="{{ cat }}_slider"
            min="-1500"
@@ -165,35 +166,27 @@
       <span>I would increase</span>
     </div>
 
-    <!-- CENTERED READ-ONLY VALUE BOX -->
     <div class="value-box">
       <div class="slider-value">
         {{ formfield cat }}
+        <input type="text" id="{{ cat }}_display" readonly value="0">
       </div>
     </div>
 
-    <!-- DETAILS CENTERED BELOW -->
-    <div class="details-wrapper">
-      <details class="details-text">
-        <summary>Details</summary>
-        {% if cat == 'spending' %}
-          You could change your consumption of nondurable goods (e.g., food, clothes, vacation, entertainment),
-          durable goods (e.g., vehicles, furniture, household appliances),
-          and services (e.g., babysitting, house-cleaning).
-        {% elif cat == 'asset' %}
-          You could change the amount of investment you make (e.g., real estate, investments in your own business, crypto)
-          and the amount of assets that you hold (e.g., stocks, bonds, retirement or savings accounts).
-        {% elif cat == 'debt_repay' %}
-          You could change the amount you repay on revolving credit card debt, mortgages, loans, or unpaid bills.
-        {% elif cat == 'debt_new' %}
-          You could change the amount of new debt you take on (e.g., credit card debt, mortgages, loans, unpaid bills)
-          to finance extra spending, investment, or other purchases.
-        {% else %}
-          You could change your labor earnings by changing the number of work hours,
-          work opportunities, or gig economy jobs that you accept.
-        {% endif %}
-      </details>
-    </div>
+    <details class="details-text">
+      <summary>Details</summary>
+      {% if cat == 'spending' %}
+        You could change your consumption of nondurable goods, durable goods, and services.
+      {% elif cat == 'asset' %}
+        You could change the amount of investment and assets you hold.
+      {% elif cat == 'debt_repay' %}
+        You could change the amount you repay on existing debt.
+      {% elif cat == 'debt_new' %}
+        You could change the amount of new debt you take on.
+      {% else %}
+        You could change your labor earnings by changing work hours or opportunities.
+      {% endif %}
+    </details>
 
   </div>
   {% endfor %}
@@ -216,20 +209,28 @@ const categories = ['spending', 'asset', 'debt_repay', 'debt_new', 'labor'];
 categories.forEach(cat => {
   const slider = document.getElementById(`${cat}_slider`);
   const input = document.getElementById(`id_${cat}`);
+  const display = document.getElementById(`${cat}_display`);
 
   slider.value = 0;
   input.value = 0;
+  display.value = "0";
   input.readOnly = true;
   slider.dataset.touched = "false";
 
   slider.addEventListener('input', () => {
-    input.value = slider.value;
+    const val = Number(slider.value);
+
+    // store numeric value
+    input.value = val;
+
+    // display formatted value
+    display.value = val > 0 ? `+${val}` : val;
+
     slider.dataset.touched = "true";
     updateSavings();
   });
 });
 
-// INITIAL DISPLAY (payment arrives in checking account)
 updateSavings();
 
 function updateSavings() {

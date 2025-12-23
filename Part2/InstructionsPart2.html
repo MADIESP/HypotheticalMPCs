@@ -1,0 +1,56 @@
+{% block content %}
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #c82333;
+    }
+
+    p {
+        text-align: justify;
+        max-width: 700px;
+        margin: 0 auto 15px auto;
+        font-size: 1.1em;
+        line-height: 1.5;
+    }
+
+    ul {
+        max-width: 600px;
+        margin: 20px auto;
+        font-size: 1.1em;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    .start-button {
+        display: block;
+        margin: 30px auto 0 auto;
+    }
+</style>
+
+<h2>Welcome to Part 2!</h2>
+
+<p>
+    In this part, we ask you to imagine a <strong>hypothetical situation</strong>
+    and tell us how you and your household would respond.
+</p>
+
+<p style="text-align: center;"><strong>This part has 6 pages:</strong></p>
+
+<ul>
+    <li><strong>Page 1:</strong> Explanation of the hypothetical scenario</li>
+    <li><strong>Page 2:</strong> Your responses to the hypothetical scenario</li>
+    <li><strong>Page 3:</strong> A few feedback questions</li>
+    <li><strong>Page 4 (if applicable):</strong> 1 follow-up question</li>
+    <li><strong>Page 5 (if applicable):</strong> 1 follow-up question</li>
+    <li><strong>Page 6:</strong> A few additional feedback questions</li>
+</ul>
+
+
+<button class="btn btn-danger start-button" id="button1">
+    Start
+</button>
+
+{% endblock %}

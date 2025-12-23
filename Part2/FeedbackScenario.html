@@ -3,6 +3,11 @@
 
 <style>
   /* make question text larger + centered */
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
   .question-label {
     font-size: 20px;        /* adjust size as you like */
     font-weight: bold;
@@ -16,23 +21,24 @@
     display: none;
     margin-top: 15px;
   }
+  .question-block { margin-bottom: 25px; }
 
   /* optional: center the radio buttons */
   .otree-form-field .controls {
     text-align: center;
   }
+
 </style>
 
+ <h2>Part 3 - Page 4/4</h2>
 <!-- Render each field manually -->
-<div class="form-group" style="font-size:20px;">
-  <label class="question-label">
-    Did the categories presented cover all the ways you would have wanted to classify how
-Robin, Taylor, and Charlie used the $1,000 payment?
-  </label>
+<div class="question-block" >
+    <b>1.</b> Did the categories presented cover <b>all the ways</b> you would have wanted to <b>classify</b> how
+Robin, Taylor, and Charlie <b>used the $1,000 payment?</b>
   {{ formfield 'categories_cover_scenario' }}
 </div>
 
-<div id="specify-field" style="font-size:20px;">
+<div id="specify-field" >
   {{ formfield 'categories_specify_scenario' }}
 </div>
 

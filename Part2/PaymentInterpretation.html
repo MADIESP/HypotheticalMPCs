@@ -9,6 +9,11 @@
     display: block;
     margin: 25px 0 15px 0;
   }
+  h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #c82333;
+    }
 
   .otree-form-field .controls {
     text-align: center;
@@ -18,31 +23,37 @@
     display: none;
     margin-top: 15px;
   }
+
+  p {
+        text-align: center;
+        font-size: 1.05em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+  .question-block { margin-bottom: 25px; }
+
 </style>
 
-<p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight: bold;">
-  Earlier, you were asked to imagine that you and your household receive an unexpected one-time payment of $1,000.
-  We would like to understand how you interpreted this scenario.
-</p>
+<h2>Part 2 - Page 6/6</h2>
 
-<div class="form-group">
-  <label class="question-label">
-    1) In your mind, who was the $1,000 payment primarily intended for?
-  </label>
+<p>
+  Earlier, you were asked to imagine that you and your household receive an <b>unexpected one-time payment of $1,000.</b> </p>
+ <p> We would like to understand <b>how you interpreted</b> this scenario. </p>
+
+
+<div class="question-block" >
+    <b>1.</b> In your mind, who was the $1,000 payment <b>primarily intended for?</b>
   {{ formfield 'payment_intended_for' }}
 </div>
 
-<div class="form-group">
-  <label class="question-label">
-    2) Who did you imagine had access to the $1,000 payment?
-  </label>
+<div class="question-block" >
+    <b>2.</b> Who did you imagine <b>had access to</b> the $1,000 payment?
   {{ formfield 'payment_access' }}
 </div>
 
-<div class="form-group">
-  <label class="question-label">
-    3) Do you think your use of the payment would have been different if the $1,000 had been deposited directly into your personal account and could not be accessed by other household members?
-  </label>
+<div class="question-block" >
+    <b>3.</b> Do you think your use of the payment <b>would have been different</b> if the $1,000 had been deposited directly into your <b>personal account</b> and <b>could not be accessed</b> by other household members?
   {{ formfield 'payment_different_if_personal' }}
 </div>
 

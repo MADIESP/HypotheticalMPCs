@@ -286,6 +286,11 @@ def set_payoff_questions(player):
 
 
     # PAGES
+
+class instructionsPart2(Page):
+    form_model = 'player'
+
+
 class instructionsT0(Page):
     form_model = 'player'
 
@@ -555,6 +560,44 @@ class FeedbackElicitationT2(Page):
     def is_displayed(player: Player):
         return  player.subsession.Treatment == 3 and player.q1_received_stimulus==1
 
+class PaymentInterpretation(Page):
+    form_model = 'player'
+    form_fields = [
+        'payment_intended_for',
+        'payment_access',
+        'payment_different_if_personal',
+        'payment_different_explain',
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus==2
+class PaymentInterpretationT2(Page):
+    form_model = 'player'
+    form_fields = [
+        'deposit_account',
+        'payment_different_if_personal',
+        'payment_different_explain',
+    ]
+
+    @staticmethod
+    def error_message(player: Player, values):
+        # If deposit_account is NOT 2,3,4 → Q2 should be ignored
+        if values['deposit_account'] not in [2, 3, 4]:
+            return None
+
+        # If Q2 should be shown but is unanswered
+        if values['payment_different_if_personal'] is None:
+            return "Please answer Question 2."
+
+        # If Q2 == Yes, explanation is required
+        if values['payment_different_if_personal'] == 1 and not values['payment_different_explain']:
+            return "Please explain how your use of the payment would have been different."
+
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 3 and player.q1_received_stimulus==1
 class InstructionsScenarios(Page):
     form_model = 'player'
 
@@ -771,47 +814,10 @@ class FeedbackScenario(Page):
         set_payoff_questions(player)
 
 
-class PaymentInterpretation(Page):
-    form_model = 'player'
-    form_fields = [
-        'payment_intended_for',
-        'payment_access',
-        'payment_different_if_personal',
-        'payment_different_explain',
-    ]
 
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus==2
-class PaymentInterpretationT2(Page):
-    form_model = 'player'
-    form_fields = [
-        'deposit_account',
-        'payment_different_if_personal',
-        'payment_different_explain',
-    ]
-
-    @staticmethod
-    def error_message(player: Player, values):
-        # If deposit_account is NOT 2,3,4 → Q2 should be ignored
-        if values['deposit_account'] not in [2, 3, 4]:
-            return None
-
-        # If Q2 should be shown but is unanswered
-        if values['payment_different_if_personal'] is None:
-            return "Please answer Question 2."
-
-        # If Q2 == Yes, explanation is required
-        if values['payment_different_if_personal'] == 1 and not values['payment_different_explain']:
-            return "Please explain how your use of the payment would have been different."
-
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.subsession.Treatment == 3 and player.q1_received_stimulus==1
 class End(Page):
     form_model = 'player'
 
 
 
-page_sequence = [questionCovid, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario, PaymentInterpretation,PaymentInterpretationT2,End]
+page_sequence = [questionCovid, instructionsPart2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End]
