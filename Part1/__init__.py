@@ -100,7 +100,7 @@ class Player(BasePlayer):
         label="",
         choices=[[0, "0 (Completely unwilling) "],[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
                  [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 (Very willing)"]],
-        widget=widgets.RadioSelectHorizontal,
+        widget=widgets.RadioSelect,
         blank=True
     )
 
@@ -108,7 +108,7 @@ class Player(BasePlayer):
         label="",
         choices=[[0, "0 (Completely unwilling)"], [1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
                  [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 (Very willing)"]],
-        widget=widgets.RadioSelectHorizontal,
+        widget=widgets.RadioSelect,
         blank=True
     )
 
@@ -151,7 +151,8 @@ class Player(BasePlayer):
             [7, "$1,100–$1,299"],
             [8, "$1,300–$1,499"],
             [9, "$1,500–$2,499"],
-            [10, "$2,500 or more"],
+            [10, "$2,500 –$2,999"],
+            [11, "$3,000 or more"],
         ],
         blank=True
     )
@@ -194,28 +195,33 @@ class Player(BasePlayer):
 
     financial_decision_making = models.IntegerField(
         label="",
-        choices=[[1, "I make all"], [2, "I make most"], [3, "I share them equally with other household members"],
-                 [4, " I make some but not most"], [5, "I make none"]],
-        widget=widgets.RadioSelectHorizontal
+        choices=[
+            [1, "I make all the decisions"],
+            [2, "I make most of the decisions"],
+            [3, "Decisions are shared equally between me and someone else"],
+            [4, "Someone else makes most of the decisions"],
+            [5, "Someone else makes all the decisions"],
+        ],
+        widget=widgets.RadioSelect
     )
 
     financial_awareness = models.IntegerField(
         label=" ",
         choices=[[1, "Not at all informed"], [2, "Somewhat informed"], [3, "Very informed"],
                  [4, "Extremely informed"]],
-        widget=widgets.RadioSelectHorizontal
+        widget=widgets.RadioSelect
     )
 
     grocery_shopping = models.IntegerField(
         label="",
-        choices=[[1, "I did without other household members"], [2, "I did with other household members"], [3, "Other household members did without me"]],
-        widget=widgets.RadioSelectHorizontal
+        choices=[[1, "I did the shopping alone "], [2, "I did the shopping with someone else"], [3, "Someone else did the shopping without me"]],
+        widget=widgets.RadioSelect
     )
 
     major_purchase = models.IntegerField(
         label="",
-        choices=[[1, "I did without other household members"], [2, "I did with other household members"], [3, "Other household members did without me"]],
-        widget=widgets.RadioSelectHorizontal
+        choices=[[1, "I made the purchase alone"], [2, "I made the purchase with someone else"], [3, "Someone else made the purchase without me"]],
+        widget=widgets.RadioSelect
     )
 
 
@@ -242,7 +248,7 @@ class Player(BasePlayer):
     fico_score = models.IntegerField(
         label="",
         choices=[[1, "579 or lower"], [2, "580–669"], [3, "670–739"], [4, "740–799"], [5, "800 or higher"]],
-        widget=widgets.RadioSelectHorizontal
+        widget=widgets.RadioSelect
     )
 
     bill_payment_ability = models.IntegerField(
@@ -254,19 +260,19 @@ class Player(BasePlayer):
             [4, "Around half are overdue"],
             [5, "Most are overdue"]
         ],
-        widget=widgets.RadioSelectHorizontal
+        widget=widgets.RadioSelect
     )
 
     credit_card_payment = models.IntegerField(
         label="",
         choices=[[1, "Always"], [2, "Most months"], [3, "Some months"], [4, "Almost never"], [5, "Never"]],
-        widget=widgets.RadioSelectHorizontal
+        widget=widgets.RadioSelect
     )
 
     housing_payment = models.IntegerField(
         label="",
         choices=[[1, "Always"], [2, "Most months"], [3, "Some months"], [4, "Almost never"], [5, "Never"]],
-        widget=widgets.RadioSelectHorizontal
+        widget=widgets.RadioSelect
     )
 
 
@@ -274,7 +280,7 @@ class Player(BasePlayer):
     attention1 = models.IntegerField(
         label="",
         choices=[[1, "Strongly disagree"], [2, "Disagree"], [3, "Neither agree nor disagree"] ,[4, "Agree"], [5, "Strongly agree"]],
-        widget=widgets.RadioSelectHorizontal,
+        widget=widgets.RadioSelect,
     )
 
 # FUNCTIONS
@@ -283,6 +289,9 @@ def gender(player):
 
 # PAGES
 class Instructions(Page):
+    form_model = 'player'
+
+class InstructionsPart1(Page):
     form_model = 'player'
 
 
@@ -356,5 +365,5 @@ class Page3(Page):
 
 
 
-page_sequence = [Instructions, Page1, Page2,Page3]
+page_sequence = [Instructions,InstructionsPart1, Page1, Page2,Page3]
 #page_sequence = [ Part1]
