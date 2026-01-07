@@ -161,6 +161,7 @@ class Player(BasePlayer):
             "Not sure",
         ],
         widget=widgets.RadioSelect,
+        blank=True,
     )
 
     payment_different_explain = models.LongStringField(
@@ -272,7 +273,7 @@ class InstructionsPart2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment <3
+        return player.subsession.Treatment <3 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
 
 
 class InstructionsPart2T2(Page):
@@ -561,24 +562,27 @@ class PaymentInterpretationT2(Page):
         'payment_different_explain',
     ]
 
-    @staticmethod
-    def error_message(player: Player, values):
-        # If deposit_account is NOT 2,3,4 → Q2 should be ignored
-        if values['deposit_account'] not in [2, 3, 4]:
-            return None
+    def error_message(self, values):
+        dep = values.get('deposit_account')
+        diff = values.get('payment_different_if_personal')
+        explain = values.get('payment_different_explain')
 
-        # If Q2 should be shown but is unanswered
-        if values['payment_different_if_personal'] is None:
-            return "Please answer Question 2."
+        # Q2 required only if deposit_account ∈ {2,3,4}
+        if dep in [2, 3, 4]:
+            if diff is None:
+                return 'Please answer Question 2.'
 
-        # If Q2 == Yes, explanation is required
-        if values['payment_different_if_personal'] == 1 and not values['payment_different_explain']:
-            return "Please explain how your use of the payment would have been different."
-
+            # Explanation required only if Q2 = Yes (assuming Yes = 1)
+            if diff == 1 and not explain:
+                return 'Please explain your answer to Question 2.'
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 3 and player.participant.received_stimulus==1
+        return (
+            player.subsession.Treatment == 3
+            and player.participant.received_stimulus == 1
+        )
+
 class InstructionsScenarios(Page):
     form_model = 'player'
 

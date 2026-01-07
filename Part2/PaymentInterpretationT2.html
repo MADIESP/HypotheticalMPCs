@@ -8,26 +8,29 @@
     display: block;
     margin: 25px 0 15px 0;
   }
+
   h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #c82333;
-    }
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
 
   .otree-form-field .controls {
     text-align: center;
   }
 
-  #q2-field, #explain-field {
+  #q2-field,
+  #explain-field {
     display: none;
     margin-top: 15px;
   }
 </style>
 
-<h2>Part 2 - Page 6/6</h2>
+<h2>Part 2 – Page 6/6</h2>
 
-<p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight: bold;">
-  Earlier you reported that you and your household received a Covid stimulus check of ${{ participant.stimulus_amount }}.
+<p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight:bold;">
+  Earlier you reported that you and your household received a Covid stimulus check of
+  ${{ participant.stimulus_amount }}.
 </p>
 
 <!-- Question 1 -->
@@ -41,13 +44,14 @@
 <!-- Question 2 (conditional on Q1) -->
 <div id="q2-field" class="form-group">
   <label class="question-label">
-    2) Do you think your <b>use of the payment</b> would have been <b>different</b> if the ${{ participant.stimulus_amount }}
-    had been deposited directly into your <b>personal account</b> and could not be accessed by other household members?
+    2) Do you think your <b>use of the payment</b> would have been <b>different</b> if the
+    ${{ participant.stimulus_amount }} had been deposited directly into your
+    <b>personal account</b> and could not be accessed by other household members?
   </label>
   {{ formfield 'payment_different_if_personal' }}
 </div>
 
-<!-- Explanation (conditional on Q2=yes) -->
+<!-- Explanation (conditional on Q2 = yes) -->
 <div id="explain-field" class="form-group">
   {{ formfield 'payment_different_explain' }}
 </div>
@@ -57,24 +61,27 @@
 </button>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
   const q2Field = document.getElementById("q2-field");
-  const explainDiv = document.getElementById("explain-field");
+  const explainField = document.getElementById("explain-field");
 
   function getCheckedValue(name) {
     const checked = document.querySelector(`input[name="${name}"]:checked`);
     return checked ? checked.value : null;
   }
 
-  function hideElement(el) {
-    if (el) el.style.display = "none";
-  }
   function showElement(el) {
     if (el) el.style.display = "block";
   }
+
+  function hideElement(el) {
+    if (el) el.style.display = "none";
+  }
+
   function clearInputsInside(el) {
     if (!el) return;
-    const inputs = el.querySelectorAll("input, textarea");
+    const inputs = el.querySelectorAll("input, textarea, select");
     inputs.forEach(i => {
       if (i.type === "radio" || i.type === "checkbox") {
         i.checked = false;
@@ -84,48 +91,64 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  function setRequired(el, required) {
+    if (!el) return;
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach(i => {
+      if (required) {
+        i.setAttribute("required", "required");
+      } else {
+        i.removeAttribute("required");
+      }
+    });
+  }
+
   function updateQ2Visibility() {
     const depVal = getCheckedValue("deposit_account");
-    // Show Q2 only if deposit_account ∈ {2,3,4}
-    if (depVal !== null && ["2","3","4","2.0","3.0","4.0"].includes(depVal)) {
+
+    if (depVal !== null && ["2", "3", "4", "2.0", "3.0", "4.0"].includes(depVal)) {
       showElement(q2Field);
+      setRequired(q2Field, true);
     } else {
       hideElement(q2Field);
-      hideElement(explainDiv);
-      // clear any answers that might remain
+      hideElement(explainField);
+
+      setRequired(q2Field, false);
+      setRequired(explainField, false);
+
       clearInputsInside(q2Field);
-      clearInputsInside(explainDiv);
+      clearInputsInside(explainField);
     }
   }
 
   function updateExplainVisibility() {
     const diffVal = getCheckedValue("payment_different_if_personal");
-    // Accept both numeric-encoded (e.g. "1") and string-encoded (e.g. "Yes")
-    const isYes = diffVal !== null && (diffVal === "1" || diffVal.toLowerCase?.() === "yes");
+    const isYes =
+      diffVal !== null &&
+      (diffVal === "1" || diffVal.toLowerCase?.() === "yes");
+
     if (isYes) {
-      showElement(explainDiv);
+      showElement(explainField);
+      setRequired(explainField, true);
     } else {
-      hideElement(explainDiv);
-      clearInputsInside(explainDiv);
+      hideElement(explainField);
+      setRequired(explainField, false);
+      clearInputsInside(explainField);
     }
   }
 
-  // delegation: one listener for changes anywhere in the form
-  document.addEventListener("change", function(e) {
-    // if deposit_account changed, update Q2 visibility
+  document.addEventListener("change", function (e) {
     if (e.target && e.target.name === "deposit_account") {
       updateQ2Visibility();
-      // when Q2 becomes visible, also evaluate whether explain should show (in case back button)
       updateExplainVisibility();
     }
 
-    // if payment_different_if_personal changed, update explain visibility
     if (e.target && e.target.name === "payment_different_if_personal") {
       updateExplainVisibility();
     }
   });
 
-  // initialize on load (handles browser back navigation where radio may already be checked)
+  // Initialize on load (handles back button / refresh)
   updateQ2Visibility();
   updateExplainVisibility();
 });
