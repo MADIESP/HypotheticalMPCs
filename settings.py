@@ -45,8 +45,24 @@ USE_POINTS = False
 
 ADMIN_USERNAME = 'admin'
 # for security, best to set admin password in an environment variable
-ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
+#ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
 
 DEMO_PAGE_INTRO_HTML = """ """
 
 SECRET_KEY = '2390561968578'
+
+environ['OTREE_ADMIN_PASSWORD'] = 'HypotheticalMPCs'
+environ['OTREE_PRODUCTION'] = '1'
+environ['OTREE_AUTH_LEVEL'] ='STUDY'
+
+ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
+DEBUG = (environ.get('OTREE_PRODUCTION') in {None, '', '0'})
+AUTH_LEVEL= environ.get('OTREE_AUTH_LEVEL')
+
+ROOMS = [
+
+    dict(
+        name='econ_lab',
+        display_name='Name'
+    ),
+]
