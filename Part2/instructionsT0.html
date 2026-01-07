@@ -1,44 +1,107 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-  <style>
-    h2 {text-align: center;}
-    p {text-align: justify; font-size:20px;}
+<style>
+    .content-box {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 30px;
+    }
 
-    </style>
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #c82333;
+    }
+
+    p {
+        text-align: justify;
+        font-size: 1.05em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    li {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+
+    /* LIGHT RED HEADERS */
+    .header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.15em;
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 5px;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+</style>
+
+<div class="content-box">
+
+    <h2>Part 2 - Page 1/6</h2>
+    <h2>Explanation of the hypothetical scenario</h2>
 
 
 
-<div class="text-justify">
+    <p>
+        Suppose that today you learn that you and your household will receive an
+        <strong>unexpected one-time payment of $1,000</strong>.
+        This payment will not be taxed and will arrive in your<strong> checking account</strong> within a few days
+        (for example as a stimulus check, tax refund, bonus, inheritance, gift, or lottery win).
+    </p>
 
-    <br>
-<p>Now suppose that today you learn that you and your household will receive an unexpected one-time payment of <b>$1,000. </b>
-    You can think of this payment as a government stimulus check, tax refund, bonus, inheritance, gift, or lottery win.
-    This one-time payment, which will not be taxed, will be available on your bank account or as a check in your mailbox within a few days.</p>
+    <p>
+        We'll ask you to think about how you and your household would use this extra money over the
+        <strong>next three months</strong>, <b>compared with</b> what you would have done <strong>if you had not </strong>
+         received the payment.
+    </p>
 
-<p> Consider ways in which you and your household could use this additional income over the <b> next three months </b> after you receive the payment: </p>
+    <p>In particular, with this <b>extra money, </b> you and your household could:</p>
 
-   <ul>
-    <li style="font-size:20px;">
-        <strong>Change in spending:</strong>  Change in the amount of nondurable goods
-	(e.g., food, clothes, health and beauty products, vacation, entertainment),
-	durable goods (e.g., vehicles, furniture, household appliances),
-	and services (e.g., babysitting, house-cleaning, tutoring) that you purchase, compared to what you would have purchased without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in debt repayment:</strong> Change in the amount you repay on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities), compared to what you would have repaid without the payment.
-    </li>
-</ul>
+    <ul>
 
-<br>
+        <li>
+            <div class="header">Change your debt repayment</div>
+            <p>You could change the <b>amount of debt you repay</b> (e.g., credit card debt, mortgages, loans, unpaid bills). </p>
+        </li>
 
-    <!--<p> We would like to understand how you and your household would allocate this one-time payment across these different categories in the next three months. </p>  -->
-<p> Any amount you do not use in the next three months is considered <b>savings.</b> This money is set aside for future use, for instance by depositing it in checking, savings, or pension accounts, or by purchasing financial assets.</p>
 
-    <br>
-    <button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Next</button>
+        <li>
+            <div class="header">Change your spending</div>
+            <p>You could change your consumption of <strong>nondurable goods</strong>
+            (e.g., food, clothes, entertainment),
+            <strong>durable goods</strong> (e.g., vehicles, furniture),
+            and <strong>services</strong> (e.g., babysitting, house-cleaning).</p>
+        </li>
 
+
+    </ul>
+
+    <p style="text-align: center;">
+  Any amount not used would be considered <strong>savings.</strong> This money would be set aside for future use, for instance by depositing it in checking, savings, or pension accounts, or by purchasing financial assets.</p>
+
+</p>
+
+    <div class="btn-container">
+        <button class="btn btn-danger custom-submit">Start</button>
     </div>
+
+</div>
+
 
 {% endblock %}

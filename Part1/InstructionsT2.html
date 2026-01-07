@@ -1,0 +1,56 @@
+{% block content %}
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #c82333;
+    }
+
+    p {
+        text-align: justify;
+        max-width: 700px;
+        margin: 0 auto 15px auto;
+        font-size: 1.1em;
+        line-height: 1.5;
+    }
+    ul {
+        max-width: 600px;
+        margin: 20px auto;
+        font-size: 1.1em;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    .start-button {
+        display: block;
+        margin: 30px auto 0 auto;
+    }
+</style>
+
+<h2>Welcome!</h2>
+
+<p>
+    We are trying to understand how Americans <strong>make financial decisions</strong>.
+    Often, policymakers do not fully understand people’s
+    <strong>concerns and goals</strong>.
+    By answering this survey, you are contributing to research that can
+    <strong>help families like yours</strong>.
+</p>
+
+<p style="text-align: center;"><strong>This experiment has 3 parts:</strong></p>
+
+<ul>
+    <li><strong>Part 1:</strong> Questions about you and your household.</li>
+    <li><strong>Part 2:</strong> Questions about how you used your last covid stimulus check or what you would do if you received some money unexpectedly.</li>
+    <li><strong>Part 3:</strong> A task in which you’ll be asked to categorize different actions.
+        Correct answers in this task will earn you <strong>extra bonus money</strong>.
+    </li>
+</ul>
+
+<p style="text-align: center;">Thank you for taking the time to participate!</p>
+
+<button class="btn btn-danger start-button" id="button1">
+    Start
+</button>
+
+{% endblock %}

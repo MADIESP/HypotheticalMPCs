@@ -26,19 +26,7 @@ class Player(BasePlayer):
     debt_repay = models.IntegerField(min=-1500, max=1500)
     debt_new = models.IntegerField(min=-1500, max=1500)
     labor = models.IntegerField(min=-1500, max=1500)
-    q1_received_stimulus = models.IntegerField(
-        label="Have you and your household ever received a Covid Stimulus check?",
-        choices=[
-            [1, "Yes"],
-            [2, "No"]
-        ],
-        widget=widgets.RadioSelect
-    )
 
-    q2_amount = models.IntegerField(
-        label="What was the approximate amount of the last Covid stimulus check that you and your household received?",
-        blank=True
-    )
 
     # DEBT CATEGORIES
 
@@ -197,12 +185,6 @@ class Player(BasePlayer):
 def creating_session(subsession: Subsession):
     subsession.Treatment = subsession.session.config['Treatment']
 
-def amount_stimulus(player):
-
-    if player.q1_received_stimulus==2:
-        player.participant.q2_amount = 0
-    elif player.q1_received_stimulus==1:
-         player.participant.q2_amount=player.q2_amount
 
 def debt(player):
 
@@ -283,12 +265,22 @@ def set_payoff_questions(player):
 
 
 
-
-
     # PAGES
 
 class InstructionsPart2(Page):
     form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment <3
+
+
+class InstructionsPart2T2(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 3 and player.participant.received_stimulus == 1
 
 
 class instructionsT0(Page):
@@ -304,26 +296,15 @@ class instructionsT1(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus==2
+        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus==2
 
 class instructionsT2(Page):
     form_model = 'player'
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.q1_received_stimulus==1
+        return  player.subsession.Treatment == 3 and player.participant.received_stimulus==1
 
-
-class questionCovid(Page):
-    form_model = 'player'
-    form_fields = ['q1_received_stimulus', 'q2_amount']
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.subsession.Treatment == 3
-
-    def before_next_page(player, timeout_happened):
-        amount_stimulus(player)
 
 class ElicitationT0(Page):
     form_model = 'player'
@@ -353,7 +334,7 @@ class ElicitationT1(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus ==2
+        return  player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus ==2
 
     def before_next_page(player, timeout_happened):
         debt(player)
@@ -368,7 +349,7 @@ class ElicitationT2(Page):
         'labor']
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.q1_received_stimulus ==1
+        return  player.subsession.Treatment == 3 and player.participant.received_stimulus ==1
 
     def before_next_page(player, timeout_happened):
         debt(player)
@@ -409,7 +390,7 @@ class QuestionsDebtRepay(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 1 and player.participant.debt_repay!=0 or player.subsession.Treatment == 2 and player.participant.debt_repay!=0 or player.subsession.Treatment==3 and player.q1_received_stimulus ==2 and player.participant.debt_repay!=0
+        return player.subsession.Treatment == 1 and player.participant.debt_repay!=0 or player.subsession.Treatment == 2 and player.participant.debt_repay!=0 or player.subsession.Treatment==3 and player.participant.received_stimulus ==2 and player.participant.debt_repay!=0
 
 class QuestionsDebtRepayT2(Page):
     form_model = 'player'
@@ -447,7 +428,7 @@ class QuestionsDebtRepayT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment==3 and player.q1_received_stimulus ==1 and player.participant.debt_repay!=0
+        return player.subsession.Treatment==3 and player.participant.received_stimulus ==1 and player.participant.debt_repay!=0
 
 
 
@@ -490,7 +471,7 @@ class QuestionsDebtNew(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 and player.participant.debt_new!=0 or player.subsession.Treatment==3 and player.q1_received_stimulus ==2 and player.participant.debt_new!=0
+        return player.subsession.Treatment == 2 and player.participant.debt_new!=0 or player.subsession.Treatment==3 and player.participant.received_stimulus ==2 and player.participant.debt_new!=0
 
 class QuestionsDebtNewT2(Page):
     form_model = 'player'
@@ -528,7 +509,7 @@ class QuestionsDebtNewT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment==3 and player.q1_received_stimulus ==1  and player.participant.debt_new!=0
+        return  player.subsession.Treatment==3 and player.participant.received_stimulus ==1  and player.participant.debt_new!=0
 
 
 class FeedbackElicitation(Page):
@@ -543,7 +524,7 @@ class FeedbackElicitation(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus == 2
+        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
 
 
 class FeedbackElicitationT2(Page):
@@ -558,7 +539,7 @@ class FeedbackElicitationT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.q1_received_stimulus==1
+        return  player.subsession.Treatment == 3 and player.participant.received_stimulus==1
 
 class PaymentInterpretation(Page):
     form_model = 'player'
@@ -571,7 +552,7 @@ class PaymentInterpretation(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.q1_received_stimulus==2
+        return player.subsession.Treatment == 1 or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus==2
 class PaymentInterpretationT2(Page):
     form_model = 'player'
     form_fields = [
@@ -597,7 +578,7 @@ class PaymentInterpretationT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 3 and player.q1_received_stimulus==1
+        return player.subsession.Treatment == 3 and player.participant.received_stimulus==1
 class InstructionsScenarios(Page):
     form_model = 'player'
 
@@ -701,6 +682,7 @@ class TaylorT0(Page):
         correct_TaylorT0(player)
 
 
+
 class Taylor(Page):
     form_model = 'player'
     form_fields = [
@@ -735,6 +717,7 @@ class Taylor(Page):
     def before_next_page(player, timeout_happened):
         correct_Taylor(player)
 
+
 class Charlie(Page):
     form_model = 'player'
     form_fields = [
@@ -768,6 +751,8 @@ class Charlie(Page):
 
     def before_next_page(player, timeout_happened):
         correct_Charlie(player)
+        set_payoff(player)
+        set_payoff_questions(player)
 
 class CharlieT0(Page):
     form_model = 'player'
@@ -799,6 +784,8 @@ class CharlieT0(Page):
 
     def before_next_page(player, timeout_happened):
         correct_CharlieT0(player)
+        set_payoff(player)
+        set_payoff_questions(player)
 
 
 
@@ -809,9 +796,6 @@ class FeedbackScenario(Page):
         'categories_specify_scenario',
     ]
 
-    def before_next_page(player, timeout_happened):
-        set_payoff(player)
-        set_payoff_questions(player)
 
 
 
@@ -820,4 +804,4 @@ class End(Page):
 
 
 
-page_sequence = [questionCovid, InstructionsPart2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End]
+page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End]

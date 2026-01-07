@@ -2,6 +2,18 @@
 {% block content %}
 
 <style>
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
+  p.intro {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 20px auto;
+        font-size: 1.1em;
+        line-height: 1.5;
+    }
   h6 { text-align: center; margin-bottom: 20px; font-size:22px; }
   .question-block { margin-bottom: 25px; }
   .slider-label { font-weight: bold; margin-bottom: 8px; }
@@ -15,32 +27,38 @@
   #specify-field { display: none; margin-top: 10px; }
 </style>
 
-<h6>For questions 1 and 2 below, please answer on a scale from 0 to 10:</h6>
-<h6 style="text-align:center;">0 =  Not difficult at all</h6>
-<h6 style="text-align:center;">10 =  Extremely difficult</h6>
+<h2> Part 2 - Page 3/6  </h2>
 
-<div class="question-block" style="font-size:20px;">
-  <b>1. How difficult was it to understand the different categories?</b>
+
+
+
+<p class="intro">For questions 1 and 2 below, please answer on a <b>scale from 0 to 10:</b> </p>
+<p class="intro"> <b> 0 =  Not difficult at all </b> </p>
+<p class="intro"> <b>10 =  Extremely difficult </b> </p>
+
+<div class="question-block" >
+  <b>1.</b> How difficult was it to <b>understand the different categories?</b>
   {{ formfield 'understanding_difficulty' }}
 </div>
 
-  <div class="question-block" style="font-size:20px;">
-    <b>2. How difficult was it to remember how you used the covid stimulus payment?</b>
+  <!-- Treatment 1 wording -->
+  <div class="question-block" >
+    <b>2.</b> How difficult was it to <b>remember how you used</b>  the covid stimulus payment?
     {{ formfield 'mental_effort' }}
   </div>
 
-<div class="radio-block" style="font-size:20px;">
-    <b>3. This is a question to check whether you are paying attention and reading the questions carefully. Please select  “Slightly concerned” to continue.</b>
+  <div class="radio-block" >
+    <b>3.</b>  Attention check: Please select “Slightly concerned” to continue.
     {{ formfield 'attention2' }}
   </div>
 
-  <div class="radio-block" style="font-size:20px;">
-    <b>4. Did the categories presented cover all the ways you and your household  used this payment, or were there expenses that you found difficult to classify?</b>
+  <div class="radio-block" >
+    <b>4.</b> Did the categories presented <b>cover all the ways</b> you and your household <b>used this payment,</b> or were there expenses that you found <b> difficult to classify?</b>
     {{ formfield 'categories_cover' }}
   </div>
 
 
-<div id="specify-field" style="font-size:20px;">
+<div id="specify-field" >
   {{ formfield 'categories_specify' }}
 </div>
 

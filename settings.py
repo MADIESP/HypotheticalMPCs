@@ -32,7 +32,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['gender','q2_amount', 'debt_new', 'debt_repay', 'payoff_questions']
+PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'payoff_questions']
 SESSION_FIELDS = []
 
 # ISO-639 code

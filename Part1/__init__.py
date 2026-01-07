@@ -13,8 +13,7 @@ class C(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    pass
-
+    Treatment = models.IntegerField()
 
 class Group(BaseGroup):
     pass
@@ -62,8 +61,8 @@ class Player(BasePlayer):
 
     occupation_employed = models.IntegerField(
         label="",
-        choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
-                 [4, "Sales and related"], [5, "Office and administrative support"],
+        choices=[[1, "Management, business, and financial occupations"], [2, "Professional, scientific and cultural occupations"], [3, "Service (healthcare support, safety, food service, cleaning and maintenance, personal care)"],
+                 [4, "Sales and related occupations"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
                  [7, "Construction and natural resource extraction"], [8, "Installation, maintenance, and repair"],
                  [9, "Production"], [10, "Transportation and material moving"], [11, "Armed Forces"]],
@@ -87,8 +86,8 @@ class Player(BasePlayer):
 
     occupation_unemployed = models.IntegerField(
         label=" ",
-        choices=[[1, "Management, business, and financial"], [2, "Professional"], [3, "Service"],
-                 [4, "Sales and related"], [5, "Office and administrative support"],
+        choices=[[1, "Management, business, and financial occupations"], [2, "Professional, scientific and cultural occupations"], [3, "Service (healthcare support, safety, food service, cleaning and maintenance, personal care)"],
+                 [4, "Sales and related occupations"], [5, "Office and administrative support"],
                  [6, "Farming, fishing, and forestry"],
                  [7, "Construction and natural resource extraction"], [8, "Installation, maintenance, and repair"],
                  [9, "Production"], [10, "Transportation and material moving"], [11, "Armed Forces"]],
@@ -189,6 +188,22 @@ class Player(BasePlayer):
     household_income_exact = models.FloatField(blank=True,
                                                label="")
 
+    # covid stimulus
+
+    received_stimulus = models.IntegerField(
+        label="",
+        choices=[
+            [1, "Yes"],
+            [2, "No"]
+        ],
+        widget=widgets.RadioSelect
+    )
+
+    stimulus_amount = models.IntegerField(
+        label="",
+        blank=True
+    )
+
 
 
     # --- Page 3: Household financial questions ---
@@ -284,12 +299,39 @@ class Player(BasePlayer):
     )
 
 # FUNCTIONS
+
+def creating_session(subsession: Subsession):
+    subsession.Treatment = subsession.session.config['Treatment']
+
 def gender(player):
     player.participant.gender = player.gender
 
+def covid_stimulus(player):
+
+    if player.received_stimulus==2:
+        player.participant.received_stimulus=2
+        player.participant.stimulus_amount = 0
+    elif player.received_stimulus==1:
+        player.participant.received_stimulus = 1
+        player.participant.stimulus_amount=player.stimulus_amount
+
+
 # PAGES
+
 class Instructions(Page):
     form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment <3
+
+
+class InstructionsT2(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 3
 
 class InstructionsPart1(Page):
     form_model = 'player'
@@ -311,7 +353,7 @@ class Page1(Page):
 
 class Page2(Page):
     form_model = 'player'
-    form_fields = ['household_size','household_children', 'residence_owner', 'rent_amount', 'home_value', 'household_income_bracket','household_income_exact'  ]
+    form_fields = ['household_size','household_children', 'residence_owner', 'rent_amount', 'home_value', 'household_income_bracket','household_income_exact', 'received_stimulus','stimulus_amount'  ]
 
     def error_message(self, values):
         if values['residence_owner'] == 2 and values['rent_amount'] is None:
@@ -322,6 +364,10 @@ class Page2(Page):
 
         if values['household_income_bracket'] is None:
             return "Please select your household income bracket."
+
+
+    def before_next_page(player, timeout_happened):
+        covid_stimulus(player)
 
 
 
@@ -365,5 +411,5 @@ class Page3(Page):
 
 
 
-page_sequence = [Instructions,InstructionsPart1, Page1, Page2,Page3]
+page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
 #page_sequence = [ Part1]

@@ -146,20 +146,20 @@ checking account.
 
 <form method="post">
 
-  {% for cat in ['spending_Taylor', 'asset_Taylor', 'debt_repay_Taylor', 'debt_new_Taylor', 'labor_Taylor'] %}
+  {% for cat in ['labor_Taylor', 'debt_repay_Taylor', 'debt_new_Taylor','spending_Taylor', 'asset_Taylor'  ] %}
   <div class="slider-container">
 
     <div class="slider-label">
       {% if cat == 'spending_Taylor' %}
         Taylor's change in spending
       {% elif cat == 'asset_Taylor' %}
-        Taylor's change in investment and assets
+        Taylor's change in investments and assets
       {% elif cat == 'debt_repay_Taylor' %}
         Taylor's change in debt repayment
       {% elif cat == 'debt_new_Taylor' %}
         Taylor's change in uptake of new debt (to finance extra expenditures)
       {% else %}
-        Taylor's change in labor income (due to a change in time worked)
+        Taylor's change in earnings (due to a change in working time)
       {% endif %}
     </div>
 

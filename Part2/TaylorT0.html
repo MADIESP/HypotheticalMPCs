@@ -1,251 +1,219 @@
 {% block content %}
-
-
 <style>
-  h2 { text-align: center; margin-bottom: 10px; }
-  p { text-align: center; font-size: 1.2em; margin-bottom: 15px; }
+  p {
+    text-align: justify;
+    max-width: 700px;
+    margin: 0 auto 15px auto;
+    font-size: 1.1em;
+    line-height: 1.5;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
+
+  h4 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c82333;
+  }
 
   .slider-container {
     width: 75%;
-    margin: 15px auto;
-    text-align: center;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
     border-bottom: 1px solid #ddd;
-    padding-bottom: 15px;
+    text-align: center;
   }
 
   .slider-label {
-    font-size: 1.05em;
     font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 1.05em;
+    margin-bottom: 4px;
+    padding: 8px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 5px;
   }
 
   input[type=range] {
     width: 80%;
     height: 10px;
-    accent-color: #007bff;
     cursor: pointer;
+    accent-color: #721c24;
   }
 
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-    margin-top: -8px;
+  .slider-anchors {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 6px auto 2px;
+    font-size: 0.9em;
+    color: #555;
   }
 
-  input[type=range]::-moz-range-thumb,
-  input[type=range]::-ms-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-  }
-
-  /* Centered input field, label removed */
-  .form-group {
+  .slider-anchors span:nth-child(2) {
+    flex-grow: 1;
     text-align: center;
-    margin-top: 8px;
   }
 
-  .form-group label {
+  .value-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  .slider-value input[type=number] {
     display: none;
   }
 
-  .form-group input {
-    display: inline-block;
-    margin: 0 auto;
-    width: 100px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 4px;
+  .slider-value label {
+    display: none !important;
   }
 
-  .details-text {
-    font-size: 0.85em;
-    color: #555;
-    margin-top: 4px;
+  .slider-value input[type=text] {
+    width: 90px;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 4px;
+    background-color: #f8f9fa;
   }
 
   .checking-display {
     text-align: center;
     font-size: 1.3em;
-    color: blue;
     font-weight: bold;
     margin-top: 25px;
   }
 
-  .warning-message {
-    color: red;
-    text-align: center;
-    font-weight: bold;
-    margin-top: 15px;
-    display: none;
-  }
-
   button.btn-danger {
     display: block;
-    margin: 25px auto 10px;
+    margin: 30px auto 10px;
   }
 </style>
 
+<h2>Part 3 – Page 2/4</h2>
+<h4>Scenario 2: Taylor</h4>
 
-
-
-<p> <b>
-   Consider Taylor.
-   At the beginning of the month, {{ pronoun_subject }} unexpectedly receives a $1,000
-payment from a stimulus program, deposited into {{ pronoun_object }} checking account. As a result, Taylor
-decides to invest in a new machine to scale up {{ pronoun_object }} business, costing $8,000. To finance
-the purchase, Taylor takes out a loan of $5,000 and pays the remaining $3,000 from {{ pronoun_object }}
-checking account. </b>
+<p>
+  At the beginning of the month, <b>Taylor unexpectedly receives a $1,000 payment</b>
+  deposited into {{ pronoun_object }} checking account from a stimulus program.
 </p>
 
 <p>
-   <b>The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.</b>
+  As a result, Taylor decides to invest in a
+  <b>new machine to scale up {{ pronoun_object }} business, costing $8,000</b>.
+  To finance the purchase, Taylor <b>takes out a loan of $5,000</b> and pays the
+  remaining $3,000 from {{ pronoun_object }} checking account.
+</p>
+
+<p>
+  The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.
 </p>
 
 <p style="text-align:center; font-style: italic;">
-   Taylor's story is illustrated in the time frame below:
+  <b>Taylor's story</b> is illustrated in the time frame below:
 </p>
 
 <div style="text-align:center; margin: 20px 0;">
-    <img src="{{ static 'global/Taylor.jpg'}}" width="700px" alt="Taylor's timeline illustration"/>
+  <img src="{{ static 'global/Taylor.jpg' }}" width="700px"
+       alt="Taylor's timeline illustration"/>
 </div>
 
-
-<p><b>Based on the story above, how did this one-time payment cause Taylor to adjust {{ pronoun_object }} behavior over the next three months?</b></p>
-<p><b> For each row, please move the slider to the right or type a number in the box. </b></p>
-<p style="font-style: italic; text-align: center;">
-  Remember that you can earn 1 point if you answer correctly.
+<p style="text-align: center;">
+  Based on the story above, <b>indicate how Taylor adjusted {{ pronoun_object }} behavior</b>
+  following the $1,000 payment by <b>moving each slider</b>;
+  leave the slider at <b>0</b> if there is no change.
 </p>
 
+<p style="font-style: italic; text-align: center; color: #c82333;">
+  Remember that you can earn $1 if you answer correctly.
+</p>
 
 <form method="post">
 
-    <div id="sliders-wrapper">
+  {% for cat in ['debt_repay_Taylor', 'spending_Taylor'] %}
+  <div class="slider-container">
 
-        {% for cat in ['spending_Taylor', 'debt_repay_Taylor'] %}
-        <div class="slider-container">
-            <div class="slider-label">
-                {% if cat == 'spending_Taylor' %}Spending
-                {% else %}Debt repayment
-                {% endif %}
-            </div>
-
-            <input type="range" id="{{ cat }}_slider" min="-10000" max="10000" value="-10000" step="10">
-
-            <!-- formfield centered and label hidden -->
-            <div class="form-group">
-              {{ formfield cat }}
-            </div>
-        </div>
-        {% endfor %}
-
+    <div class="slider-label">
+      {% if cat == 'debt_repay_Taylor' %}
+        Taylor's change in debt repayment
+      {% else %}
+        Taylor's change in spending
+      {% endif %}
     </div>
 
-    <div class="checking-display">
-      Checking Account: <span id="savings">$</span>
+    <input type="range"
+           id="{{ cat }}_slider"
+           min="-10000"
+           max="10000"
+           step="100"
+           value="0">
+
+    <div class="slider-anchors">
+      <span>Taylor decreased</span>
+      <span>Taylor didn’t change</span>
+      <span>Taylor increased</span>
     </div>
 
-    <div id="warning-message" class="warning-message">
-      Please adjust the slider or enter a value for every category before submitting.
+    <div class="value-box">
+      <div class="slider-value">
+        {{ formfield cat }}
+        <input type="text" id="{{ cat }}_display" readonly value="0">
+      </div>
     </div>
 
-    <button type="submit" class="btn btn-danger">Submit</button>
+  </div>
+  {% endfor %}
+
+  <div class="checking-display">
+    Taylor's Savings: <span id="savings">+$1000</span>
+  </div>
+
+  <button type="submit" class="btn btn-danger">Submit</button>
 </form>
 
 <script>
 const totalPayment = 1000;
-const initialValue = -1500;
-let hasMoved = false;
+const categories = ['debt_repay_Taylor', 'spending_Taylor'];
 
-const categories = ['spending_Taylor',  'debt_repay_Taylor'];
-
-// Set up sliders and inputs
 categories.forEach(cat => {
-    const slider = document.getElementById(`${cat}_slider`);
-    const input = document.getElementById(`id_${cat}`);
+  const slider = document.getElementById(`${cat}_slider`);
+  const input = document.getElementById(`id_${cat}`);
+  const display = document.getElementById(`${cat}_display`);
 
-    // initialize values
-    input.value = initialValue;
-    input.value = '';
-    slider.dataset.touched = "false";
-    input.dataset.touched = "false";
+  slider.value = 0;
+  input.value = 0;
+  display.value = "0";
+  input.readOnly = true;
 
-    // slider → input
-    slider.addEventListener('input', () => {
-        input.value = slider.value;
-        slider.dataset.touched = "true";
-        input.dataset.touched = "true";
-        hasMoved = true;
-        updateSavings();
-    });
-
-    // input → slider
-    input.addEventListener('input', () => {
-        if (input.value === '' || input.value === '-') return;
-        let val = parseFloat(input.value);
-        if (isNaN(val)) val = initialValue;
-        if (val > 10000) val = 10000;
-        if (val < -10000) val = -10000;
-        input.value = val;
-        slider.value = val;
-        slider.dataset.touched = "true";
-        input.dataset.touched = "true";
-        hasMoved = true;
-        updateSavings();
-    });
+  slider.addEventListener('input', () => {
+    const val = Number(slider.value);
+    input.value = val;
+    display.value = val > 0 ? `+${val}` : val;
+    updateSavings();
+  });
 });
 
-// update checking account
+updateSavings();
+
 function updateSavings() {
-    const allMoved = categories.every(cat => {
-        const slider = document.getElementById(`${cat}_slider`);
-        return slider.dataset.touched === "true";
-    });
+  let totalUsed = 0;
 
-    if (!allMoved) {
-        document.getElementById('savings').textContent = '$';
-        return;
-    }
+  categories.forEach(cat => {
+    const val = Number(document.getElementById(`id_${cat}`).value) || 0;
+    totalUsed += val;
+  });
 
-    let totalUsed = 0;
-    categories.forEach(cat => {
-        const val = parseFloat(document.getElementById(`id_${cat}`).value) || 0;
-        if (['spending_Taylor',  'debt_repay_Taylor'].includes(cat)) totalUsed += val;
-        else totalUsed -= val;
-    });
-    const remaining = totalPayment - totalUsed;
-    document.getElementById('savings').textContent = `$${remaining.toFixed(2)}`;
+  const remaining = totalPayment - totalUsed;
+  const sign = remaining > 0 ? '+' : remaining < 0 ? '−' : '';
+  document.getElementById('savings').textContent =
+    `${sign}$${Math.abs(remaining).toFixed(0)}`;
 }
-
-// validate on submit
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (e) => {
-        let allTouched = true;
-        categories.forEach(cat => {
-            const slider = document.getElementById(`${cat}_slider`);
-            if (slider.dataset.touched !== "true") allTouched = false;
-        });
-        if (!allTouched) {
-            e.preventDefault();
-            document.getElementById('warning-message').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            document.getElementById('warning-message').style.display = 'none';
-        }
-    });
-});
-
-// initially show only $
-document.getElementById('savings').textContent = '$';
 </script>
 
 {% endblock %}

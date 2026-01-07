@@ -54,23 +54,36 @@
     text-align: center;
   }
 
+  /* Special spacing for earnings anchors */
+  .slider-anchors.earnings span:first-child {
+    max-width: 40%;
+    text-align: left;
+  }
+
+  .slider-anchors.earnings span:nth-child(2) {
+    max-width: 20%;
+    text-align: center;
+  }
+
+  .slider-anchors.earnings span:last-child {
+    max-width: 40%;
+    text-align: right;
+  }
+
   .value-box {
     display: flex;
     justify-content: center;
     margin-top: 6px;
   }
 
-  /* hide oTree numeric input */
   .slider-value input[type=number] {
     display: none;
   }
 
-  /* hide oTree formfield labels */
   .slider-value label {
-  display: none !important;
+    display: none !important;
   }
 
-  /* visible display input */
   .slider-value input[type=text] {
     width: 90px;
     text-align: center;
@@ -83,7 +96,8 @@
   .details-text {
     font-size: 0.85em;
     color: #555;
-    margin-top: 4px;
+    margin-top: 6px;
+    text-align: center;
   }
 
   .context-note {
@@ -115,6 +129,7 @@
 </style>
 
 <h2>Part 2 – Page 2/6</h2>
+<h2>Your answers</h2>
 
 <p>
   How would this <b>unexpected $1,000 payment</b> change your behavior over the
@@ -130,24 +145,24 @@
 
 <form method="post">
 
-  {% for cat in ['spending', 'asset', 'debt_repay', 'debt_new', 'labor'] %}
+  {% for cat in ['labor', 'debt_repay', 'debt_new', 'spending', 'asset'] %}
   <div class="slider-container">
 
     <div class="slider-label">
-      {% if cat == 'spending' %}
-        Change your spending
-      {% elif cat == 'asset' %}
-        Change your investments and assets
+      {% if cat == 'labor' %}
+        Change in my earnings (due to a change in working time)
       {% elif cat == 'debt_repay' %}
-        Change your debt repayment
+        Change in my debt repayment
       {% elif cat == 'debt_new' %}
-        Change your uptake of new debt (to finance extra expenditures)
+        Change in my uptake of new debt (to finance extra expenditures)
+      {% elif cat == 'spending' %}
+        Change in my spending
       {% else %}
-        Change your labor income (due to a change in time worked)
+        Change in my investments and assets
       {% endif %}
     </div>
 
-    {% if cat == 'debt_new' or cat == 'labor' %}
+    {% if cat == 'labor' or cat == 'debt_new' %}
       <p class="context-note">
         For this category, any increase will be <b>added to your checking account</b>.
       </p>
@@ -160,10 +175,16 @@
            step="10"
            value="0">
 
-    <div class="slider-anchors">
-      <span>I would decrease</span>
-      <span>I wouldn't change</span>
-      <span>I would increase</span>
+    <div class="slider-anchors {% if cat == 'labor' %}earnings{% endif %}">
+      {% if cat == 'labor' %}
+        <span>I would decrease my earnings by reducing my working time</span>
+        <span>I wouldn’t change</span>
+        <span>I would increase my earnings by increasing my working time</span>
+      {% else %}
+        <span>I would decrease</span>
+        <span>I wouldn’t change</span>
+        <span>I would increase</span>
+      {% endif %}
     </div>
 
     <div class="value-box">
@@ -175,17 +196,31 @@
 
     <details class="details-text">
       <summary>Details</summary>
-      {% if cat == 'spending' %}
-        You could change your consumption of nondurable goods, durable goods, and services.
-      {% elif cat == 'asset' %}
-        You could change the amount of investment and assets you hold.
+
+      {% if cat == 'labor' %}
+        You could change the <b>number of hours</b> you work, the
+        <b>work opportunities</b> you pursue, or the <b>gig economy jobs</b>
+        that you accept, which would affect both your <b>free time</b> and your
+        <b>earnings</b>.
       {% elif cat == 'debt_repay' %}
-        You could change the amount you repay on existing debt.
+        You could change the <b>amount of debt you repay</b>
+        (e.g., credit card debt, mortgages, loans, unpaid bills).
       {% elif cat == 'debt_new' %}
-        You could change the amount of new debt you take on.
+        You could change the amount of <b>new debt you take on</b>
+        (e.g., credit card debt, mortgages, loans, unpaid bills)
+        to <b>finance extra</b> spending, investments, and assets.
+      {% elif cat == 'spending' %}
+        You could change your consumption of <b>nondurable goods</b>
+        (e.g., food, clothes, entertainment),
+        <b>durable goods</b> (e.g., vehicles, furniture),
+        and <b>services</b> (e.g., babysitting, house-cleaning).
       {% else %}
-        You could change your labor earnings by changing work hours or opportunities.
+        You could change the amount of <b>investments you make</b>
+        (e.g., real estate, investments in your own business, cryptocurrencies)
+        and the amount of <b>assets that you hold</b>
+        (e.g., stocks, bonds, retirement, savings accounts).
       {% endif %}
+
     </details>
 
   </div>
@@ -204,7 +239,7 @@
 
 <script>
 const totalPayment = 1000;
-const categories = ['spending', 'asset', 'debt_repay', 'debt_new', 'labor'];
+const categories = ['labor', 'debt_repay', 'debt_new', 'spending', 'asset'];
 
 categories.forEach(cat => {
   const slider = document.getElementById(`${cat}_slider`);
@@ -219,13 +254,8 @@ categories.forEach(cat => {
 
   slider.addEventListener('input', () => {
     const val = Number(slider.value);
-
-    // store numeric value
     input.value = val;
-
-    // display formatted value
     display.value = val > 0 ? `+${val}` : val;
-
     slider.dataset.touched = "true";
     updateSavings();
   });

@@ -27,18 +27,27 @@
         font-size: 1.1em;
     }
 
-    table.asset-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        margin-bottom: 25px;
+    /* Centered blocks for assets & debts */
+    .centered-options {
+    margin-top: 10px;
+    margin-bottom: 25px;
     }
 
-    table.asset-table td {
-        padding: 6px 10px;
-        vertical-align: middle;
-        white-space: nowrap;
+    .centered-options .form-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
     }
+
+    .centered-options .form-check {
+    display: flex;
+    align-items: center;
+    }
+
+    .centered-options .form-check input {
+    margin-right: 8px;
+    }
+
 
     .btn-submit {
         display: block;
@@ -62,9 +71,7 @@
 
     <!-- 2 -->
     <div class="form-section">
-        <p>
-            <b>2.</b> How <b>informed</b> are you about where the <b>money in your household</b> comes from and what it is spent on?</p>
-        </p>
+        <p><b>2.</b> How <b>informed</b> are you about where the <b>money in your household</b> comes from and what it is spent on?</p>
         {% formfield player.financial_awareness %}
     </div>
 
@@ -80,45 +87,34 @@
         {% formfield player.major_purchase %}
     </div>
 
-
-    <!-- ASSETS -->
+    <!-- 5 ASSETS -->
     <div class="form-section">
         <p><b>5.</b> Do you or your household currently hold the following types of <b>assets?</b></p>
 
-        <table class="asset-table">
-            <tr>
-                <td>{% formfield player.has_cash %}</td>
-                <td>{% formfield player.has_savings %}</td>
-                <td>{% formfield player.has_money_market %}</td>
-            </tr>
-            <tr>
-                <td>{% formfield player.has_stocks %}</td>
-                <td>{% formfield player.has_retirement %}</td>
-                <td>{% formfield player.has_life_insurance %}</td>
-            </tr>
-            <tr>
-                <td>{% formfield player.has_real_estate %}</td>
-                <td>{% formfield player.has_other_assets %}</td>
-            </tr>
-        </table>
+        <div class="centered-options">
+            {% formfield player.has_cash %}
+            {% formfield player.has_savings %}
+            {% formfield player.has_money_market %}
+            {% formfield player.has_stocks %}
+            {% formfield player.has_retirement %}
+            {% formfield player.has_life_insurance %}
+            {% formfield player.has_real_estate %}
+            {% formfield player.has_other_assets %}
+        </div>
     </div>
 
-    <!-- DEBTS -->
+    <!-- 6 DEBTS -->
     <div class="form-section">
         <p><b>6.</b> Do you or your household currently owe the following types of <b>debts?</b></p>
 
-        <table class="asset-table">
-            <tr>
-                <td>{% formfield player.debt_credit_card %}</td>
-                <td>{% formfield player.debt_mortgage %}</td>
-                <td>{% formfield player.debt_auto %}</td>
-            </tr>
-            <tr>
-                <td>{% formfield player.debt_student %}</td>
-                <td>{% formfield player.debt_personal %}</td>
-                <td>{% formfield player.debt_unpaid_bills %}</td>
-            </tr>
-        </table>
+        <div class="centered-options">
+            {% formfield player.debt_credit_card %}
+            {% formfield player.debt_mortgage %}
+            {% formfield player.debt_auto %}
+            {% formfield player.debt_student %}
+            {% formfield player.debt_personal %}
+            {% formfield player.debt_unpaid_bills %}
+        </div>
     </div>
 
     <!-- 7 -->
@@ -145,7 +141,7 @@
         {% formfield player.housing_payment %}
     </div>
 
-    <!-- Attention check -->
+    <!-- 11 -->
     <div class="form-section">
         <p><b>11.</b> Attention check: Please select “Agree” to continue.</p>
         {% formfield player.attention1 %}

@@ -146,20 +146,20 @@
 
 <form method="post">
 
-  {% for cat in ['spending_Charlie', 'asset_Charlie', 'debt_repay_Charlie', 'debt_new_Charlie', 'labor_Charlie'] %}
+  {% for cat in ['labor_Charlie', 'debt_repay_Charlie', 'debt_new_Charlie','spending_Charlie', 'asset_Charlie' ] %}
   <div class="slider-container">
 
     <div class="slider-label">
       {% if cat == 'spending_Charlie' %}
         Charlie's change in spending
       {% elif cat == 'asset_Charlie' %}
-        Charlie's change in investment and assets
+        Charlie's change in investments and assets
       {% elif cat == 'debt_repay_Charlie' %}
         Charlie's change in debt repayment
       {% elif cat == 'debt_new_Charlie' %}
         Charlie's change in uptake of new debt (to finance extra expenditures)
       {% else %}
-        Charlie's change in labor income (due to a change in time worked)
+        Charlie's change in earnings  (due to a change in working time)
       {% endif %}
     </div>
 

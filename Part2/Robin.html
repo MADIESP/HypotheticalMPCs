@@ -143,20 +143,20 @@
 
 <form method="post">
 
-  {% for cat in ['spending_Robin', 'asset_Robin', 'debt_repay_Robin', 'debt_new_Robin', 'labor_Robin'] %}
+  {% for cat in ['labor_Robin', 'debt_repay_Robin', 'debt_new_Robin','spending_Robin', 'asset_Robin',  ] %}
   <div class="slider-container">
 
     <div class="slider-label">
       {% if cat == 'spending_Robin' %}
         Robin's change in spending
       {% elif cat == 'asset_Robin' %}
-        Robin's change in investment and assets
+        Robin's change in investments and assets
       {% elif cat == 'debt_repay_Robin' %}
         Robin's change in debt repayment
       {% elif cat == 'debt_new_Robin' %}
         Robin's change in uptake of new debt (to finance extra expenditures)
       {% else %}
-        Robin's change in labor income (due to a change in time worked)
+        Robin's change in earnings (due to a change in working time)
       {% endif %}
     </div>
 
@@ -199,11 +199,13 @@
 <script>
 const totalPayment = 1000;
 const categories = [
+        'labor_Robin',
+        'debt_repay_Robin',
+  'debt_new_Robin',
   'spending_Robin',
   'asset_Robin',
-  'debt_repay_Robin',
-  'debt_new_Robin',
-  'labor_Robin'
+
+
 ];
 
 categories.forEach(cat => {

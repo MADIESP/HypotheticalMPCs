@@ -5,19 +5,18 @@
     h3 { text-align: center; margin-bottom: 20px; color: #c82333; }
     p.intro { text-align: justify; max-width: 800px; margin: 0 auto 20px auto; font-size: 1.1em; line-height: 1.5; }
     form { max-width: 800px; margin: 0 auto; }
-    .form-section { margin-top: 15px; }
-    .form-section p { margin-bottom: 5px; font-size: 1.1em; }
+    .form-section { margin-top: 15px; }  /* slightly smaller spacing */
+    .form-section p { margin-bottom: 5px; font-size: 1.1em; } /* reduce gap below question */
     .btn-submit { display: block; margin: 30px auto 0 auto; }
     .dollar-input { display: flex; align-items: center; max-width: 200px; }
     .dollar-input span { margin-right: 5px; font-weight: bold; }
-    .dollar-input input { margin: 0; }
+    .dollar-input input { margin: 0; } /* remove extra margin */
 </style>
 
-<h2>Part 1 – Page 2/3</h2>
+<h2> Part 1 - Page 2/3</h2>
 
 <p class="intro">
-    This second page is about your <b>household</b>. By "household" we mean everyone who usually lives with you in your primary residence,
-    <b>including yourself</b> (but excluding roommates and renters).
+    This second page is about your <b>household</b>. By 'household' we mean everyone who usually lives with you in your primary residence <b>including yourself</b> (but excluding roommates and renters).
 </p>
 
 <form method="post">
@@ -52,16 +51,17 @@
     </div>
 
     <!-- Household income bracket -->
-    <div class="form-section">
-        <p style="text-align: justify; max-width: 700px;">
-            <b>4.</b> What was your <b>total household income</b>, before taxes and transfers, in 2025?
-        </p>
-        <p style="text-align: justify; font-size: 0.95em; font-style: italic; margin-top: 3px; max-width: 550px;">
-            Note that social <b>insurance benefits</b> (e.g., Social Security, Medicare, unemployment insurance)
-            are <b>included</b> in this definition of income.
-        </p>
-        {% formfield player.household_income_bracket %}
-    </div>
+<div class="form-section">
+    <p style="text-align: justify;max-width: 700px;">
+        <b>4.</b> What was your <b>total household income</b>, before taxes and transfers, in 2025?
+    </p>
+    <p style="text-align: justify; font-size: 0.95em; font-style: italic; margin-top: 3px;max-width: 550px;">
+        Note that social <b>insurance benefits</b> (e.g., Social Security, Medicare, unemployment insurance)
+        are <b> included </b> in this definition of income.
+    </p>
+    {% formfield player.household_income_bracket %}
+</div>
+
 
     <!-- More precise household income -->
     <div class="form-section">
@@ -74,57 +74,26 @@
         </div>
     </div>
 
-    <!-- Covid stimulus -->
-    <div class="form-section">
-        <p><b>6.</b> Have you and your household ever received a <b>Covid stimulus check?</b></p>
-        {% formfield player.received_stimulus %}
-    </div>
-
-    <div id="stimulus_amount_question" class="form-section" style="display:none;">
-        <p><b>7.</b> What was the approximate <b>amount</b> of the last Covid stimulus check your household received?</p>
-        <div class="dollar-input">
-            <span>$</span>
-            {% formfield player.stimulus_amount %}
-        </div>
-    </div>
 
     <button class="btn btn-danger btn-submit" type="submit">Submit</button>
 </form>
 
 <script>
     function updateVisibility() {
-        // Rent / own logic
-        const residenceValue = document.querySelector('input[name="residence_owner"]:checked')?.value;
+        const value = document.querySelector('input[name="residence_owner"]:checked')?.value;
 
         document.getElementById("rent_question").style.display =
-            residenceValue === "2" ? "block" : "none";
+            value === "2" ? "block" : "none";
 
         document.getElementById("own_question").style.display =
-            residenceValue === "1" ? "block" : "none";
-
-        // Covid stimulus logic
-        const stimulusValue = document.querySelector('input[name="received_stimulus"]:checked')?.value;
-        const stimulusDiv = document.getElementById("stimulus_amount_question");
-        const stimulusInput = stimulusDiv.querySelector("input");
-
-        if (stimulusValue === "1") {
-            stimulusDiv.style.display = "block";
-            stimulusInput.required = true;
-        } else {
-            stimulusDiv.style.display = "none";
-            stimulusInput.required = false;
-            stimulusInput.value = ""; // clear value to avoid accidental submission
-        }
+            value === "1" ? "block" : "none";
     }
 
-    document.querySelectorAll(
-        'input[name="residence_owner"], input[name="received_stimulus"]'
-    ).forEach(el => {
+    document.querySelectorAll('input[name="residence_owner"]').forEach(el => {
         el.addEventListener("change", updateVisibility);
     });
 
     updateVisibility();
 </script>
-
 
 {% endblock %}

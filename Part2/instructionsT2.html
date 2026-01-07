@@ -1,53 +1,119 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-  <style>
-    h2 {text-align: center;}
-    p {text-align: justify; font-size:20px;}
+<style>
+    .content-box {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 30px;
+    }
 
-    </style>
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #c82333;
+    }
+
+    p {
+        text-align: justify;
+        font-size: 1.05em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    li {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+
+    /* LIGHT RED HEADERS */
+    .header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.15em;
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 5px;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+</style>
+
+<div class="content-box">
+
+    <h2>Part 2 - Page 1/6</h2>
+
+    <h2>Instructions</h2>
+
+    <p> You reported that you and your household received a Covid stimulus check of <b> ${{participant.stimulus_amount}}. </b> </p>
 
 
+    <p>
+        We'll ask you to think about how you and your household  used this extra money over the
+        <strong>next three months</strong>, <b>compared with</b> what you would have done <strong>if you had not </strong>
+         received the payment.
+    </p>
 
-<div class="text-justify">
+    <p>In particular, with this <b>extra money, </b> you and your household could have:</p>
 
-    <br>
-    <p> You reported that you and your household received a Covid stimulus check of <b> ${{participant.q2_amount}}. </b> </p>
+    <ul>
+        <li>
+            <div class="header">Changed your working time and earnings</div>
+            <p>You could have changed the <b>number of hours</b> you worked, the
+            <b>work opportunities</b> you pursued, or the <b>gig economy jobs</b> that you accepted, which affected both your <b>free time</b> and your <b>earnings.</b></p>
+        </li>
 
-    <p> Now consider ways in which you and your household used this additional income over the <b> next three months </b> after you received the payment: </p>
+        <li>
+            <div class="header">Changed your debt repayment</div>
+            <p>You could have changed the <b>amount of debt you repayed</b> (e.g., credit card debt, mortgages, loans, unpaid bills). </p>
+        </li>
 
-   <ul>
-    <li style="font-size:20px;">
-        <strong>Change in spending:</strong>  Change in the amount of nondurable goods
-	(e.g., food, clothes, health and beauty products, vacation, entertainment),
-	durable goods (e.g., vehicles, furniture, household appliances),
-	and services (e.g., babysitting, house-cleaning, tutoring) that you purchased, compared to what you would have purchased without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in investment and assets:</strong>   Change in the amount of investment (e.g., real estate, investments in own business, crypto) you made and in assets that you held (e.g., mutual funds, retirement accounts or pension plan, stocks, bonds, treasury bills, life insurance, CDs), compared to what you would have done without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in debt repayment:</strong> Change in the amount you repaid on revolving credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills (e.g., legal, medical, utilities), compared to what you would have repaid without the payment.
-    </li>
-    <br>
-       <li style="font-size:20px;">
-        <strong>Change in uptake of new debt to finance extra expenditures:</strong>  Change in the amount of new debt you took on (e.g., credit card debt, mortgages, student loans, auto loans, other loans, or unpaid bills) to finance extra spending, investment, or other purchases, compared to what you would have taken on without the payment.
-    </li>
-    <br>
-    <li style="font-size:20px;">
-        <strong>Change in labor income caused by a change in time worked:</strong> Change in labor income caused by a change in the number of work hours, work opportunities, or gig economy jobs that you accepted, compared to what you would have accepted without the payment.
-    </li>
-</ul>
+        <li>
+            <div class="header">Changed your uptake of new debt</div>
+            <p>You could have changed the amount of <b>new debt you took on</b>
+            (e.g., credit card debt, mortgages, loans, unpaid bills)
+            to <b>finance extra</b> spending, investments and assets.</p>
+        </li>
 
-<br>
-    <!--<p> We would like to understand how you and your household would allocate this one-time payment across these different categories in the next three months. </p>  -->
-    <!-- <p>  After adjusting your behavior in response to the payment, any remaining amount will stay in your <b> checking account </b> for future use.</p>  -->
+        <li>
+            <div class="header">Changed your spending</div>
+            <p>You could have changed your consumption of <strong>nondurable goods</strong>
+            (e.g., food, clothes, entertainment),
+            <strong>durable goods</strong> (e.g., vehicles, furniture),
+            and <strong>services</strong> (e.g., babysitting, house-cleaning).</p>
+        </li>
 
-    <br>
-    <button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Next</button>
+        <li>
+            <div class="header">Changed your investments and assets</div>
+            <p>You could have changed the amount of <b>investments you made</b>
+            (e.g., real estate, investments in your own business, cryptocurrencies)
+            and the amount of <b>assets that you held</b>
+            (e.g., stocks, bonds, retirement, savings accounts).</p>
+        </li>
 
+    </ul>
 
+    <p style="text-align: center;">
+  Any amount not used could have stayed in your <strong>checking account</strong> for future use.
+</p>
+
+    <div class="btn-container">
+        <button class="btn btn-danger custom-submit">Start</button>
     </div>
+
+</div>
+
 {% endblock %}
+

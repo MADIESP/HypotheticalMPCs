@@ -4,7 +4,6 @@
 <style>
   .question-label {
     font-size: 19px;
-    font-weight: bold;
     text-align: center;
     display: block;
     margin: 25px 0 15px 0;
@@ -28,13 +27,13 @@
 <h2>Part 2 - Page 6/6</h2>
 
 <p style="text-align:center; font-size:22px; margin-bottom:25px; font-weight: bold;">
-  Earlier you reported that you and your household received a Covid stimulus check of ${{ participant.q2_amount }}.
+  Earlier you reported that you and your household received a Covid stimulus check of ${{ participant.stimulus_amount }}.
 </p>
 
 <!-- Question 1 -->
 <div class="form-group">
   <label class="question-label">
-    1) On which bank account was the payment deposited?
+    1) On which <b>bank account</b> was the payment deposited?
   </label>
   {{ formfield 'deposit_account' }}
 </div>
@@ -42,8 +41,8 @@
 <!-- Question 2 (conditional on Q1) -->
 <div id="q2-field" class="form-group">
   <label class="question-label">
-    2) Do you think your use of the payment would have been different if the ${{ participant.q2_amount }}
-    had been deposited directly into your personal account and could not be accessed by other household members?
+    2) Do you think your <b>use of the payment</b> would have been <b>different</b> if the ${{ participant.stimulus_amount }}
+    had been deposited directly into your <b>personal account</b> and could not be accessed by other household members?
   </label>
   {{ formfield 'payment_different_if_personal' }}
 </div>
