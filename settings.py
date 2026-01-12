@@ -66,7 +66,15 @@ AUTH_LEVEL= environ.get('OTREE_AUTH_LEVEL')
 ROOMS = [
 
     dict(
-        name='consumption_savings_study',
-        display_name='consumption_savings_study'
+        name='consumption_savings_study1',
+        display_name='consumption_savings_study1'
+    ),
+dict(
+        name='consumption_savings_study2',
+        display_name='consumption_savings_study2'
+    ),
+dict(
+        name='consumption_savings_study3',
+        display_name='consumption_savings_study3'
     ),
 ]
