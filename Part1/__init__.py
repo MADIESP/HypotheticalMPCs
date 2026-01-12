@@ -430,5 +430,5 @@ class Page3(Page):
 
 
 
-#page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
-page_sequence = [ Page1, Page2]
+page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
+#page_sequence = [ Page1, Page2]
