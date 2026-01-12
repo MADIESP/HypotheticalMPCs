@@ -39,29 +39,16 @@
 
 <div class="end-container">
 
-    <h2>The survey is now over</h2>
-    <h2>Thank you for your participation!</h2>
+    <h2>You are being redirected to Prolific...</h2>
 
-    <div class="total">
-        You will receive a total of   <span class="amount">{{ participant.payoff }}</span>
-    </div>
-
-    <br>
-    <h4>Payment breakdown</h4>
-
-    <p class="payoff"><span class="amount">$3</span> for participating in the experiment</p>
-    <p class="payoff">
-        <span class="amount">+${{ participant.payoff_questions }}</span> for answering
-        {{ participant.payoff_questions }} question(s) correctly in part 3
-    </p>
-
-    <p> Please click Next to return to Prolific and receive your payment.</p>
-
-    <button class="btn btn-danger btn-submit" type="submit">
-        Next
-    </button>
 </div>
 
+<script>
+    let completionlink = js_vars.completionlink;
 
+    window.onload = function(){
+        window.location.href=completionlink;
+    }
+</script>
 
 {% endblock %}

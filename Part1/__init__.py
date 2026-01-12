@@ -19,6 +19,14 @@ class Group(BaseGroup):
     pass
 
 class Player(BasePlayer):
+
+
+    prolific_id = models.StringField(
+        label=""
+        ,
+        blank=False
+    )
+
     # --- Page 1: Individual information ---
     age = models.FloatField(label="", max=99)
 
@@ -306,6 +314,9 @@ def creating_session(subsession: Subsession):
 def gender(player):
     player.participant.gender = player.gender
 
+def prolific_id(player):
+    player.participant.prolific_id = player.prolific_id
+
 def covid_stimulus(player):
 
     if player.received_stimulus==2:
@@ -320,18 +331,26 @@ def covid_stimulus(player):
 
 class Instructions(Page):
     form_model = 'player'
+    form_fields = ['prolific_id']
 
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment <3
 
+    def before_next_page(player, timeout_happened):
+        prolific_id(player)
+
 
 class InstructionsT2(Page):
     form_model = 'player'
+    form_fields = ['prolific_id']
 
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment == 3
+
+    def before_next_page(player, timeout_happened):
+        prolific_id(player)
 
 class InstructionsPart1(Page):
     form_model = 'player'
@@ -411,5 +430,5 @@ class Page3(Page):
 
 
 
-page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
-#page_sequence = [ Part1]
+#page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
+page_sequence = [ Page1, Page2]

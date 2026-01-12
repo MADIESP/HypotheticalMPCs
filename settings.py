@@ -8,18 +8,22 @@ SESSION_CONFIGS = [
         app_sequence=['Part1','Part2'],
         num_demo_participants=20,
         Treatment=1,
+        completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
+
      ),
     dict(
         name='T1',
         app_sequence=['Part1','Part2'],
         num_demo_participants=20,
         Treatment=2,
+        completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
     ),
     dict(
         name='T2',
         app_sequence=['Part1', 'Part2'],
         num_demo_participants=20,
         Treatment=3,
+        completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
     ),
 ]
 
@@ -32,7 +36,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'payoff_questions']
+PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'payoff_questions', 'prolific_id']
 SESSION_FIELDS = []
 
 # ISO-639 code
@@ -62,7 +66,7 @@ AUTH_LEVEL= environ.get('OTREE_AUTH_LEVEL')
 ROOMS = [
 
     dict(
-        name='econ_lab',
-        display_name='Name'
+        name='prolific_study',
+        display_name='prolific_study'
     ),
 ]
