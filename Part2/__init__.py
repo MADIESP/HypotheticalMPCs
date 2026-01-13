@@ -249,17 +249,17 @@ def correct_CharlieT0(player):
 def set_payoff(player):
 
     if player.correct_Charlie== False and player.correct_Taylor==False and player.correct_Robin== False:
-        player.participant.payoff = 3
+        player.participant.payoff = 2
     elif player.correct_Charlie== False and player.correct_Taylor==False and player.correct_Robin== True or player.correct_Charlie== False and player.correct_Taylor==True and player.correct_Robin== False or player.correct_Charlie== True and player.correct_Taylor==False and player.correct_Robin== False:
-        player.participant.payoff = 4
+        player.participant.payoff = 3
     elif player.correct_Charlie== False and player.correct_Taylor==True and player.correct_Robin== True or player.correct_Charlie== True and player.correct_Taylor==True and player.correct_Robin== False or player.correct_Charlie== True and player.correct_Taylor==False and player.correct_Robin== True:
-        player.participant.payoff = 5
+        player.participant.payoff = 4
     elif player.correct_Charlie== True and player.correct_Taylor==True and player.correct_Robin== True:
-        player.participant.payoff = 6
+        player.participant.payoff = 5
 
 def set_payoff_questions(player):
 
-    points=player.participant.payoff - 3
+    points=player.participant.payoff - 2
 
     player.participant.payoff_questions=points
 

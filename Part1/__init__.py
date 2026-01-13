@@ -255,9 +255,9 @@ class Player(BasePlayer):
     has_retirement = models.BooleanField(label="<b>Retirement accounts</b><br>"
         "<span style='font-size:0.9em;'>(e.g., 401(k), IRA)</span>")
     has_life_insurance = models.BooleanField(label="<b>Life insurance </b>")
-    has_real_estate = models.BooleanField(label="<b>Real estate</b><br>"
-        "<span style='font-size:0.9em;'>(other than primary residence)</span>")
-    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
+    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>"
+        #"<span style='font-size:0.9em;'>(other than primary residence)</span>")
+    has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
     has_other_assets = models.BooleanField(label="<b>Other</b>")
 
     debt_credit_card = models.BooleanField(label="<b>Credit card debt</b>")
