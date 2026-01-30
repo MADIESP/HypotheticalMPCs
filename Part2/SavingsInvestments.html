@@ -1,0 +1,250 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 10px 15px;
+    margin: 10px 0 15px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .example-box ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .example-box li {
+    margin-bottom: 6px;
+  }
+
+  .sub-box {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .category-title {
+    font-weight: bold;
+    font-size: 1em;
+    margin-top: 12px;
+    margin-bottom: 2px;
+  }
+
+  .category-hint {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Part 2 – Page 6/6</h2>
+<h2>Savings and investments</h2>
+
+<p>
+  In this section, we ask about the <b>money that you and your household would put towards savings
+  or investments</b> over the <b>three months</b> after receiving the
+  <b>$1,000 payment</b>, relative to what you would have done without the payment.
+</p>
+
+<div class="example-box">
+  <p><b>Examples of savings and investments:</b></p>
+  <ul>
+    <li>
+      <b>Saving and retirement accounts:</b>
+      (e.g., savings accounts, retirement or pension plans, mutual funds)
+    </li>
+    <li>
+      <b>Low-risk financial assets</b>
+      (e.g., life insurance products, treasury bills, government bonds,
+      certificates of deposit)
+    </li>
+    <li>
+      <b>Riskier financial assets</b>
+      (e.g., stocks, investments in the businesses of others)
+    </li>
+    <li>
+      <b>Real estate</b>
+
+    </li>
+    <li>
+      <b>Own business investments</b>
+      (e.g., software, licensing fees, vehicles, machines, or other equipment
+      for your own business)
+    </li>
+    <li>
+      <b>Cryptocurrencies</b>
+    </li>
+  </ul>
+</div>
+
+<form method="post">
+
+<p>
+  <b>1.</b> Would the <b>$1,000 payment</b> cause you and your household to
+  <b>increase the money you put towards savings or investments</b>
+  over the next three months?
+</p>
+
+{% formfield player.save_invest_increase label="" %}
+
+<!-- Increase -->
+<div id="increase-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> By <b>how much</b> would the payment
+    <b>increase</b> the money you put towards savings or investments?
+  </p>
+  {% formfield player.save_invest_increase_amount label="" %}
+</div>
+
+<!-- No → same or decrease -->
+<div id="same-or-decrease-box" class="sub-box hidden">
+  <p>
+    <b>1.b.</b> Would you therefore <b>keep this amount the same</b>
+    or <b>decrease</b> it?
+  </p>
+  {% formfield player.save_invest_same_or_decrease label="" %}
+</div>
+
+<!-- Decrease -->
+<div id="decrease-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> By <b>how much</b> would the payment
+    <b>decrease</b> the money you put towards savings or investments?
+  </p>
+  {% formfield player.save_invest_decrease_amount label="" %}
+</div>
+
+<!-- Allocation -->
+<div id="allocation-box" class="sub-box hidden">
+  <p>
+    <b>3.</b> How would you and your household <b>allocate</b> this change across the following <b>categories?</b>
+    <br>
+    <span style="font-size:0.9em; color:#555;">
+      (The amounts should add up to the total change you reported above.)
+    </span>
+  </p>
+
+  <div class="category-title">Saving and retirement accounts</div>
+  <div class="category-hint">
+    (e.g., savings accounts, retirement or pension plans, mutual funds)
+  </div>
+  {% formfield player.save_accounts label="" %}
+
+  <div class="category-title">Low-risk financial assets</div>
+  <div class="category-hint">
+    (e.g., life insurance, treasury bills, government bonds,
+    certificates of deposit)
+  </div>
+  {% formfield player.save_lowrisk label="" %}
+
+  <div class="category-title">Stocks and business investments</div>
+  <div class="category-hint">
+    (e.g., stocks, investments in the businesses of others)
+  </div>
+  {% formfield player.save_stocks label="" %}
+
+  <div class="category-title">Real estate</div>
+  {% formfield player.save_realestate label="" %}
+
+  <div class="category-title">Own business investments</div>
+  <div class="category-hint">
+    (e.g., software, licensing fees, vehicles, machines, equipment)
+  </div>
+  {% formfield player.save_business label="" %}
+
+  <div class="category-title">Cryptocurrencies</div>
+  {% formfield player.save_crypto label="" %}
+
+  <div class="category-title">Other</div>
+  {% formfield player.save_other label="" %}
+
+  <p>Please specify (if applicable):</p>
+  {% formfield player.save_other_text label="" %}
+</div>
+
+<button class="btn btn-danger">Next</button>
+
+</form>
+</div>
+
+<script>
+function clearInputs(containerId) {
+  document.querySelectorAll(`#${containerId} input`).forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+function isFilled(containerId) {
+  const inputs = document.querySelectorAll(`#${containerId} input`);
+  return Array.from(inputs).some(el =>
+    el.type === 'radio' ? el.checked : el.value !== ''
+  );
+}
+
+function updateVisibility() {
+  const increase =
+    document.querySelector('input[name="save_invest_increase"]:checked')?.value;
+  const sameOrDecrease =
+    document.querySelector('input[name="save_invest_same_or_decrease"]:checked')?.value;
+
+  const showIncrease = increase === 'yes';
+  const showNo = increase === 'no';
+  const showDecrease = sameOrDecrease === 'decrease';
+
+  document.getElementById('increase-box')
+    .classList.toggle('hidden', !showIncrease);
+
+  document.getElementById('same-or-decrease-box')
+    .classList.toggle('hidden', !showNo);
+
+  document.getElementById('decrease-box')
+    .classList.toggle('hidden', !showDecrease);
+
+  const amountAnswered =
+    (showIncrease && isFilled('increase-box')) ||
+    (showDecrease && isFilled('decrease-box'));
+
+  document.getElementById('allocation-box')
+    .classList.toggle('hidden', !amountAnswered);
+
+  if (!amountAnswered) clearInputs('allocation-box');
+}
+
+document.addEventListener('change', updateVisibility);
+document.addEventListener('DOMContentLoaded', updateVisibility);
+</script>
+
+{% endblock %}

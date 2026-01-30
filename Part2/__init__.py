@@ -21,11 +21,168 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 
+    spend_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+
+    spend_increase_amount = models.CurrencyField(min=0, blank=True)
+
+    spend_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease my spending')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    spend_decrease_amount = models.CurrencyField(min=0, blank=True)
+
+    spend_nondurable = models.CurrencyField(min=0, blank=True)
+    spend_services = models.CurrencyField(min=0, blank=True)
+    spend_durable = models.CurrencyField(min=0, blank=True)
+    spend_other = models.CurrencyField(min=0, blank=True)
+    spend_other_text = models.LongStringField(blank=True)
+
+    spend_debt = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    debt_repay_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+
+    ## Debt Repayment ##
+
+    debt_repay_increase_amount = models.CurrencyField(min=0, blank=True)
+
+    debt_repay_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease my repayment')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    debt_repay_decrease_amount = models.CurrencyField(min=0, blank=True)
+
+    debt_cc = models.CurrencyField(min=0, blank=True)
+    debt_bills = models.CurrencyField(min=0, blank=True)
+    debt_payday = models.CurrencyField(min=0, blank=True)
+    debt_longterm = models.CurrencyField(min=0, blank=True)
+    debt_other = models.CurrencyField(min=0, blank=True)
+    debt_other_text = models.LongStringField(blank=True)
+
+    # LABOR
+
+    labor_decrease = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+
+    labor_income_decrease_amount = models.CurrencyField(min=0, blank=True)
+
+    labor_same_or_increase = models.StringField(
+        choices=[('same', 'Keep the same'), ('increase', 'Increase working time')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    labor_income_increase_amount = models.CurrencyField(min=0, blank=True)
+
+    labor_gigs = models.CurrencyField(min=0, blank=True)
+    labor_overtime = models.CurrencyField(min=0, blank=True)
+    labor_holidays = models.CurrencyField(min=0, blank=True)
+    labor_contract = models.CurrencyField(min=0, blank=True)
+    labor_other = models.CurrencyField(min=0, blank=True)
+    labor_other_text = models.LongStringField(blank=True)
+
+    # NEW DEBT
+
+    new_debt_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+
+    new_debt_increase_amount = models.CurrencyField(min=0, blank=True)
+
+    new_debt_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease new debt')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    new_debt_decrease_amount = models.CurrencyField(min=0, blank=True)
+
+    new_debt_cc = models.CurrencyField(min=0, blank=True)
+    new_debt_bills = models.CurrencyField(min=0, blank=True)
+    new_debt_payday = models.CurrencyField(min=0, blank=True)
+    new_debt_auto = models.CurrencyField(min=0, blank=True)
+    new_debt_student = models.CurrencyField(min=0, blank=True)
+    new_debt_mortgage = models.CurrencyField(min=0, blank=True)
+    new_debt_other = models.CurrencyField(min=0, blank=True)
+    new_debt_other_text = models.LongStringField(blank=True)
+
+    # ======================================================
+    # SAVINGS AND INVESTMENTS
+    # ======================================================
+
+    save_invest_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+
+    save_invest_increase_amount = models.CurrencyField(min=0, blank=True)
+
+    save_invest_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    save_invest_decrease_amount = models.CurrencyField(min=0, blank=True)
+
+    # Allocation categories
+    save_accounts = models.CurrencyField(min=0, blank=True)
+    save_lowrisk = models.CurrencyField(min=0, blank=True)
+    save_stocks = models.CurrencyField(min=0, blank=True)
+    save_realestate = models.CurrencyField(min=0, blank=True)
+    save_business = models.CurrencyField(min=0, blank=True)
+    save_crypto = models.CurrencyField(min=0, blank=True)
+    save_other = models.CurrencyField(min=0, blank=True)
+    save_other_text = models.LongStringField(blank=True)
+
+    # ======================================================
+    # REVIEW / REVISION PAGE
+    # ======================================================
+
+    # Final (possibly revised) answers
+    spending_final = models.CurrencyField(blank=True)
+    debt_repay_final = models.CurrencyField(blank=True)
+    labor_income_final = models.CurrencyField(blank=True)
+    new_debt_final = models.CurrencyField(blank=True)
+    save_invest_final = models.CurrencyField(blank=True)
+
+    # Revision indicators
+    revised_any = models.BooleanField(initial=False)
+
+    # Revision reasons (multiple choice)
+    revision_misunderstood = models.BooleanField(initial=False)
+    revision_rethought_less = models.BooleanField(initial=False)
+    revision_rethought_more = models.BooleanField(initial=False)
+    revision_context = models.BooleanField(initial=False)
+    revision_mistake = models.BooleanField(initial=False)
+    revision_other = models.BooleanField(initial=False)
+
+    revision_other_text = models.LongStringField(blank=True)
+
+
     spending = models.IntegerField(min=-1500, max=1500)
     asset = models.IntegerField(min=-1500, max=1500)
     debt_repay = models.IntegerField(min=-1500, max=1500)
     debt_new = models.IntegerField(min=-1500, max=1500)
     labor = models.IntegerField(min=-1500, max=1500)
+
+
 
 
     # DEBT CATEGORIES
@@ -186,11 +343,75 @@ class Player(BasePlayer):
 def creating_session(subsession: Subsession):
     subsession.Treatment = subsession.session.config['Treatment']
 
+def spending(player):
+    inc = player.field_maybe_none('spend_increase_amount')
+    dec = player.field_maybe_none('spend_decrease_amount')
 
-def debt(player):
+    if inc is not None:
+        value = inc
+    elif dec is not None:
+        value = -dec
+    else:
+        value = None
 
-    player.participant.debt_new = player.debt_new
-    player.participant.debt_repay = player.debt_repay
+    player.participant.spending_net = value
+
+
+def debtRepay(player):
+    inc = player.field_maybe_none('debt_repay_increase_amount')
+    dec = player.field_maybe_none('debt_repay_decrease_amount')
+
+    if inc is not None:
+        value = inc
+    elif dec is not None:
+        value = -dec
+    else:
+        value = None
+
+    player.participant.debt_repay_net = value
+
+
+def debtNew(player):
+    inc = player.field_maybe_none('new_debt_increase_amount')
+    dec = player.field_maybe_none('new_debt_decrease_amount')
+
+    if inc is not None:
+        value = inc
+    elif dec is not None:
+        value = -dec
+    else:
+        value = None
+
+    player.participant.new_debt_net = value
+
+
+def labor(player):
+    inc = player.field_maybe_none('labor_income_increase_amount')
+    dec = player.field_maybe_none('labor_income_decrease_amount')
+
+    if inc is not None:
+        value = inc
+    elif dec is not None:
+        value = -dec
+    else:
+        value = None
+
+    player.participant.labor_income_net = value
+
+
+def saveInvest(player):
+    inc = player.field_maybe_none('save_invest_increase_amount')
+    dec = player.field_maybe_none('save_invest_decrease_amount')
+
+    if inc is not None:
+        value = inc
+    elif dec is not None:
+        value = -dec
+    else:
+        value = None
+
+    player.participant.save_invest_net = value
+
 
 def debtBaseline(player):
     player.participant.debt_repay = player.debt_repay
@@ -321,6 +542,388 @@ class ElicitationT0(Page):
     def before_next_page(player, timeout_happened):
         debtBaseline(player)
 
+class Spending(Page):
+    form_model = 'player'
+    form_fields = [
+        'spend_increase',
+        'spend_increase_amount',
+        'spend_same_or_decrease',
+        'spend_decrease_amount',
+        'spend_nondurable',
+        'spend_services',
+        'spend_durable',
+        'spend_other',
+        'spend_other_text',
+        'spend_debt',
+    ]
+
+    def error_message(self, values):
+
+        # --- Determine reported total change ---
+        if values['spend_increase'] == 'yes':
+            reported_amount = values['spend_increase_amount']
+        elif values['spend_same_or_decrease'] == 'decrease':
+            reported_amount = values['spend_decrease_amount']
+        else:
+            reported_amount = None
+
+        # --- Allocation check only if there is a change ---
+        if reported_amount is not None:
+
+            allocation_fields = [
+                values['spend_nondurable'] or 0,
+                values['spend_services'] or 0,
+                values['spend_durable'] or 0,
+                values['spend_other'] or 0,
+            ]
+
+            allocation_sum = sum(allocation_fields)
+
+            if allocation_sum != reported_amount:
+                return (
+                    f"The amounts you entered across categories add up to "
+                    f"{allocation_sum}, but you reported a total change of "
+                    f"{reported_amount}. "
+                    f"Please make sure the amounts match."
+                )
+
+
+    def before_next_page(player, timeout_happened):
+        spending(player)
+
+class DebtRepayment(Page):
+    form_model = 'player'
+    form_fields = [
+        'debt_repay_increase',
+        'debt_repay_increase_amount',
+        'debt_repay_same_or_decrease',
+        'debt_repay_decrease_amount',
+        'debt_cc',
+        'debt_bills',
+        'debt_payday',
+        'debt_longterm',
+        'debt_other',
+        'debt_other_text',
+    ]
+
+    def error_message(self, values):
+
+        # --- determine reported total ---
+        if values['debt_repay_increase'] == 'yes':
+            total = values['debt_repay_increase_amount']
+            if total is None:
+                return "Please enter the amount by which your debt repayment would increase."
+
+        elif values['debt_repay_same_or_decrease'] == 'decrease':
+            total = values['debt_repay_decrease_amount']
+            if total is None:
+                return "Please enter the amount by which your debt repayment would decrease."
+
+        else:
+            total = None
+
+        # --- allocation consistency ---
+        if total is not None:
+            allocation = (
+                (values['debt_cc'] or 0)
+                + (values['debt_bills'] or 0)
+                + (values['debt_payday'] or 0)
+                + (values['debt_longterm'] or 0)
+                + (values['debt_other'] or 0)
+            )
+
+            if allocation != total:
+                return (
+                    f"The amounts allocated across debt categories add up to {allocation}, "
+                    f"but you reported a total change of {total}. "
+                    f"Please make sure these amounts match."
+                )
+
+
+    def before_next_page(player, timeout_happened):
+        debtRepay(player)
+
+class Labor(Page):
+    form_model = 'player'
+    form_fields = [
+        'labor_decrease',
+        'labor_income_decrease_amount',
+        'labor_same_or_increase',
+        'labor_income_increase_amount',
+        'labor_gigs',
+        'labor_overtime',
+        'labor_holidays',
+        'labor_contract',
+        'labor_other',
+        'labor_other_text',
+    ]
+
+    def error_message(self, values):
+
+        if values['labor_decrease'] == 'yes':
+            total = values['labor_income_decrease_amount']
+            if total is None:
+                return "Please enter the decrease in your labor income."
+
+        elif values['labor_same_or_increase'] == 'increase':
+            total = values['labor_income_increase_amount']
+            if total is None:
+                return "Please enter the increase in your labor income."
+
+        else:
+            total = None
+
+        if total is not None:
+            allocation = (
+                (values['labor_gigs'] or 0)
+                + (values['labor_overtime'] or 0)
+                + (values['labor_holidays'] or 0)
+                + (values['labor_contract'] or 0)
+                + (values['labor_other'] or 0)
+            )
+
+            if allocation != total:
+                return (
+                    f"The amounts across categories add up to {allocation}, "
+                    f"but you reported a total change of {total}. "
+                    f"Please make sure these amounts match."
+                )
+
+
+    def before_next_page(player, timeout_happened):
+        labor(player)
+class NewDebt(Page):
+    form_model = 'player'
+    form_fields = [
+        'new_debt_increase',
+        'new_debt_increase_amount',
+        'new_debt_same_or_decrease',
+        'new_debt_decrease_amount',
+        'new_debt_cc',
+        'new_debt_bills',
+        'new_debt_payday',
+        'new_debt_auto',
+        'new_debt_student',
+        'new_debt_mortgage',
+        'new_debt_other',
+        'new_debt_other_text',
+    ]
+
+    def error_message(self, values):
+
+        if values['new_debt_increase'] == 'yes':
+            total = values['new_debt_increase_amount']
+            if total is None:
+                return "Please enter the increase in new debt."
+
+        elif values['new_debt_same_or_decrease'] == 'decrease':
+            total = values['new_debt_decrease_amount']
+            if total is None:
+                return "Please enter the decrease in new debt."
+
+        else:
+            total = None
+
+        if total is not None:
+            allocation = (
+                (values['new_debt_cc'] or 0)
+                + (values['new_debt_bills'] or 0)
+                + (values['new_debt_payday'] or 0)
+                + (values['new_debt_auto'] or 0)
+                + (values['new_debt_student'] or 0)
+                + (values['new_debt_mortgage'] or 0)
+                + (values['new_debt_other'] or 0)
+            )
+
+            if allocation != total:
+                return (
+                    f"The amounts across categories add up to {allocation}, "
+                    f"but you reported a total change of {total}. "
+                    f"Please make sure these amounts match."
+                )
+
+
+    def before_next_page(player, timeout_happened):
+        debtNew(player)
+class SavingsInvestments(Page):
+    form_model = 'player'
+    form_fields = [
+        'save_invest_increase',
+        'save_invest_increase_amount',
+        'save_invest_same_or_decrease',
+        'save_invest_decrease_amount',
+        'save_accounts',
+        'save_lowrisk',
+        'save_stocks',
+        'save_realestate',
+        'save_business',
+        'save_crypto',
+        'save_other',
+        'save_other_text',
+    ]
+
+    def error_message(self, values):
+
+        # --- determine reported total ---
+        if values['save_invest_increase'] == 'yes':
+            total = values['save_invest_increase_amount']
+            if total is None:
+                return (
+                    "Please enter the amount by which your savings or "
+                    "investments would increase."
+                )
+
+        elif values['save_invest_same_or_decrease'] == 'decrease':
+            total = values['save_invest_decrease_amount']
+            if total is None:
+                return (
+                    "Please enter the amount by which your savings or "
+                    "investments would decrease."
+                )
+
+        else:
+            total = None
+
+        # --- allocation consistency ---
+        if total is not None:
+            allocation = (
+                (values['save_accounts'] or 0)
+                + (values['save_lowrisk'] or 0)
+                + (values['save_stocks'] or 0)
+                + (values['save_realestate'] or 0)
+                + (values['save_business'] or 0)
+                + (values['save_crypto'] or 0)
+                + (values['save_other'] or 0)
+            )
+
+            if allocation != total:
+                return (
+                    f"The amounts allocated across categories add up to {allocation}, "
+                    f"but you reported a total change of {total}. "
+                    f"Please make sure these amounts match."
+                )
+
+
+
+
+    def before_next_page(player, timeout_happened):
+        saveInvest(player)
+
+class Review(Page):
+    form_model = 'player'
+    form_fields = [
+        'spending_final',
+        'debt_repay_final',
+        'labor_income_final',
+        'new_debt_final',
+        'save_invest_final',
+        'revision_misunderstood',
+        'revision_rethought_less',
+        'revision_rethought_more',
+        'revision_context',
+        'revision_mistake',
+        'revision_other',
+        'revision_other_text',
+    ]
+
+    def vars_for_template(player):
+        p = player.participant
+
+        def safe(x):
+            return x if x is not None else 0
+
+        rows = [
+            dict(name='spending_final',
+                 label='Spending on goods and services',
+                 value=safe(getattr(p, 'spending_net', None))),
+            dict(name='debt_repay_final',
+                 label='Debt repayment',
+                 value=safe(getattr(p, 'debt_repay_net', None))),
+            dict(name='labor_income_final',
+                 label='Labor income',
+                 value=safe(getattr(p, 'labor_income_net', None))),
+            dict(name='new_debt_final',
+                 label='New debt',
+                 value=safe(getattr(p, 'new_debt_net', None))),
+            dict(name='save_invest_final',
+                 label='Savings and investments',
+                 value=safe(getattr(p, 'save_invest_net', None))),
+        ]
+
+        return dict(rows=rows)
+
+    def before_next_page(player):
+        part = player.participant
+
+        # Fill missing finals with initial values
+        player.spending_final = (
+            player.spending_final
+            if player.spending_final is not None
+            else part.spending_net
+        )
+
+        player.debt_repay_final = (
+            player.debt_repay_final
+            if player.debt_repay_final is not None
+            else part.debt_repay_net
+        )
+
+        player.labor_income_final = (
+            player.labor_income_final
+            if player.labor_income_final is not None
+            else part.labor_income_net
+        )
+
+        player.new_debt_final = (
+            player.new_debt_final
+            if player.new_debt_final is not None
+            else part.new_debt_net
+        )
+
+        player.save_invest_final = (
+            player.save_invest_final
+            if player.save_invest_final is not None
+            else part.save_invest_net
+        )
+
+        # Detect whether *any* revision occurred
+        player.revised_any = any([
+            player.spending_final != part.spending_net,
+            player.debt_repay_final != part.debt_repay_net,
+            player.labor_income_final != part.labor_income_net,
+            player.new_debt_final != part.new_debt_net,
+            player.save_invest_final != part.save_invest_net,
+        ])
+
+    def error_message(player, values):
+        part = player.participant
+
+        revised = any([
+            values['spending_final'] != part.spending_net,
+            values['debt_repay_final'] != part.debt_repay_net,
+            values['labor_income_final'] != part.labor_income_net,
+            values['new_debt_final'] != part.new_debt_net,
+            values['save_invest_final'] != part.save_invest_net,
+        ])
+
+        if revised:
+            reasons = [
+                values['revision_misunderstood'],
+                values['revision_rethought_less'],
+                values['revision_rethought_more'],
+                values['revision_context'],
+                values['revision_mistake'],
+                values['revision_other'],
+            ]
+
+            if not any(reasons):
+                return (
+                    "You changed at least one answer. "
+                    "Please indicate why you revised your response."
+                )
+
+            if values['revision_other'] and not values['revision_other_text']:
+                return "Please specify the reason for your revision."
 
 class ElicitationT1(Page):
     form_model = 'player'
@@ -812,6 +1415,8 @@ class ProlificBack(Page):
             completionlink=
             player.subsession.session.config['completionlink']
         )
+page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#
 
-page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #page_sequence =[Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]

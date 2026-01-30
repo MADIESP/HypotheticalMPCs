@@ -1,0 +1,203 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 10px 15px;
+    margin: 10px 0 15px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .example-box ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .example-box li {
+    margin-bottom: 6px;
+  }
+
+  .sub-box {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .warning-box {
+    background-color: #f8d7da;
+    border-left: 4px solid #c82333;
+    padding: 10px 15px;
+    margin: 15px 0;
+    font-size: 0.95em;
+    color: #721c24;
+  }
+
+  .category-hint {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Part 2 – Page 3/6</h2>
+<h2>Debt repayment</h2>
+
+<p>
+  In this section, we ask about the <b>amount of debt that you and your household would repay</b>
+  over the <b>three months</b> after receiving the <b>$1,000 payment</b>,
+  relative to what you would have repaid without the payment.
+</p>
+
+<div class="example-box">
+  <p><b>Examples of debt repayment:</b></p>
+  <ul>
+    <li><b>Credit cards</b> (e.g., repaying a higher share of your balance)</li>
+    <li><b>Unpaid bills</b> (e.g., utilities, medical, or legal bills)</li>
+    <li><b>Short-term loans</b> (e.g., payday loans)</li>
+    <li><b>Longer-term loans</b> (e.g., auto loans, student loans, mortgages)</li>
+  </ul>
+</div>
+
+<form method="post">
+
+<p>
+  <b>1.</b> Would the <b>$1,000 payment</b> cause you and your household to
+  <b>increase the amount of debt that you repay</b>
+  over the next three months?
+</p>
+
+{% formfield player.debt_repay_increase label="" %}
+
+<div id="increase-box" class="sub-box hidden">
+  <p><b>2.</b> By how much would the payment <b>increase</b> your debt repayment?</p>
+  {% formfield player.debt_repay_increase_amount label="" %}
+</div>
+
+<div id="same-or-decrease-box" class="sub-box hidden">
+  <p>
+    <b>1.b.</b> Would you therefore <b>keep your debt repayment the same</b>
+    or <b>decrease</b> it?
+  </p>
+  {% formfield player.debt_repay_same_or_decrease label="" %}
+</div>
+
+<div id="decrease-box" class="sub-box hidden">
+  <p><b>2.</b> By how much would the payment <b>decrease</b> your debt repayment?</p>
+  {% formfield player.debt_repay_decrease_amount label="" %}
+</div>
+
+<div id="decrease-warning" class="warning-box hidden">
+  You reported that you would <b>decrease your debt repayment</b> following the payment.
+  Please make sure this reflects your intended choice.
+</div>
+
+<div id="allocation-box" class="sub-box hidden">
+  <p>
+    <b>3.</b> How would you and your household <b>allocate</b> this change in debt repayment across the following <b>categories?</b>
+    <br>
+    <span style="font-size:0.9em; color:#555;">
+      (The amounts should add up to the total change you reported above.)
+    </span>
+  </p>
+
+  <p><b>Credit cards</b></p>
+  <div class="category-hint">(e.g., balances carried over)</div>
+  {% formfield player.debt_cc label="" %}
+
+  <p><b>Unpaid bills</b></p>
+  <div class="category-hint">(e.g., utilities, medical, legal bills)</div>
+  {% formfield player.debt_bills label="" %}
+
+  <p><b>Payday loans</b></p>
+  {% formfield player.debt_payday label="" %}
+
+  <p><b>Auto loans, student loans, mortgages</b></p>
+  {% formfield player.debt_longterm label="" %}
+
+  <p><b>Other</b></p>
+  {% formfield player.debt_other label="" %}
+
+  <p>Please specify (if applicable):</p>
+  {% formfield player.debt_other_text label="" %}
+</div>
+
+<button class="btn btn-danger">Next</button>
+
+</form>
+</div>
+
+<script>
+function clearInputs(containerId) {
+  document.querySelectorAll(`#${containerId} input`).forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+function isFilled(containerId) {
+  const inputs = document.querySelectorAll(`#${containerId} input`);
+  return Array.from(inputs).some(el =>
+    el.type === 'radio' ? el.checked : el.value !== ''
+  );
+}
+
+function updateVisibility() {
+  const increase =
+    document.querySelector('input[name="debt_repay_increase"]:checked')?.value;
+  const sameOrDecrease =
+    document.querySelector('input[name="debt_repay_same_or_decrease"]:checked')?.value;
+
+  const showIncrease = increase === 'yes';
+  const showNo = increase === 'no';
+  const showDecrease = sameOrDecrease === 'decrease';
+
+  document.getElementById('increase-box').classList.toggle('hidden', !showIncrease);
+  document.getElementById('same-or-decrease-box').classList.toggle('hidden', !showNo);
+  document.getElementById('decrease-box').classList.toggle('hidden', !showDecrease);
+  document.getElementById('decrease-warning').classList.toggle('hidden', !showDecrease);
+
+  const amountAnswered =
+    (showIncrease && isFilled('increase-box')) ||
+    (showDecrease && isFilled('decrease-box'));
+
+  document.getElementById('allocation-box').classList.toggle('hidden', !amountAnswered);
+  if (!amountAnswered) clearInputs('allocation-box');
+}
+
+document.addEventListener('change', updateVisibility);
+document.addEventListener('DOMContentLoaded', updateVisibility);
+</script>
+
+{% endblock %}

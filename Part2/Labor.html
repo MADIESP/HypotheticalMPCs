@@ -1,0 +1,217 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 10px 15px;
+    margin: 10px 0 15px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .example-box ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .example-box li {
+    margin-bottom: 6px;
+  }
+
+  .sub-box {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .category-hint {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Part 2 – Page 4/6</h2>
+<h2>Working time and labor income</h2>
+
+<p>
+  In this section, we ask about the <b>time that you would spend working</b>
+  over the <b>three months</b> after receiving the <b>$1,000 payment</b>,
+  relative to what you would have done without the payment.
+</p>
+
+<div class="example-box">
+  <p><b>Examples of changes in working time:</b></p>
+  <ul>
+    <li><b>Accepting fewer or more gigs</b> (e.g., surveys, clients, or patients)</li>
+    <li><b>Working fewer or more extra hours</b> for your employer</li>
+    <li><b>Taking more or fewer holidays</b></li>
+    <li><b>Negotiating a change in weekly hours</b> with your employer</li>
+  </ul>
+</div>
+
+<form method="post">
+
+<p>
+  <b>1.</b> Would the <b>$1,000 payment</b> cause you to
+  <b>decrease the time that you spend working</b>
+  over the next three months?
+</p>
+
+{% formfield player.labor_decrease label="" %}
+
+<!-- Decrease labor income -->
+<div id="decrease-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> This reduction in working time would lead to a
+    <b>decrease in your labor income</b>.
+    By how much would your labor income decrease?
+  </p>
+  {% formfield player.labor_income_decrease_amount label="" %}
+</div>
+
+<!-- No → same or increase -->
+<div id="same-or-increase-box" class="sub-box hidden">
+  <p>
+    <b>1.b.</b> Would you therefore <b>keep your working time the same</b>
+    or <b>increase</b> it?
+  </p>
+  {% formfield player.labor_same_or_increase label="" %}
+</div>
+
+<!-- Increase labor income -->
+<div id="increase-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> This increase in working time would lead to an
+    <b>increase in your labor income</b>.
+    By how much would your labor income increase?
+  </p>
+  {% formfield player.labor_income_increase_amount label="" %}
+</div>
+
+<!-- Allocation -->
+<div id="allocation-box" class="sub-box hidden">
+  <p>
+    <b>3.</b> How would you <b>allocate</b> this change in labor income across the <b>following categories?</b>
+    <br>
+    <span style="font-size:0.9em; color:#555;">
+      (The amounts should add up to the total change you reported above.)
+    </span>
+  </p>
+
+  <p><b>Gigs, clients, or patients</b></p>
+  <div class="category-hint">
+    (e.g., fewer or more surveys, clients, or patients)
+  </div>
+  {% formfield player.labor_gigs label="" %}
+
+  <p><b>Overtime or extra hours</b></p>
+  <div class="category-hint">
+    (e.g., fewer or more extra hours for your employer)
+  </div>
+  {% formfield player.labor_overtime label="" %}
+
+  <p><b>Holidays or leave</b></p>
+  <div class="category-hint">
+    (e.g., taking more or fewer holidays)
+  </div>
+  {% formfield player.labor_holidays label="" %}
+
+  <p><b>Negotiated hours</b></p>
+  <div class="category-hint">
+    (e.g., a change in contracted weekly hours)
+  </div>
+  {% formfield player.labor_contract label="" %}
+
+  <p><b>Other</b></p>
+  {% formfield player.labor_other label="" %}
+
+  <p>Please specify (if applicable):</p>
+  {% formfield player.labor_other_text label="" %}
+</div>
+
+<button class="btn btn-danger">Next</button>
+
+</form>
+</div>
+
+<script>
+function clearInputs(containerId) {
+  document.querySelectorAll(`#${containerId} input`).forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+function isFilled(containerId) {
+  const inputs = document.querySelectorAll(`#${containerId} input`);
+  return Array.from(inputs).some(el =>
+    el.type === 'radio' ? el.checked : el.value !== ''
+  );
+}
+
+function updateVisibility() {
+  const decrease =
+    document.querySelector('input[name="labor_decrease"]:checked')?.value;
+  const sameOrIncrease =
+    document.querySelector('input[name="labor_same_or_increase"]:checked')?.value;
+
+  const showDecrease = decrease === 'yes';
+  const showNo = decrease === 'no';
+  const showIncrease = sameOrIncrease === 'increase';
+
+  document.getElementById('decrease-box')
+    .classList.toggle('hidden', !showDecrease);
+
+  document.getElementById('same-or-increase-box')
+    .classList.toggle('hidden', !showNo);
+
+  document.getElementById('increase-box')
+    .classList.toggle('hidden', !showIncrease);
+
+  const amountAnswered =
+    (showDecrease && isFilled('decrease-box')) ||
+    (showIncrease && isFilled('increase-box'));
+
+  document.getElementById('allocation-box')
+    .classList.toggle('hidden', !amountAnswered);
+
+  if (!amountAnswered) clearInputs('allocation-box');
+}
+
+document.addEventListener('change', updateVisibility);
+document.addEventListener('DOMContentLoaded', updateVisibility);
+</script>
+
+{% endblock %}

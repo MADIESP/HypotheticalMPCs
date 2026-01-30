@@ -1,0 +1,203 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 1.05em;
+  }
+
+  th {
+    font-weight: bold;
+    background-color: #f8f9fa;
+  }
+
+  input[type="number"] {
+    width: 130px;
+    padding: 6px;
+    text-align: center;
+    font-size: 1.05em;
+  }
+
+  .placeholder {
+    color: #777;
+    cursor: pointer;
+    font-size: 1.1em;
+  }
+
+  .note {
+    font-size: 0.95em;
+    color: #555;
+    margin-top: 10px;
+  }
+
+  .revision-box {
+    margin-top: 25px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #c82333;
+    display: none;
+  }
+
+  .revision-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.05em;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Review your answers</h2>
+
+<p>
+  Below is a summary of your responses regarding how the
+  <b>$1,000 payment</b> would affect your household’s decisions over the
+  <b>next three months</b>.
+</p>
+
+<p>
+  Please review your answers carefully. If any amount does not reflect what you
+  would do, you may revise it below.
+</p>
+
+<form method="post">
+
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Amount</th>
+  </tr>
+
+  {% for row in rows %}
+  <tr>
+    <td>{{ row.label }}</td>
+    <td>
+      {% if row.value or row.value == 0 %}
+        <input type="number"
+               name="{{ row.name }}"
+               value="{{ row.value }}"
+               data-initial="{{ row.value }}">
+      {% else %}
+        <span class="placeholder">—</span>
+        <input type="number"
+               name="{{ row.name }}"
+               data-initial=""
+               style="display:none;">
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p class="note">
+  Positive values indicate an increase; negative values indicate a decrease.
+  A value of <b>0</b> indicates no change.
+</p>
+
+<div id="revision-box" class="revision-box">
+  <p>
+    <b>You changed at least one answer.</b><br>
+    Please indicate why you revised your response:
+  </p>
+
+  <label>
+    <input type="checkbox" name="revision_misunderstood">
+    I initially misunderstood the question or categories
+  </label>
+
+  <label>
+    <input type="checkbox" name="revision_rethought_less">
+    I realized I would spend or save less than I first thought
+  </label>
+
+  <label>
+    <input type="checkbox" name="revision_rethought_more">
+    I realized I would spend or save more than I first thought
+  </label>
+
+  <label>
+    <input type="checkbox" name="revision_context">
+    Seeing all categories together changed my perspective
+  </label>
+
+  <label>
+    <input type="checkbox" name="revision_mistake">
+    I made a mistake when entering my original answer
+  </label>
+
+  <label>
+    <input type="checkbox" name="revision_other">
+    Other (please specify)
+  </label>
+
+  <input type="text"
+         name="revision_other_text"
+         placeholder="Please specify"
+         style="width:100%; margin-top:8px;">
+</div>
+
+<button class="btn btn-danger">Confirm and continue</button>
+
+</form>
+</div>
+
+<script>
+function checkChanges() {
+  let changed = false;
+
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    if (String(input.value) !== String(input.dataset.initial)) {
+      changed = true;
+    }
+  });
+
+  document.getElementById('revision-box').style.display =
+    changed ? 'block' : 'none';
+}
+
+// Turn — into editable input
+document.querySelectorAll('.placeholder').forEach(span => {
+  span.addEventListener('click', () => {
+    const input = span.nextElementSibling;
+    span.style.display = 'none';
+    input.style.display = 'inline-block';
+    input.focus();
+  });
+});
+
+document.addEventListener('input', checkChanges);
+</script>
+
+{% endblock %}

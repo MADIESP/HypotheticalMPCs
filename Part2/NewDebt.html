@@ -1,0 +1,240 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 10px 15px;
+    margin: 10px 0 15px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .example-box ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .example-box li {
+    margin-bottom: 6px;
+  }
+
+  .sub-box {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* 🔧 FIX: category titles */
+  .category-title {
+    font-weight: bold;
+    font-size: 1em;
+    margin-top: 12px;
+    margin-bottom: 2px;
+  }
+
+  .category-hint {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Part 2 – Page 5/6</h2>
+<h2>New debt</h2>
+
+<p>
+  In this section, we ask about the <b>amount of new debt that you and your household would take on</b>
+  over the <b>three months</b> after receiving the <b>$1,000 payment</b>,
+  relative to what you would have taken on without the payment.
+</p>
+
+<div class="example-box">
+  <p>
+    <b>What we mean by new debt:</b><br>
+    New debt refers to debt that you take on <b>to finance extra spending</b> beyond
+    what you would have been able to pay for with your current income or available
+    savings. This can occur even if you also repay some of your existing debt during
+    the same period.
+  </p>
+
+  <p><b>Examples of new debt:</b></p>
+  <ul>
+    <li>
+      <b>Credit cards:</b>
+      carrying over a higher balance to future months (for example, by using your
+      card more for purchases and not paying the full balance immediately)
+    </li>
+    <li>
+      <b>Unpaid bills:</b>
+      leaving some bills unpaid, such as medical, legal, or utility bills
+    </li>
+    <li>
+      <b>Short-term loans:</b>
+      taking out new payday loans
+    </li>
+    <li>
+      <b>Longer-term loans:</b>
+      taking out new auto loans, student loans, or mortgages
+    </li>
+  </ul>
+</div>
+
+<form method="post">
+
+<p>
+  <b>1.</b> Would the <b>$1,000 payment</b> cause you to
+  <b>increase the amount of new debt that you take on</b>
+  over the next three months?
+</p>
+
+{% formfield player.new_debt_increase label="" %}
+
+<!-- Increase new debt -->
+<div id="increase-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> By how much would the payment
+    <b>increase the amount of new debt</b> that you take on?
+  </p>
+  {% formfield player.new_debt_increase_amount label="" %}
+</div>
+
+<!-- No → same or decrease -->
+<div id="same-or-decrease-box" class="sub-box hidden">
+  <p>
+    <b>1.b.</b> Would you therefore <b>keep the amount of new debt the same</b>
+    or <b>decrease</b> it?
+  </p>
+  {% formfield player.new_debt_same_or_decrease label="" %}
+</div>
+
+<!-- Decrease new debt -->
+<div id="decrease-box" class="sub-box hidden">
+  <p>
+    <b>2.</b> By how much would the payment
+    <b>decrease the amount of new debt</b> that you take on?
+  </p>
+  {% formfield player.new_debt_decrease_amount label="" %}
+</div>
+
+<!-- Allocation -->
+<div id="allocation-box" class="sub-box hidden">
+  <p>
+    <b>3.</b> How would you and your household <b>allocate</b> this change in new debt across the following <b>categories?</b>
+    <br>
+    <span style="font-size:0.9em; color:#555;">
+      (The amounts should add up to the total change you reported above.)
+    </span>
+  </p>
+
+  <div class="category-title">Credit cards</div>
+  <div class="category-hint">(e.g., balances carried over to future months)</div>
+  {% formfield player.new_debt_cc label="" %}
+
+  <div class="category-title">Unpaid bills</div>
+  <div class="category-hint">(e.g., medical, legal, or utility bills)</div>
+  {% formfield player.new_debt_bills label="" %}
+
+  <div class="category-title">Payday loans</div>
+  {% formfield player.new_debt_payday label="" %}
+
+  <div class="category-title">Auto loans</div>
+  {% formfield player.new_debt_auto label="" %}
+
+  <div class="category-title">Student loans</div>
+  {% formfield player.new_debt_student label="" %}
+
+  <div class="category-title">Mortgages</div>
+  {% formfield player.new_debt_mortgage label="" %}
+
+  <div class="category-title">Other</div>
+  {% formfield player.new_debt_other label="" %}
+
+  <p>Please specify (if applicable):</p>
+  {% formfield player.new_debt_other_text label="" %}
+</div>
+
+<button class="btn btn-danger">Next</button>
+
+</form>
+</div>
+
+<script>
+function clearInputs(containerId) {
+  document.querySelectorAll(`#${containerId} input`).forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+function isFilled(containerId) {
+  const inputs = document.querySelectorAll(`#${containerId} input`);
+  return Array.from(inputs).some(el =>
+    el.type === 'radio' ? el.checked : el.value !== ''
+  );
+}
+
+function updateVisibility() {
+  const increase =
+    document.querySelector('input[name="new_debt_increase"]:checked')?.value;
+  const sameOrDecrease =
+    document.querySelector('input[name="new_debt_same_or_decrease"]:checked')?.value;
+
+  const showIncrease = increase === 'yes';
+  const showNo = increase === 'no';
+  const showDecrease = sameOrDecrease === 'decrease';
+
+  document.getElementById('increase-box')
+    .classList.toggle('hidden', !showIncrease);
+
+  document.getElementById('same-or-decrease-box')
+    .classList.toggle('hidden', !showNo);
+
+  document.getElementById('decrease-box')
+    .classList.toggle('hidden', !showDecrease);
+
+  const amountAnswered =
+    (showIncrease && isFilled('increase-box')) ||
+    (showDecrease && isFilled('decrease-box'));
+
+  document.getElementById('allocation-box')
+    .classList.toggle('hidden', !amountAnswered);
+
+  if (!amountAnswered) clearInputs('allocation-box');
+}
+
+document.addEventListener('change', updateVisibility);
+document.addEventListener('DOMContentLoaded', updateVisibility);
+</script>
+
+{% endblock %}

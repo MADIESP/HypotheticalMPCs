@@ -1,0 +1,219 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 10px 15px;
+    margin: 10px 0 15px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .example-box ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .example-box li {
+    margin-bottom: 6px;
+  }
+
+  .sub-box {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .warning-box {
+    background-color: #f8d7da;
+    border-left: 4px solid #c82333;
+    padding: 10px 15px;
+    margin: 15px 0;
+    font-size: 0.95em;
+    color: #721c24;
+  }
+
+  .category-hint {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+
+  button.btn-danger {
+    display: block;
+    margin: 30px auto 10px;
+  }
+</style>
+
+<div class="content-box">
+
+<h2>Part 2 – Page 2/6</h2>
+<h2>Spending on goods and services</h2>
+
+<p>
+  In this section, we ask about the <b>goods and services that you and your household would purchase</b>
+  over the <b>three months</b> after receiving the <b>$1,000 payment</b>,
+  relative to what you would have purchased without the payment.
+</p>
+
+<div class="example-box">
+  <p><b>Examples of spending on goods and services:</b></p>
+  <ul>
+    <li><b>Everyday purchases</b> (e.g., food, beauty products, personal care or health care products)</li>
+    <li><b>Outings and leisure activities</b> (e.g., restaurants, entertainment outings, vacations)</li>
+    <li><b>Services provided by others</b> (e.g., babysitting, house-cleaning, tutoring, appointments with beauty,
+        personal care, or health care specialists)</li>
+    <li><b>Durable goods</b> (e.g., clothes, vehicles, furniture, household appliances)</li>
+  </ul>
+</div>
+
+<form method="post">
+
+<p>
+  <b>1.</b> Would the <b>$1,000 payment</b> cause you and your household to
+  <b>increase your spending on goods and services</b>
+  over the next three months?
+</p>
+
+{% formfield player.spend_increase label="" %}
+
+<div id="increase-box" class="sub-box hidden">
+  <p><b>2.</b> By how much would the payment <b>increase</b> your spending?</p>
+  {% formfield player.spend_increase_amount label="" %}
+</div>
+
+<div id="same-or-decrease-box" class="sub-box hidden">
+  <p><b>1.b.</b> Would you therefore <b>keep your spending the same</b> or <b>decrease</b> it?</p>
+  {% formfield player.spend_same_or_decrease label="" %}
+</div>
+
+<div id="decrease-box" class="sub-box hidden">
+  <p><b>2.</b> By how much would the payment <b>decrease</b> your spending?</p>
+  {% formfield player.spend_decrease_amount label="" %}
+</div>
+
+<div id="decrease-warning" class="warning-box hidden">
+  You reported that you would <b>decrease your spending</b> following the payment.
+  Please make sure this reflects your intended choice.
+</div>
+
+<div id="allocation-box" class="sub-box hidden">
+  <p>
+    <b>3.</b> How would you and your household <b>allocate</b> this change in spending across the following <b>categories?</b>
+  <br>
+  <span style="font-size:0.9em; color:#555;">
+    (The amounts should add up to the total change you reported above.)
+  </span>
+</p>
+
+  <p><b>Non-durable goods</b></p>
+  <div class="category-hint">
+    (e.g., food, restaurant or entertainment outings, vacations,
+    personal care or health care products)
+  </div>
+  {% formfield player.spend_nondurable label="" %}
+
+  <p><b>Services</b></p>
+  <div class="category-hint">
+    (e.g., babysitting, house-cleaning, tutoring,
+    appointments with beauty, personal care, or health care specialists)
+  </div>
+  {% formfield player.spend_services label="" %}
+
+  <p><b>Durable goods</b></p>
+  <div class="category-hint">
+    (e.g., clothes, vehicles, furniture, household appliances)
+  </div>
+  {% formfield player.spend_durable label="" %}
+
+  <p><b>Other</b></p>
+  {% formfield player.spend_other label="" %}
+
+  <p>Please specify (if applicable):</p>
+  {% formfield player.spend_other_text label="" %}
+</div>
+
+<div id="debt-box" class="sub-box hidden">
+  <p>
+    <b>4.</b> Would you buy any of these things in part by <b>contracting debt</b>
+    (for example, credit card debt or an auto loan)?
+  </p>
+  {% formfield player.spend_debt label="" %}
+</div>
+
+<button class="btn btn-danger">Next</button>
+
+</form>
+</div>
+
+<script>
+function clearInputs(containerId) {
+  document.querySelectorAll(`#${containerId} input`).forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+function isFilled(containerId) {
+  const inputs = document.querySelectorAll(`#${containerId} input`);
+  return Array.from(inputs).some(el =>
+    el.type === 'radio' ? el.checked : el.value !== ''
+  );
+}
+
+function updateVisibility() {
+  const increase =
+    document.querySelector('input[name="spend_increase"]:checked')?.value;
+  const sameOrDecrease =
+    document.querySelector('input[name="spend_same_or_decrease"]:checked')?.value;
+
+  const showIncrease = increase === 'yes';
+  const showNo = increase === 'no';
+  const showDecrease = sameOrDecrease === 'decrease';
+
+  document.getElementById('increase-box').classList.toggle('hidden', !showIncrease);
+  document.getElementById('same-or-decrease-box').classList.toggle('hidden', !showNo);
+  document.getElementById('decrease-box').classList.toggle('hidden', !showDecrease);
+  document.getElementById('decrease-warning').classList.toggle('hidden', !showDecrease);
+
+  const amountAnswered =
+    (showIncrease && isFilled('increase-box')) ||
+    (showDecrease && isFilled('decrease-box'));
+
+  document.getElementById('allocation-box').classList.toggle('hidden', !amountAnswered);
+  if (!amountAnswered) clearInputs('allocation-box');
+
+  const showDebt = amountAnswered && showIncrease;
+  document.getElementById('debt-box').classList.toggle('hidden', !showDebt);
+  if (!showDebt) clearInputs('debt-box');
+}
+
+document.addEventListener('change', updateVisibility);
+document.addEventListener('DOMContentLoaded', updateVisibility);
+</script>
+
+{% endblock %}
