@@ -18,8 +18,96 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     pass
 
-
 class Player(BasePlayer):
+# ================= SPENDING =================
+
+    spend_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+    spend_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+    spend_amount = models.CurrencyField(blank=True)
+
+    spend_everyday = models.CurrencyField(blank=True)
+    spend_leisure = models.CurrencyField(blank=True)
+    spend_services = models.CurrencyField(blank=True)
+    spend_durable = models.CurrencyField(blank=True)
+
+    # ================= DEBT REPAYMENT =================
+    debt_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+    debt_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+    debt_amount = models.CurrencyField(blank=True)
+
+    debt_cc = models.CurrencyField(blank=True)
+    debt_bills = models.CurrencyField(blank=True)
+    debt_short = models.CurrencyField(blank=True)
+    debt_long = models.CurrencyField(blank=True)
+
+    # ================= LABOR =================
+    labor_decrease = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+    labor_same_or_increase = models.StringField(
+        choices=[('same', 'Keep the same'), ('increase', 'Increase')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+    labor_hours = models.FloatField(blank=True)
+    labor_income = models.CurrencyField(blank=True)
+
+    labor_gigs = models.CurrencyField(blank=True)
+    labor_overtime = models.CurrencyField(blank=True)
+    labor_holidays = models.CurrencyField(blank=True)
+    labor_contract = models.CurrencyField(blank=True)
+
+    # ================= NEW DEBT =================
+    newdebt_same_or_decrease = models.StringField(
+    choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+    widget=widgets.RadioSelect
+    )
+
+    newdebt_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+    newdebt_amount = models.CurrencyField(blank=True)
+
+    newdebt_cc = models.CurrencyField(blank=True)
+    newdebt_bills = models.CurrencyField(blank=True)
+    newdebt_short = models.CurrencyField(blank=True)
+    newdebt_long = models.CurrencyField(blank=True)
+
+    # ================= SAVINGS =================
+    save_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelect
+    )
+    save_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+    save_amount = models.CurrencyField(blank=True)
+
+    save_accounts = models.CurrencyField(blank=True)
+    save_lowrisk = models.CurrencyField(blank=True)
+    save_risky = models.CurrencyField(blank=True)
+    save_realestate = models.CurrencyField(blank=True)
+    save_business = models.CurrencyField(blank=True)
+    save_crypto = models.CurrencyField(blank=True)
+###
 
     spend_increase = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
@@ -925,7 +1013,7 @@ class Review(Page):
             if values['revision_other'] and not values['revision_other_text']:
                 return "Please specify the reason for your revision."
 
-class ElicitationT1(Page):
+class elicitationT1(Page):
     form_model = 'player'
     form_fields = [
         'spending',
@@ -942,6 +1030,66 @@ class ElicitationT1(Page):
 
     def before_next_page(player, timeout_happened):
         debt(player)
+
+class ElicitationT1(Page):
+    form_model = 'player'
+    form_fields = [
+        # Spending
+        'spend_increase', 'spend_same_or_decrease', 'spend_amount',
+        'spend_everyday', 'spend_leisure', 'spend_services', 'spend_durable',
+
+        # Debt repayment
+        'debt_increase', 'debt_same_or_decrease', 'debt_amount',
+        'debt_cc', 'debt_bills', 'debt_short', 'debt_long',
+
+        # Labor
+        'labor_decrease', 'labor_same_or_increase',
+        'labor_hours', 'labor_income',
+        'labor_gigs', 'labor_overtime', 'labor_holidays', 'labor_contract',
+
+        # New debt
+        'newdebt_increase', 'newdebt_amount','newdebt_same_or_decrease',
+        'newdebt_cc', 'newdebt_bills', 'newdebt_short', 'newdebt_long',
+
+        # Savings
+        'save_increase', 'save_same_or_decrease', 'save_amount',
+        'save_accounts', 'save_lowrisk', 'save_risky',
+        'save_realestate', 'save_business', 'save_crypto',
+    ]
+
+def error_message(self, values):
+    def check(total, components):
+        if not total:
+            return True
+        alloc_sum = sum(v or 0 for v in components)
+        return abs(alloc_sum - total) < 1
+
+    checks = [
+        check(values['spend_amount'], [
+            values['spend_everyday'], values['spend_leisure'],
+            values['spend_services'], values['spend_durable']
+        ]),
+        check(values['debt_amount'], [
+            values['debt_cc'], values['debt_bills'],
+            values['debt_short'], values['debt_long']
+        ]),
+        check(values['newdebt_amount'], [
+            values['newdebt_cc'], values['newdebt_bills'],
+            values['newdebt_short'], values['newdebt_long']
+        ]),
+        check(values['save_amount'], [
+            values['save_accounts'], values['save_lowrisk'],
+            values['save_risky'], values['save_realestate'],
+            values['save_business'], values['save_crypto']
+        ]),
+    ]
+
+    if not all(checks):
+        return (
+            "Some allocations do not add up to the total amounts you entered. "
+            "Please correct them before continuing."
+        )
+
 
 class ElicitationT2(Page):
     form_model = 'player'
@@ -1415,8 +1563,11 @@ class ProlificBack(Page):
             completionlink=
             player.subsession.session.config['completionlink']
         )
-page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
+page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+
 #page_sequence =[Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]

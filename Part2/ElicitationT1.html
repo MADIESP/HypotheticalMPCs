@@ -1,0 +1,491 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+.content-box { max-width:1200px; margin:auto; padding:25px; }
+h2 { text-align:center; color:#c82333; margin-bottom:25px; }
+h5 { text-align:center; margin-bottom:25px; }
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-bottom:30px; }
+.grid-1 { display:grid; grid-template-columns:1fr; margin-bottom:30px; }
+
+.category-box {
+  border:1px solid #ddd;
+  padding:20px;
+  border-radius:6px;
+}
+
+.category-question {
+  font-size: 1.15em;
+  text-align:center;
+  margin-bottom: 12px;
+}
+
+.category-title {
+  color:#c82333;
+  font-weight:600;
+}
+
+.example-box {
+  background:#fdecea;
+  border-left:4px solid #f5c6cb;
+  padding:12px;
+  font-size:0.95em;
+  margin:14px 0;
+}
+
+.example-box ul { margin-left:18px; }
+
+.sub-box { margin-left:18px; margin-top:14px; }
+.hidden { display:none; }
+
+.alloc-input { max-width:200px; }
+
+.warning {
+  color:#721c24;
+  background:#f8d7da;
+  border-left:4px solid #c82333;
+  padding:10px;
+  font-size:0.95em;
+  font-weight:600;
+  margin-top:14px;
+}
+
+.balance-box {
+  margin-top:40px;
+  padding-top:18px;
+  border-top:1px solid #ccc;
+  font-size:1.1em;
+  text-align:center;
+}
+</style>
+
+<div class="content-box">
+<h2>Part 2 – Page 2/6</h2>
+<h2>Your answers</h2>
+
+<h5>
+Over the next <b>three months</b>, would the $1,000 payment cause you and your household to...
+</h5>
+
+<form method="post">
+
+<!-- ================= ROW 1 ================= -->
+<div class="grid-2">
+
+<!-- SPENDING -->
+<div class="category-box category" data-sign="-1" data-type="money">
+  <p class="category-question">
+    <b>increase</b> your <span class="category-title">spending on goods and services</span>?
+  </p>
+  {% formfield player.spend_increase label="" %}
+
+  <div class="sub-box same-decrease hidden">
+    <p>Would you therefore <b>keep your spending the same</b> or <b>decrease</b> it?</p>
+    {% formfield player.spend_same_or_decrease label="" %}
+  </div>
+
+  <div class="example-box">
+    <p><b>Examples of spending on goods and services:</b></p>
+    <ul>
+      <li><b>Everyday purchases</b> (e.g., food, personal care, health-related products)</li>
+      <li><b>Outings and leisure activities</b> (e.g., restaurants, entertainment, vacations)</li>
+      <li><b>Services provided by others</b> (e.g., babysitting, house-cleaning, tutoring)</li>
+      <li><b>Durable goods</b> (e.g., clothes, vehicles, furniture, appliances)</li>
+    </ul>
+  </div>
+
+  <div class="sub-box amount hidden">
+    <p><b>By how much</b> would this amount <b><span class="amount-direction"></span></b>?</p>
+    {% formfield player.spend_amount label="" %}
+  </div>
+
+  <div class="sub-box allocation hidden">
+    <p>How would you <b>allocate</b> this <b><span class="amount-direction"></span></b>?</p>
+
+    <p><b>Everyday purchases</b></p>
+    <div class="alloc-input">{% formfield player.spend_everyday label="" %}</div>
+
+    <p><b>Outings and leisure activities</b></p>
+    <div class="alloc-input">{% formfield player.spend_leisure label="" %}</div>
+
+    <p><b>Services provided by others</b></p>
+    <div class="alloc-input">{% formfield player.spend_services label="" %}</div>
+
+    <p><b>Durable goods</b></p>
+    <div class="alloc-input">{% formfield player.spend_durable label="" %}</div>
+
+    <div class="warning hidden">The amounts above do not add up to the total.</div>
+  </div>
+</div>
+
+<!-- DEBT REPAYMENT -->
+<div class="category-box category" data-sign="-1" data-type="money">
+  <p class="category-question">
+    <b>increase</b> the amount of <span class="category-title">debt that you repay</span>?
+  </p>
+  {% formfield player.debt_increase label="" %}
+
+  <div class="sub-box same-decrease hidden">
+    <p>Would you therefore keep this amount <b>the same </b> or <b>decrease</b> it?</p>
+    {% formfield player.debt_same_or_decrease label="" %}
+  </div>
+
+  <div class="example-box">
+    <p><b>Examples of debt repayment:</b></p>
+    <ul>
+      <li><b>Credit cards</b> (e.g., repaying a higher share of your balance)</li>
+      <li><b>Unpaid bills</b> (e.g., utilities, medical, legal bills)</li>
+      <li><b>Short-term loans</b> (e.g., payday loans)</li>
+      <li><b>Longer-term loans</b> (e.g., auto, student, mortgage loans)</li>
+    </ul>
+  </div>
+
+  <div class="sub-box amount hidden">
+    <p><b>By how much</b> would this amount <b><span class="amount-direction"></span></b>?</p>
+    {% formfield player.debt_amount label="" %}
+  </div>
+
+  <div class="sub-box allocation hidden">
+    <p>How would you <b>allocate</b> this <b><span class="amount-direction"></span></b>?</p>
+
+    <p><b>Credit cards</b></p>
+    <div class="alloc-input">{% formfield player.debt_cc label="" %}</div>
+
+    <p><b>Unpaid bills</b></p>
+    <div class="alloc-input">{% formfield player.debt_bills label="" %}</div>
+
+    <p><b>Short-term loans</b></p>
+    <div class="alloc-input">{% formfield player.debt_short label="" %}</div>
+
+    <p><b>Longer-term loans</b></p>
+    <div class="alloc-input">{% formfield player.debt_long label="" %}</div>
+
+    <div class="warning hidden">The amounts above do not add up to the total.</div>
+  </div>
+</div>
+</div>
+
+<!-- ================= ROW 2 ================= -->
+<div class="grid-2">
+
+<!-- LABOR -->
+<div class="category-box category" data-sign="+1" data-type="labor">
+  <p class="category-question">
+    <b>decrease</b> the <span class="category-title">time that you spend working</span>?
+  </p>
+  {% formfield player.labor_decrease label="" %}
+
+  <div class="sub-box same-increase hidden">
+    <p>Would you therefore <b>keep your working time the same</b> or <b>increase</b> it?</p>
+    {% formfield player.labor_same_or_increase label="" %}
+  </div>
+
+  <div class="example-box">
+    <p><b>Examples of changes in working time:</b></p>
+    <ul>
+      <li>Accepting fewer or more gigs</li>
+      <li>Working fewer or more extra hours</li>
+      <li>Taking more or fewer holidays</li>
+      <li>Negotiating a change in weekly hours</li>
+    </ul>
+  </div>
+
+  <div class="sub-box amount hidden">
+    <p class="labor-hours-text"></p>
+    <div style="display:flex; align-items:center; gap:8px;">
+      {% formfield player.labor_hours label="" %}
+      <span>hours</span>
+    </div>
+
+    <p>
+      What <b><span class="labor-direction"></span></b> in <b>labor income</b>
+      would this represent over the next three months?
+    </p>
+    {% formfield player.labor_income label="" %}
+  </div>
+
+  <div class="sub-box allocation hidden">
+    <p>How would you <b>allocate</b> this <span class="labor-direction"></span>?</p>
+
+    <p><b>Gigs, clients, or patients</b></p>
+    <div class="alloc-input">{% formfield player.labor_gigs label="" %}</div>
+
+    <p><b>Extra hours for employer</b></p>
+    <div class="alloc-input">{% formfield player.labor_overtime label="" %}</div>
+
+    <p><b>Holidays or leave</b></p>
+    <div class="alloc-input">{% formfield player.labor_holidays label="" %}</div>
+
+    <p><b>Negotiated weekly hours</b></p>
+    <div class="alloc-input">{% formfield player.labor_contract label="" %}</div>
+
+    <div class="warning hidden">The amounts above do not add up to the total.</div>
+  </div>
+</div>
+
+<!-- NEW DEBT -->
+<div class="category-box category" data-sign="+1" data-type="money">
+  <p class="category-question">
+    <b>increase</b> the amount of <span class="category-title">new debt</span> that you take on?
+  </p>
+  {% formfield player.newdebt_increase label="" %}
+
+  <div class="sub-box same-decrease hidden">
+    <p>
+      Would you therefore keep the amount of new debt <b>the same</b>
+      or <b>decrease</b> it?
+    </p>
+    {% formfield player.newdebt_same_or_decrease label="" %}
+  </div>
+
+  <div class="example-box">
+    <p><b>Examples of new debt:</b></p>
+    <ul>
+      <li><b>Credit cards</b> (e.g., carrying over a higher balance)</li>
+      <li><b>Unpaid bills</b> (e.g., leaving some bills unpaid)</li>
+      <li><b>Short-term loans</b> (e.g., taking out new payday loans)</li>
+      <li><b>Longer-term loans</b> (e.g., taking out new auto, student, or mortgage loans)</li>
+    </ul>
+    <p><i>Note: It is possible to both repay existing debt and take on new debt over the same period.</i></p>
+  </div>
+
+  <div class="sub-box amount hidden">
+    <p><b>By how much</b> would this amount <b><span class="amount-direction"></span></b>?</p>
+    {% formfield player.newdebt_amount label="" %}
+  </div>
+
+  <div class="sub-box allocation hidden">
+    <p>How would you <b>allocate</b> this <b><span class="amount-direction"></span></b>?</p>
+
+    <p><b>Credit cards</b></p>
+    <div class="alloc-input">{% formfield player.newdebt_cc label="" %}</div>
+
+    <p><b>Unpaid bills</b></p>
+    <div class="alloc-input">{% formfield player.newdebt_bills label="" %}</div>
+
+    <p><b>Short-term loans</b></p>
+    <div class="alloc-input">{% formfield player.newdebt_short label="" %}</div>
+
+    <p><b>Longer-term loans</b></p>
+    <div class="alloc-input">{% formfield player.newdebt_long label="" %}</div>
+
+    <div class="warning hidden">The amounts above do not add up to the total.</div>
+  </div>
+</div>
+</div>
+
+<!-- ================= ROW 3 ================= -->
+<div class="grid-1">
+
+<div class="category-box category" data-sign="-1" data-type="money">
+  <p class="category-question">
+    <b>increase</b> the money you put towards
+    <span class="category-title">savings or investments</span>?
+  </p>
+  {% formfield player.save_increase label="" %}
+
+  <div class="sub-box same-decrease hidden">
+    <p>Would you therefore keep this amount <b>the same</b> or <b>decrease</b> it?</p>
+    {% formfield player.save_same_or_decrease label="" %}
+  </div>
+
+  <div class="example-box">
+    <p><b>Examples of savings and investments:</b></p>
+    <ul>
+      <li>Saving and retirement accounts</li>
+      <li>Low-risk financial assets</li>
+      <li>Riskier financial assets</li>
+      <li>Real estate</li>
+      <li>Own business investments</li>
+      <li>Cryptocurrencies</li>
+    </ul>
+  </div>
+
+  <div class="sub-box amount hidden">
+    <p><b>By how much</b> would this amount <b><span class="amount-direction"></span></b>?</p>
+    {% formfield player.save_amount label="" %}
+  </div>
+
+  <div class="sub-box allocation hidden">
+    <p>How would you <b>allocate</b> this <b><span class="amount-direction"></span></b>?</p>
+
+    <p><b>Saving and retirement accounts</b></p>
+    <div class="alloc-input">{% formfield player.save_accounts label="" %}</div>
+
+    <p><b>Low-risk financial assets</b></p>
+    <div class="alloc-input">{% formfield player.save_lowrisk label="" %}</div>
+
+    <p><b>Riskier financial assets</b></p>
+    <div class="alloc-input">{% formfield player.save_risky label="" %}</div>
+
+    <p><b>Real estate</b></p>
+    <div class="alloc-input">{% formfield player.save_realestate label="" %}</div>
+
+    <p><b>Own business investments</b></p>
+    <div class="alloc-input">{% formfield player.save_business label="" %}</div>
+
+    <p><b>Cryptocurrencies</b></p>
+    <div class="alloc-input">{% formfield player.save_crypto label="" %}</div>
+
+    <div class="warning hidden">The amounts above do not add up to the total.</div>
+  </div>
+</div>
+</div>
+
+<div class="balance-box">
+Checking account balance:
+<b><span id="balance-sign">+</span>$<span id="balance">1000</span></b>
+</div>
+
+<!-- 🔧 ONLY CHANGE HERE -->
+<div style="text-align:center; margin-top:30px;">
+  <button id="submit-btn" class="btn btn-danger">
+    Submit
+  </button>
+</div>
+
+
+</form>
+</div>
+
+<script>
+let base = 1000;
+
+/* helpers */
+function sumAlloc(container){
+  let s = 0;
+  container.querySelectorAll('.alloc-input input').forEach(i=>{
+    if(i.value) s += parseFloat(i.value);
+  });
+  return s;
+}
+
+/* NEW helper */
+function updateSubmitButton(){
+  const btn = document.getElementById('submit-btn');
+  const anyWarningVisible = Array.from(
+    document.querySelectorAll('.warning')
+  ).some(w => !w.classList.contains('hidden'));
+
+  btn.disabled = anyWarningVisible;
+}
+
+/* wording */
+function setDirections(cat){
+  const yes = cat.querySelector('input[type=radio]:checked')?.value;
+  const dec = cat.querySelector('.same-decrease input:checked')?.value;
+  const inc = cat.querySelector('.same-increase input:checked')?.value;
+
+  cat.querySelectorAll('.amount-direction').forEach(span=>{
+    if(yes === 'yes') span.innerText = 'increase';
+    else if(dec === 'decrease') span.innerText = 'decrease';
+    else if(inc === 'increase') span.innerText = 'increase';
+    else span.innerText = '';
+  });
+}
+
+function setLaborText(cat){
+  const yes = cat.querySelector('input[type=radio]:checked')?.value;
+  const inc = cat.querySelector('.same-increase input:checked')?.value;
+  const hoursTxt = cat.querySelector('.labor-hours-text');
+  const incomeDir = cat.querySelector('.labor-direction');
+
+  if(yes === 'yes'){
+    hoursTxt.innerText = 'How many fewer hours would you work over the next three months?';
+    incomeDir.innerText = 'decrease';
+  } else if(inc === 'increase'){
+    hoursTxt.innerText = 'How many additional hours would you work over the next three months?';
+    incomeDir.innerText = 'increase';
+  }
+}
+
+/* visibility */
+function update(cat){
+  const yes = cat.querySelector('input[type=radio]:checked')?.value;
+  const sd = cat.querySelector('.same-decrease');
+  const si = cat.querySelector('.same-increase');
+  const amt = cat.querySelector('.amount');
+  const alloc = cat.querySelector('.allocation');
+
+  if(sd) sd.classList.toggle('hidden', yes !== 'no');
+  if(si) si.classList.toggle('hidden', yes !== 'no');
+
+  const showAmt =
+    yes === 'yes' ||
+    (sd && sd.querySelector('input[value=decrease]:checked')) ||
+    (si && si.querySelector('input[value=increase]:checked'));
+
+  amt.classList.toggle('hidden', !showAmt);
+  if(!showAmt) alloc.classList.add('hidden');
+}
+
+/* balance */
+function updateBalance(){
+  let t = 0;
+
+  document.querySelectorAll('.category').forEach(cat=>{
+    const amtInput = cat.querySelector('.amount input');
+    if(!amtInput || !amtInput.value) return;
+
+    const amount = parseFloat(amtInput.value);
+    if(isNaN(amount)) return;
+
+    // Determine direction from text already set by your logic
+    const direction = cat.querySelector('.amount-direction')?.innerText;
+
+    if(direction === 'increase'){
+      t -= amount;   // spending, saving, debt repayment reduce balance
+    } else if(direction === 'decrease'){
+      t += amount;   // opposite direction frees cash
+    }
+  });
+
+  const remaining = base + t;
+
+  const signEl = document.getElementById('balance-sign');
+  const valueEl = document.getElementById('balance');
+
+  if (remaining > 0) signEl.innerText = '+';
+  else if (remaining < 0) signEl.innerText = '−';
+  else signEl.innerText = '';
+
+  valueEl.innerText = Math.abs(remaining).toFixed(0);
+}
+
+/* listeners */
+document.querySelectorAll('.category').forEach(cat=>{
+  cat.addEventListener('change',()=>{
+    update(cat);
+    setDirections(cat);
+    setLaborText(cat);
+    updateBalance();
+    updateSubmitButton();
+  });
+});
+
+document.querySelectorAll('.amount input').forEach(inp=>{
+  inp.addEventListener('input',()=>{
+    const cat = inp.closest('.category');
+    const alloc = cat.querySelector('.allocation');
+    const warn = cat.querySelector('.warning');
+
+    alloc.classList.remove('hidden');
+
+    const allocSum = sumAlloc(alloc);
+    const anyFilled = Array.from(
+      alloc.querySelectorAll('.alloc-input input')
+    ).some(i => i.value && parseFloat(i.value) > 0);
+
+    warn.classList.toggle(
+      'hidden',
+      !anyFilled || Math.abs(allocSum - parseFloat(inp.value)) < 1
+    );
+
+    updateSubmitButton();
+    updateBalance();
+  });
+});
+</script>
+
+{% endblock %}
