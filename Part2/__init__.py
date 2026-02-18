@@ -23,11 +23,12 @@ class Player(BasePlayer):
 
     spend_increase = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
-        widget=widgets.RadioSelect
+        widget=widgets.RadioSelectHorizontal,
+        blank=True
     )
     spend_same_or_decrease = models.StringField(
         choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
-        widget=widgets.RadioSelect,
+        widget=widgets.RadioSelectHorizontal,
         blank=True
     )
     spend_amount = models.CurrencyField(blank=True)
@@ -75,12 +76,14 @@ class Player(BasePlayer):
     # ================= NEW DEBT =================
     newdebt_same_or_decrease = models.StringField(
     choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
-    widget=widgets.RadioSelect
+    widget=widgets.RadioSelect,
+        blank=True
     )
 
     newdebt_increase = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
-        widget=widgets.RadioSelect
+        widget=widgets.RadioSelect,
+        blank=True
     )
     newdebt_amount = models.CurrencyField(blank=True)
 
@@ -92,7 +95,8 @@ class Player(BasePlayer):
     # ================= SAVINGS =================
     save_increase = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
-        widget=widgets.RadioSelect
+        widget=widgets.RadioSelect,
+        blank=True
     )
     save_same_or_decrease = models.StringField(
         choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
