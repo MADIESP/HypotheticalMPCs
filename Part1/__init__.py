@@ -228,12 +228,12 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect
     )
 
-    financial_awareness = models.IntegerField(
-        label=" ",
-        choices=[[1, "Not at all informed"], [2, "Somewhat informed"], [3, "Very informed"],
-                 [4, "Extremely informed"]],
-        widget=widgets.RadioSelect
-    )
+    #financial_awareness = models.IntegerField(
+        #label=" ",
+       # choices=[[1, "Not at all informed"], [2, "Somewhat informed"], [3, "Very informed"],
+                 #[4, "Extremely informed"]],
+        #widget=widgets.RadioSelect
+    #)
 
     grocery_shopping = models.IntegerField(
         label="",
@@ -248,25 +248,24 @@ class Player(BasePlayer):
     )
 
 
-    has_cash = models.BooleanField(label="<b>Cash/checking accounts</b>")
-    has_savings = models.BooleanField(label="<b>Savings accounts</b>")
-    has_money_market = models.BooleanField(label="<b>Money market/CDs</b>")
-    has_stocks = models.BooleanField(label="<b>Stocks, bonds, or mutual funds</b>")
-    has_retirement = models.BooleanField(label="<b>Retirement accounts</b><br>"
-        "<span style='font-size:0.9em;'>(e.g., 401(k), IRA)</span>")
-    has_life_insurance = models.BooleanField(label="<b>Life insurance </b>")
+    #has_cash = models.BooleanField(label="<b>Cash/checking accounts</b>")
+    #has_savings = models.BooleanField(label="<b>Savings accounts</b>")
+    #has_money_market = models.BooleanField(label="<b>Money market/CDs</b>")
+    #has_stocks = models.BooleanField(label="<b>Stocks, bonds, or mutual funds</b>")
+    #has_retirement = models.BooleanField(label="<b>Retirement accounts</b><br>"
+       # "<span style='font-size:0.9em;'>(e.g., 401(k), IRA)</span>")
+   # has_life_insurance = models.BooleanField(label="<b>Life insurance </b>")
     #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>"
         #"<span style='font-size:0.9em;'>(other than primary residence)</span>")
-    has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
-    has_other_assets = models.BooleanField(label="<b>Other</b>")
+    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
+    #has_other_assets = models.BooleanField(label="<b>Other</b>")
 
-    debt_credit_card = models.BooleanField(label="<b>Credit card debt</b>")
-    debt_mortgage = models.BooleanField(label="<b>Mortgage/home equity loans</b>")
-    debt_auto = models.BooleanField(label="<b>Auto loans</b>")
-    debt_student = models.BooleanField(label="<b>Student loans</b>")
-    debt_personal = models.BooleanField(label="<b>Personal/other loans</b>")
-    debt_unpaid_bills = models.BooleanField(label="<b>Unpaid bills</b><br>"
-        "<span style='font-size:0.9em;'>(utilities, medical, legal, etc.)</span>")
+    debt_credit_card = models.BooleanField(label="<b>Credit card debt or other revolving credit</b>")
+    #debt_mortgage = models.BooleanField(label="<b>Mortgage/home equity loans</b>")
+    debt_loans = models.BooleanField(label="<b>Payday loans, other short-term loans, or money borrowed from friends or family</b>")
+    debt_bills = models.BooleanField(label="<b>Bills past due</b>")
+    debt_installment = models.BooleanField(label="<b>Installment loans</b><br>"
+        "<span style='font-size:0.9em;'>(eg., auto, personal or student loans.)</span>")
 
     fico_score = models.IntegerField(
         label="",
@@ -395,28 +394,15 @@ class Page3(Page):
     form_model = 'player'
     form_fields = [
         'financial_decision_making',
-        'financial_awareness',
         'grocery_shopping',
         'major_purchase',
 
 
-        # ---- New ASSET BooleanFields ----
-        'has_cash',
-        'has_savings',
-        'has_money_market',
-        'has_stocks',
-        'has_retirement',
-        'has_life_insurance',
-        'has_real_estate',
-        'has_other_assets',
-
         # ---- New DEBT BooleanFields ----
         'debt_credit_card',
-        'debt_mortgage',
-        'debt_auto',
-        'debt_student',
-        'debt_personal',
-        'debt_unpaid_bills',
+        'debt_installment',
+        'debt_bills',
+        'debt_loans',
 
         # ---- Remaining fields ----
         'fico_score',

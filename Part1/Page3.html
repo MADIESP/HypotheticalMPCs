@@ -69,81 +69,59 @@
         {% formfield player.financial_decision_making %}
     </div>
 
-    <!-- 2 -->
-    <div class="form-section">
-        <p><b>2.</b> How <b>informed</b> are you about where the <b>money in your household</b> comes from and what it is spent on?</p>
-        {% formfield player.financial_awareness %}
-    </div>
 
     <!-- 3 -->
     <div class="form-section">
-        <p><b>3.</b> Who did the <b>last grocery shopping</b> for your household?</p>
+        <p><b>2.</b> Who did the <b>last grocery shopping</b> for your household?</p>
         {% formfield player.grocery_shopping %}
     </div>
 
     <!-- 4 -->
     <div class="form-section">
-        <p><b>4.</b> Who made the <b>last major purchase</b> (costing more than $1,000) for your household?</p>
+        <p><b>3.</b> Who made the <b>last major purchase</b> (costing more than $1,000) for your household?</p>
         {% formfield player.major_purchase %}
-    </div>
-
-    <!-- 5 ASSETS -->
-    <div class="form-section">
-        <p><b>5.</b> Do you or your household currently hold the following types of <b>assets?</b></p>
-
-        <div class="centered-options">
-            {% formfield player.has_cash %}
-            {% formfield player.has_savings %}
-            {% formfield player.has_money_market %}
-            {% formfield player.has_stocks %}
-            {% formfield player.has_retirement %}
-            {% formfield player.has_life_insurance %}
-            {% formfield player.has_real_estate %}
-            {% formfield player.has_other_assets %}
-        </div>
     </div>
 
     <!-- 6 DEBTS -->
     <div class="form-section">
-        <p><b>6.</b> Do you or your household currently owe the following types of <b>debts?</b></p>
+        <p><b>4.</b> Do you or your household currently owe the following types of <b>debts?</b></p>
 
         <div class="centered-options">
             {% formfield player.debt_credit_card %}
-            {% formfield player.debt_mortgage %}
-            {% formfield player.debt_auto %}
-            {% formfield player.debt_student %}
-            {% formfield player.debt_personal %}
-            {% formfield player.debt_unpaid_bills %}
+            {% formfield player.debt_installment %}
+            {% formfield player.debt_bills %}
+            {% formfield player.debt_loans %}
         </div>
     </div>
 
     <!-- 7 -->
     <div class="form-section">
-        <p><b>7.</b> What is the <b>highest FICO credit score</b> in your household?</p>
+        <p><b>5.</b> What is the <b>highest FICO credit score</b> in your household?</p>
         {% formfield player.fico_score %}
     </div>
 
-    <!-- 8 -->
-    <div class="form-section">
-        <p><b>8.</b> How many of your <b>household’s bills</b> are usually overdue?</p>
-        {% formfield player.bill_payment_ability %}
-    </div>
 
     <!-- 9 -->
     <div class="form-section">
-        <p><b>9.</b> How often are you able to pay your household’s <b>credit card balances</b> in full?</p>
+        <p><b>6.</b> <b>How often </b> are you able to pay the full required amount on your household’s <b>credit cards or other revolving credit?</b> </p>
         {% formfield player.credit_card_payment %}
     </div>
 
     <!-- 10 -->
     <div class="form-section">
-        <p><b>10.</b> How often are you able to make your household’s <b>full rent, mortgage, or loan payments</b> on time?</p>
+        <p><b>7.</b> <b>How often </b> are you able to pay the full required amount on your household's <b>installment loans?</b> </p>
         {% formfield player.housing_payment %}
+    </div>
+
+     <!-- 8 -->
+    <div class="form-section">
+        <p><b>8.</b> How many of your <b>household’s bills</b> are usually overdue?</p>
+        {% formfield player.bill_payment_ability %}
     </div>
 
     <!-- 11 -->
     <div class="form-section">
-        <p><b>11.</b> Attention check: Please select “Agree” to continue.</p>
+        <p><b>9.</b> Attention check: Please select “Agree” to continue.</p>
         {% formfield player.attention1 %}
     </div>
 
