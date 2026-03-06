@@ -262,10 +262,10 @@ class Player(BasePlayer):
 
     debt_credit_card = models.BooleanField(label="<b>Credit card debt or other revolving credit</b>")
     #debt_mortgage = models.BooleanField(label="<b>Mortgage/home equity loans</b>")
-    debt_loans = models.BooleanField(label="<b>Payday loans, other short-term loans, or money borrowed from friends or family</b>")
-    debt_bills = models.BooleanField(label="<b>Bills past due</b>")
-    debt_installment = models.BooleanField(label="<b>Installment loans</b><br>"
-        "<span style='font-size:0.9em;'>(eg., auto, personal or student loans.)</span>")
+    debt_loans = models.BooleanField(label="<b>Payday loans or other short-term loans</b>")
+    debt_bills = models.BooleanField(label="<b>Overdue bills </b>")
+    debt_installment = models.BooleanField(label="<b>Installment loans</b><br>")
+        #"<span style='font-size:0.9em;'>(eg., auto, personal or student loans.)</span>")
 
     fico_score = models.IntegerField(
         label="",
