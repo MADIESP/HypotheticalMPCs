@@ -43,111 +43,127 @@
         display: block;
         margin: 30px auto 0 auto;
     }
+
+    /* --- FIXED SCALE STYLING --- */
+    .scale-section {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    .scale-section ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    .scale-section li {
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .scale-section label {
+        margin-right: 4px;
+    }
 </style>
 
 <h2> Part 1 - Page 1/3</h2>
 
-<p class="intro">
-    This first page is about <b>you personally.</b>
-</p>
+<!-- Age -->
+<div class="form-section">
+    <p><b>1.</b> What is your <b>age?</b></p>
+    {% formfield player.age %}
+</div>
 
-<form method="post">
+<!-- Gender -->
+<div class="form-section">
+    <p><b>2.</b> What is your <b>gender?</b></p>
+    {% formfield player.gender %}
+</div>
 
-    <!-- Age -->
-    <div class="form-section">
-        <p><b>1.</b> What is your <b>age?</b></p>
-        {% formfield player.age %}
+<!-- Ethnicity -->
+<div class="form-section">
+    <p><b>3.</b> How would you describe your <b>ethnicity/race?</b></p>
+    {% formfield player.ethnicity %}
+</div>
+
+<!-- Education -->
+<div class="form-section">
+    <p><b>4.</b> What is your highest level of <b>education?</b></p>
+    {% formfield player.education %}
+</div>
+
+<!-- Marital status -->
+<div class="form-section">
+    <p><b>5.</b> What is your <b>marital status?</b></p>
+    {% formfield player.marital_status %}
+</div>
+
+<!-- ZIP code -->
+<div class="form-section">
+    <p><b>6.</b> What is your current <b>ZIP code?</b></p>
+    {% formfield player.zip_code %}
+</div>
+
+<!-- Employment status -->
+<div class="form-section">
+    <p><b>7.</b> What is your current <b>employment status?</b></p>
+    {% formfield player.employment_status %}
+</div>
+
+<!-- Employed conditional fields -->
+<div id="employed_questions" class="form-section" style="display:none;">
+    <p><b>7.b.</b> Which category best describes your <b>main occupation?</b></p>
+    {% formfield player.occupation_employed %}
+
+    <div id="job_flex_hours" class="form-section">
+        <p><b>7.c.</b> How often are you able to <b>choose or change your work hours</b>?</p>
+        {% formfield player.job_flexibility_hours %}
     </div>
 
-    <!-- Gender -->
-    <div class="form-section">
-        <p><b>2.</b> What is your <b>gender?</b></p>
-        {% formfield player.gender %}
-    </div>
-
-    <!-- Ethnicity -->
-    <div class="form-section">
-        <p><b>3.</b> How would you describe your <b>ethnicity/race?</b></p>
-        {% formfield player.ethnicity %}
-    </div>
-
-    <!-- Education -->
-    <div class="form-section">
-        <p><b>4.</b> What is your highest level of <b>education?</b></p>
-        {% formfield player.education %}
-    </div>
-
-    <!-- Marital status -->
-    <div class="form-section">
-        <p><b>5.</b> What is your <b>marital status?</b></p>
-        {% formfield player.marital_status %}
-    </div>
-
-    <!-- ZIP code -->
-    <div class="form-section">
-        <p><b>6.</b> What is your current <b>ZIP code?</b></p>
-        {% formfield player.zip_code %}
-    </div>
-
-    <!-- Employment status -->
-    <div class="form-section">
-        <p><b>7.</b> What is your current <b>employment status?</b></p>
-        {% formfield player.employment_status %}
-    </div>
-
-    <!-- Employed conditional fields -->
-    <div id="employed_questions" class="form-section" style="display:none;">
-        <p><b>7.b.</b> Which category best describes your <b>main occupation?</b></p>
-        {% formfield player.occupation_employed %}
-
-        <div id="job_flex_hours" class="form-section">
-            <p><b>7.c.</b> To what extent can you <b>choose or change your work hours</b>?</p>
-            {% formfield player.job_flexibility_hours %}
-        </div>
-
-        <div id="job_flex_overtime" class="form-section">
-            <p>
-                <b>7.d.</b> Is it possible for you to take
-                <b>extra shifts, overtime, or additional hours</b>
-                on short notice?
-            </p>
-            {% formfield player.job_flexibility_overtime %}
-        </div>
-    </div>
-
-    <!-- Unemployed conditional field -->
-    <div id="unemployed_questions" class="form-section" style="display:none;">
-        <p><b>7.b.</b> Which category best describes your <b>most recent main occupation?</b></p>
-        {% formfield player.occupation_unemployed %}
-    </div>
-
-    <br>
-    <!-- Patience scale -->
-    <div class="form-section" style="max-width: 500px;">
+    <div id="job_flex_overtime" class="form-section">
         <p>
-            <b>8.</b> In general, how willing are you to
-            <b>give up something beneficial today</b>
-            in order to <b>benefit more in the future?</b>
+            <b>7.d.</b> Is it possible for you to take
+            <b>extra shifts, overtime, or additional hours</b>
+            on short notice?
         </p>
+        {% formfield player.job_flexibility_overtime %}
+    </div>
+</div>
 
+<!-- Unemployed conditional field -->
+<div id="unemployed_questions" class="form-section" style="display:none;">
+    <p><b>7.b.</b> Which category best describes your <b>most recent main occupation?</b></p>
+    {% formfield player.occupation_unemployed %}
+</div>
+
+<br>
+
+<!-- Patience scale -->
+<div class="form-section">
+    <p>
+        <b>8.</b> In general, how willing are you to
+        <b>give up something beneficial today</b>
+        in order to <b>benefit more in the future?</b>
+    </p>
+
+    <div class="scale-section">
         {% formfield player.patience_scale %}
-
     </div>
+</div>
 
-    <!-- Risk scale -->
-    <div class="form-section" style="max-width: 500px;">
-        <p>
-            <b>9.</b> In general, how willing are you to <b>take risks?</b>
-        </p>
+<!-- Risk scale -->
+<div class="form-section">
+    <p>
+        <b>9.</b> In general, how willing are you to <b>take risks?</b>
+    </p>
 
+    <div class="scale-section">
         {% formfield player.risk_scale %}
-
-
     </div>
+</div>
 
-    <button class="btn btn-danger btn-submit" type="submit">
-        Submit
-    </button>
+<button class="btn btn-danger btn-submit" type="submit">
+    Submit
+</button>
 
 </form>
 

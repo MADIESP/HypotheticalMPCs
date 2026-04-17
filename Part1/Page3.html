@@ -56,11 +56,11 @@
 </style>
 
 <h2> Part 1 - Page 3/3 </h2>
-
+<!--
 <p class="intro">
     This last page is about your household’s <b>financial decisions and attitudes toward money</b>.
 </p>
-
+-->
 <form method="post">
 
     <!-- 1 -->
@@ -70,58 +70,44 @@
     </div>
 
 
-    <!-- 3 -->
-    <div class="form-section">
-        <p><b>2.</b> Who did the <b>last grocery shopping</b> for your household?</p>
-        {% formfield player.grocery_shopping %}
-    </div>
 
-    <!-- 4 -->
-    <div class="form-section">
-        <p><b>3.</b> Who made the <b>last major purchase</b> (costing more than $1,000) for your household?</p>
-        {% formfield player.major_purchase %}
-    </div>
 
-    <!-- 6 DEBTS -->
-    <div class="form-section">
-        <p><b>4.</b> Do you or your household currently owe the following types of <b>debts?</b></p>
 
-        <div class="centered-options">
-            {% formfield player.debt_credit_card %}
-            {% formfield player.debt_installment %}
-            {% formfield player.debt_bills %}
-            {% formfield player.debt_loans %}
-        </div>
-    </div>
 
     <!-- 7 -->
     <div class="form-section">
-        <p><b>5.</b> What is the <b>highest FICO credit score</b> in your household?</p>
+        <p><b>2.</b> What is the <b>highest FICO credit score</b> in your household?</p>
         {% formfield player.fico_score %}
     </div>
 
 
     <!-- 9 -->
     <div class="form-section">
-        <p><b>6.</b> <b>How often </b> are you able to pay the full required amount on your household’s <b>credit cards or other revolving credit?</b> </p>
+        <p><b>3.</b> <b>How often </b> does your household <b> pay</b> the full  amount due on its<b> credit cards or other revolving credit? </b> </p>
         {% formfield player.credit_card_payment %}
     </div>
 
     <!-- 10 -->
     <div class="form-section">
-        <p><b>7.</b> <b>How often </b> are you able to pay the full required amount on your household's <b>installment loans?</b> </p>
-        {% formfield player.housing_payment %}
+        <p><b>4.</b> <b>How often </b> does your household <b> pay </b> the full amount due on its <b>installment loans</b> (e.g., auto, student, or personal loans)? </p>
+        {% formfield player.installment_payment %}
+    </div>
+
+     <!-- 10 -->
+    <div class="form-section">
+        <p><b>5.</b> <b>How often </b> does your household   <b> pay </b>  the full amount due on its<b> payday or other short-term loans</b>? </p>
+        {% formfield player.payday_payment %}
     </div>
 
      <!-- 8 -->
     <div class="form-section">
-        <p><b>8.</b> How many of your <b>household’s bills</b> are usually overdue?</p>
+        <p><b>6.</b> <b>How often</b> does your household <b>pay </b> its bills on time?</p>
         {% formfield player.bill_payment_ability %}
     </div>
 
     <!-- 11 -->
     <div class="form-section">
-        <p><b>9.</b> Attention check: Please select “Agree” to continue.</p>
+        <p><b>7.</b> Attention check: Please select “Agree” to continue.</p>
         {% formfield player.attention1 %}
     </div>
 

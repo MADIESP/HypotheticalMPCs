@@ -21,6 +21,13 @@ class Group(BaseGroup):
 class Player(BasePlayer):
 
 
+    consent = models.BooleanField(
+        label="<b>I agree </b> to participate in this study.",
+        blank=False,
+        widget = widgets.CheckboxInput
+    )
+
+
     prolific_id = models.StringField(
         label=""
         ,
@@ -68,19 +75,27 @@ class Player(BasePlayer):
     )
 
     occupation_employed = models.IntegerField(
-        label="",
-        choices=[[1, "Management, business, and financial occupations"], [2, "Professional, scientific and cultural occupations"], [3, "Service (healthcare support, safety, food service, cleaning and maintenance, personal care)"],
-                 [4, "Sales and related occupations"], [5, "Office and administrative support"],
-                 [6, "Farming, fishing, and forestry"],
-                 [7, "Construction and natural resource extraction"], [8, "Installation, maintenance, and repair"],
-                 [9, "Production"], [10, "Transportation and material moving"], [11, "Armed Forces"]],
+        label=" ",
+        choices=[
+            [1, "Management, professional, and technical"],
+            [2, "Service"],
+            [3, "Sales and administrative"],
+            [4, "Manual and skilled trades"],
+            [5, "Transportation and logistics"],
+            [6, "Other occupations"]
+        ],
         blank=True,
         widget=widgets.RadioSelect
     )
 
     job_flexibility_hours = models.IntegerField(
         label="",
-        choices=[[1, "Not at all"], [2, "A little"], [3, "Somewhat"], [4, "A lot"], [5, "Completely"]],
+        choices=[
+            [1, "Never"],
+            [2, "Rarely"],
+            [3, "Sometimes"],
+            [4, "Frequently"]
+        ],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
@@ -94,11 +109,14 @@ class Player(BasePlayer):
 
     occupation_unemployed = models.IntegerField(
         label=" ",
-        choices=[[1, "Management, business, and financial occupations"], [2, "Professional, scientific and cultural occupations"], [3, "Service (healthcare support, safety, food service, cleaning and maintenance, personal care)"],
-                 [4, "Sales and related occupations"], [5, "Office and administrative support"],
-                 [6, "Farming, fishing, and forestry"],
-                 [7, "Construction and natural resource extraction"], [8, "Installation, maintenance, and repair"],
-                 [9, "Production"], [10, "Transportation and material moving"], [11, "Armed Forces"]],
+        choices=[
+            [1, "Management, professional, and technical"],
+            [2, "Service"],
+            [3, "Sales and administrative"],
+            [4, "Manual and skilled trades"],
+            [5, "Transportation and logistics"],
+            [6, "Other occupations"]
+        ],
         blank=True,
         widget=widgets.RadioSelect
     )
@@ -106,16 +124,16 @@ class Player(BasePlayer):
     patience_scale = models.IntegerField(
         label="",
         choices=[[0, "0 (Completely unwilling) "],[1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
-                 [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 (Very willing)"]],
-        widget=widgets.RadioSelect,
+                 [6, "6 (Very willing)"]],
+        widget=widgets.RadioSelectHorizontal,
         blank=True
     )
 
     risk_scale = models.IntegerField(
         label="",
         choices=[[0, "0 (Completely unwilling)"], [1, "1"], [2, "2"], [3, "3"], [4, "4"], [5, "5"],
-                 [6, "6"], [7, "7"], [8, "8"], [9, "9"], [10, "10 (Very willing)"]],
-        widget=widgets.RadioSelect,
+                 [6, "6 (Very willing)"]],
+        widget=widgets.RadioSelectHorizontal,
         blank=True
     )
 
@@ -185,11 +203,9 @@ class Player(BasePlayer):
     household_income_bracket = models.IntegerField(
         label="",
 
-        choices=[[1, "$0–$9,999"], [2, "$10,000–$14,999"], [3, "$15,000–$19,999"],
-                 [4, "$20,000–$29,999"], [5, "$30,000–$39,999"], [6, "$40,000–$49,999"],
-                 [7, "$50,000–$69,999"], [8, "$70,000–$79,999"], [9, "$80,000–$99,999"],
-                 [10, "$100,000–$109,999"], [11, "$110,000–$124,999"], [12, "$125,000–$199,999"],
-                 [13, "$200,000 or more"]],
+        choices=[[1, "Less than 15.000"], [2, "Between 15.000 and 25.000"], [3, "Between 25.000 and 50.000"],
+                 [4, "Between 50.000 and 75.000"], [5, "Between 75.000 and 100.000"], [6, "Between 100.000 and 150.000"],
+                 [7, "Between 150.000 and 200.000"], [8, "More than 200.000"]],
         blank=True
     )
 
@@ -235,37 +251,18 @@ class Player(BasePlayer):
         #widget=widgets.RadioSelect
     #)
 
-    grocery_shopping = models.IntegerField(
-        label="",
-        choices=[[1, "I did the shopping alone "], [2, "I did the shopping with someone else"], [3, "Someone else did the shopping without me"]],
-        widget=widgets.RadioSelect
-    )
+   # grocery_shopping = models.IntegerField(
+      #  label="",
+      #  choices=[[1, "I did the shopping alone "], [2, "I did the shopping with someone else"], [3, "Someone else did the shopping without me"]],
+      #  widget=widgets.RadioSelect
+   # )
 
-    major_purchase = models.IntegerField(
-        label="",
-        choices=[[1, "I made the purchase alone"], [2, "I made the purchase with someone else"], [3, "Someone else made the purchase without me"]],
-        widget=widgets.RadioSelect
-    )
+   # major_purchase = models.IntegerField(
+      #  label="",
+      #  choices=[[1, "I made the purchase alone"], [2, "I made the purchase with someone else"], [3, "Someone else made the purchase without me"]],
+       # widget=widgets.RadioSelect
+  #  )
 
-
-    #has_cash = models.BooleanField(label="<b>Cash/checking accounts</b>")
-    #has_savings = models.BooleanField(label="<b>Savings accounts</b>")
-    #has_money_market = models.BooleanField(label="<b>Money market/CDs</b>")
-    #has_stocks = models.BooleanField(label="<b>Stocks, bonds, or mutual funds</b>")
-    #has_retirement = models.BooleanField(label="<b>Retirement accounts</b><br>"
-       # "<span style='font-size:0.9em;'>(e.g., 401(k), IRA)</span>")
-   # has_life_insurance = models.BooleanField(label="<b>Life insurance </b>")
-    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>"
-        #"<span style='font-size:0.9em;'>(other than primary residence)</span>")
-    #has_real_estate = models.BooleanField(label="<b>Real estate</b><br>")
-    #has_other_assets = models.BooleanField(label="<b>Other</b>")
-
-    debt_credit_card = models.BooleanField(label="<b>Credit card debt or other revolving credit</b>")
-    #debt_mortgage = models.BooleanField(label="<b>Mortgage/home equity loans</b>")
-    debt_loans = models.BooleanField(label="<b>Payday loans or other short-term loans</b>")
-    debt_bills = models.BooleanField(label="<b>Overdue bills </b>")
-    debt_installment = models.BooleanField(label="<b>Installment loans</b><br>")
-        #"<span style='font-size:0.9em;'>(eg., auto, personal or student loans.)</span>")
 
     fico_score = models.IntegerField(
         label="",
@@ -276,24 +273,30 @@ class Player(BasePlayer):
     bill_payment_ability = models.IntegerField(
         label="",
         choices=[
-            [1, "None - all bills are paid on time"],
-            [2, "A few are overdue, all by less than a month"],
-            [3, "A few are overdue, including some by more than a month"],
-            [4, "Around half are overdue"],
-            [5, "Most are overdue"]
+            [1, "Often"],
+            [2, "Sometimes"],
+            [3, "Rarely"],
+            [4, "Never"],
         ],
         widget=widgets.RadioSelect
     )
 
     credit_card_payment = models.IntegerField(
         label="",
-        choices=[[1, "Always"], [2, "Most months"], [3, "Some months"], [4, "Almost never"], [5, "Never"]],
+        choices=[[1, "Not applicable (no credit cards or revolving credit)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"], [5, "Never"]],
         widget=widgets.RadioSelect
     )
 
-    housing_payment = models.IntegerField(
+    installment_payment = models.IntegerField(
         label="",
-        choices=[[1, "Always"], [2, "Most months"], [3, "Some months"], [4, "Almost never"], [5, "Never"]],
+        choices=[[1, "Not applicable (no installment loans)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"], [5, "Never"]],
+        widget=widgets.RadioSelect
+    )
+
+    payday_payment = models.IntegerField(
+        label="",
+        choices=[[1, "Not applicable (no payday or short-term loans)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"],
+                 [5, "Never"]],
         widget=widgets.RadioSelect
     )
 
@@ -330,7 +333,7 @@ def covid_stimulus(player):
 
 class Instructions(Page):
     form_model = 'player'
-    form_fields = ['prolific_id']
+    form_fields = ['prolific_id','consent']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -394,21 +397,14 @@ class Page3(Page):
     form_model = 'player'
     form_fields = [
         'financial_decision_making',
-        'grocery_shopping',
-        'major_purchase',
 
-
-        # ---- New DEBT BooleanFields ----
-        'debt_credit_card',
-        'debt_installment',
-        'debt_bills',
-        'debt_loans',
 
         # ---- Remaining fields ----
         'fico_score',
         'bill_payment_ability',
         'credit_card_payment',
-        'housing_payment',
+        'installment_payment',
+        'payday_payment',
         'attention1'
     ]
 
@@ -416,5 +412,5 @@ class Page3(Page):
 
 
 
-page_sequence = [Instructions, InstructionsT2, InstructionsPart1, Page1, Page2,Page3]
+page_sequence = [Instructions, InstructionsT2,  Page1, Page2,Page3]
 #page_sequence = [ Page1, Page2]
