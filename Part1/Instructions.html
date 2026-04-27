@@ -50,20 +50,29 @@
     <li><strong>Part 3:</strong> A task in which you’ll be asked to categorize different actions.</li>
 </ul>
 
-<!-- CONSENT + ID BLOCK -->
-<div class="center-block">
+<div style="font-size: 0.8em; text-align: justify; line-height: 1.5; max-width: 700px; margin: 0 auto; color: #555;">
 
-    <p style="font-size: 1.1em; text-align: center;">
-        Participation is voluntary and your answers are confidential.
+    <p style="margin-bottom: 8px;">
+        Participation is voluntary. You may stop at any time by returning your submission on Prolific; however, only completed submissions can be approved for payment.
     </p>
 
-    <!-- CONSENT CHECKBOX -->
-    <div style="margin-top: 10px; display: flex; justify-content: center;">
-        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 1.1em;">
-            {{ form.consent }}
-            <span><b>I agree</b> to participate in this study</span>
-        </label>
-    </div>
+    <p style="margin-bottom: 8px;">
+        Your responses will be kept confidential and used for academic research only.
+    </p>
+
+    <p style="margin-bottom: 0;">
+        We will not collect identifying information beyond your Prolific ID, which is used only for payment and will not be linked to your responses.
+    </p>
+
+</div>
+
+   <!-- CONSENT CHECKBOX -->
+<div style="margin-top: 10px; display: flex; justify-content: center;">
+    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 1.1em;">
+        {{ form.consent }}
+        <span><b>I consent</b> to participate and allow my responses to be used for academic research.</span>
+    </label>
+</div>
 
     <!-- PROLIFIC ID -->
     <p style="margin-top: 20px; text-align: center;">

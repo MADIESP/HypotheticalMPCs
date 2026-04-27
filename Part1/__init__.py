@@ -35,7 +35,7 @@ class Player(BasePlayer):
     )
 
     # --- Page 1: Individual information ---
-    age = models.FloatField(label="", max=99)
+    #age = models.FloatField(label="", max=99)
 
     gender = models.IntegerField(
         label="",
@@ -43,12 +43,12 @@ class Player(BasePlayer):
         widget=widgets.RadioSelectHorizontal
     )
 
-    ethnicity = models.IntegerField(
-        label="",
-        choices=[[1, "White"], [2, "African American/Black"], [3, "Hispanic/Latino"],
-                 [4, "Asian/Asian American"], [5, "Mixed race"], [6, "Other"]],
-        widget=widgets.RadioSelect
-    )
+    #ethnicity = models.IntegerField(
+        #label="",
+        #choices=[[1, "White"], [2, "African American/Black"], [3, "Hispanic/Latino"],
+                 #[4, "Asian/Asian American"], [5, "Mixed race"], [6, "Other"]],
+       # widget=widgets.RadioSelect
+    #)
 
     education = models.IntegerField(
         label="",
@@ -69,8 +69,8 @@ class Player(BasePlayer):
     employment_status = models.IntegerField(
         label="",
         choices=[[1, "Full-time employee"], [2, "Part-time employee"], [3, "Self-employed or small business owner"],
-                 [4, "Unemployed and looking for work"], [5, "Temporarily laid off"], [6, "Student"],
-                 [7, "Not currently working and not looking for work"], [8, "Retiree"]],
+                 [4, "Unemployed and looking for work"], [5, "Student"],
+                 [6, "Not currently working and not looking for work"], [7, "Retiree"]],
         widget=widgets.RadioSelect
     )
 
@@ -102,7 +102,7 @@ class Player(BasePlayer):
 
     job_flexibility_overtime = models.IntegerField(
         label="",
-        choices=[[1, "No"], [2, "Yes, but rarely"], [3, "Yes, sometimes"], [4, "Yes, frequently"]],
+        choices=[[1, "Never"], [2, "Rarely"], [3, "Sometimes"], [4, "Frequently"]],
         blank=True,
         widget=widgets.RadioSelectHorizontal
     )
@@ -360,7 +360,7 @@ class InstructionsPart1(Page):
 
 class Page1(Page):
     form_model = 'player'
-    form_fields = ['age','gender','ethnicity','education','marital_status','zip_code','employment_status', 'occupation_employed','occupation_unemployed',
+    form_fields = ['gender','education','marital_status','zip_code','employment_status', 'occupation_employed','occupation_unemployed',
                 'job_flexibility_hours','job_flexibility_overtime','patience_scale','risk_scale' ]
 
     def before_next_page(player, timeout_happened):
