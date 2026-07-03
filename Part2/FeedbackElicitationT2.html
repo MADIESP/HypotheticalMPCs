@@ -7,79 +7,202 @@
     margin-bottom: 25px;
     color: #c82333;
   }
+
   p.intro {
-        text-align: center;
-        max-width: 700px;
-        margin: 0 auto 20px auto;
-        font-size: 1.1em;
-        line-height: 1.5;
-    }
-  h6 { text-align: center; margin-bottom: 20px; font-size:22px; }
-  .question-block { margin-bottom: 25px; }
-  .slider-label { font-weight: bold; margin-bottom: 8px; }
-  .scale-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9em;
-      margin-top: -8px;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 20px auto;
+    font-size: 1.1em;
+    line-height: 1.5;
   }
-  .radio-block { margin-top: 25px; }
-  #specify-field { display: none; margin-top: 10px; }
+
+  .section-title {
+    text-align: center;
+    margin: 30px 0 18px 0;
+    color: #c82333;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  .question-block {
+    margin-bottom: 25px;
+  }
+
+  .radio-block {
+    margin-top: 25px;
+  }
+
+  #specify-field {
+    display: none;
+    margin-top: 10px;
+  }
+
+  #q2-field,
+  #explain-field {
+    display: none;
+    margin-top: 15px;
+  }
+
+  .question-label {
+    font-size: 1.05em;
+    text-align: center;
+    display: block;
+    margin: 25px 0 15px 0;
+  }
+
+  .otree-form-field .controls {
+    text-align: center;
+  }
 </style>
 
-<h2> Part 2 - Page 3/6  </h2>
+<h2>Part 2 - Page 3/3</h2>
 
+<div class="section-title">Feedback questions</div>
 
+<p class="intro">For questions 1 and 2 below, please answer on a <b>scale from 0 to 10:</b></p>
+<p class="intro"><b>0 = Not difficult at all</b></p>
+<p class="intro"><b>10 = Extremely difficult</b></p>
 
-
-<p class="intro">For questions 1 and 2 below, please answer on a <b>scale from 0 to 10:</b> </p>
-<p class="intro"> <b> 0 =  Not difficult at all </b> </p>
-<p class="intro"> <b>10 =  Extremely difficult </b> </p>
-
-<div class="question-block" >
+<div class="question-block">
   <b>1.</b> How difficult was it to <b>understand the different categories?</b>
   {{ formfield 'understanding_difficulty' }}
 </div>
 
-  <!-- Treatment 1 wording -->
-  <div class="question-block" >
-    <b>2.</b> How difficult was it to <b>remember how you used</b>  the covid stimulus payment?
-    {{ formfield 'mental_effort' }}
-  </div>
+<div class="question-block">
+  <b>2.</b> How difficult was it to <b>remember how the Covid stimulus payment changed your behavior</b> across these categories?
+  {{ formfield 'mental_effort' }}
+</div>
 
-  <div class="radio-block" >
-    <b>3.</b>  Attention check: Please select “Slightly concerned” to continue.
-    {{ formfield 'attention2' }}
-  </div>
+<div class="radio-block">
+  <b>3.</b> Attention check: Please select "Slightly concerned" to continue.
+  {{ formfield 'attention2' }}
+</div>
 
-  <div class="radio-block" >
-    <b>4.</b> Did the categories presented <b>cover all the ways</b> you and your household <b>used this payment,</b> or were there expenses that you found <b> difficult to classify?</b>
-    {{ formfield 'categories_cover' }}
-  </div>
+<div class="radio-block">
+  <b>4.</b> Did the categories presented <b>cover all the ways</b> you and your household <b>used this payment,</b> or were there expenses that you found <b>difficult to classify?</b>
+  {{ formfield 'categories_cover' }}
+</div>
 
-
-<div id="specify-field" >
+<div id="specify-field">
   {{ formfield 'categories_specify' }}
 </div>
 
-<br>
-<button class="btn btn-danger custom-submit" style="display: block; margin: 0 auto;">Submit</button>
+<div class="section-title">How you received the payment</div>
+
+<p class="intro">
+  Earlier you reported that you and your household received a Covid stimulus payment of
+  <b>${{ participant.stimulus_amount }}</b>.
+</p>
+
+<div class="question-block">
+  <label class="question-label">
+    <b>5.</b> On which <b>bank account</b> was the payment deposited?
+  </label>
+  {{ formfield 'deposit_account' }}
+</div>
+
+<div id="q2-field" class="question-block">
+  <label class="question-label">
+    <b>6.</b> Do you think your <b>use of the payment</b> would have been <b>different</b> if the
+    ${{ participant.stimulus_amount }} had been deposited directly into your
+    <b>personal account</b> and could not be accessed by other household members?
+  </label>
+  {{ formfield 'payment_different_if_personal' }}
+</div>
+
+<div id="explain-field">
+  {{ formfield 'payment_different_explain' }}
+</div>
+
+<button class="btn btn-danger custom-submit" style="display:block; margin:20px auto;">
+  Submit
+</button>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const radios = document.querySelectorAll("input[name=categories_cover]");
   const specifyDiv = document.getElementById("specify-field");
+  const specifyTextarea = document.querySelector("textarea[name=categories_specify]");
 
-  radios.forEach(r => {
-    r.addEventListener("change", function() {
+  radios.forEach(radio => {
+    radio.addEventListener("change", function() {
       if (this.value === "1") {
         specifyDiv.style.display = "block";
       } else {
         specifyDiv.style.display = "none";
-        document.querySelector("textarea[name=categories_specify]").value = "";
+        if (specifyTextarea) specifyTextarea.value = "";
       }
     });
   });
+
+  const q2Field = document.getElementById("q2-field");
+  const explainField = document.getElementById("explain-field");
+
+  function getCheckedValue(name) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : null;
+  }
+
+  function showElement(el) {
+    if (el) el.style.display = "block";
+  }
+
+  function hideElement(el) {
+    if (el) el.style.display = "none";
+  }
+
+  function clearInputsInside(el) {
+    if (!el) return;
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach(i => {
+      if (i.type === "radio" || i.type === "checkbox") {
+        i.checked = false;
+      } else {
+        i.value = "";
+      }
+    });
+  }
+
+  function updateQ2Visibility() {
+    const depVal = getCheckedValue("deposit_account");
+
+    if (depVal !== null && ["2", "3", "4", "2.0", "3.0", "4.0"].includes(depVal)) {
+      showElement(q2Field);
+    } else {
+      hideElement(q2Field);
+      hideElement(explainField);
+      clearInputsInside(q2Field);
+      clearInputsInside(explainField);
+    }
+  }
+
+  function updateExplainVisibility() {
+    const diffVal = getCheckedValue("payment_different_if_personal");
+    const isYes =
+      diffVal !== null &&
+      (diffVal === "1" || diffVal.toLowerCase?.() === "yes");
+
+    if (isYes) {
+      showElement(explainField);
+    } else {
+      hideElement(explainField);
+      clearInputsInside(explainField);
+    }
+  }
+
+  document.addEventListener("change", function(e) {
+    if (e.target && e.target.name === "deposit_account") {
+      updateQ2Visibility();
+      updateExplainVisibility();
+    }
+
+    if (e.target && e.target.name === "payment_different_if_personal") {
+      updateExplainVisibility();
+    }
+  });
+
+  updateQ2Visibility();
+  updateExplainVisibility();
 });
 </script>
 

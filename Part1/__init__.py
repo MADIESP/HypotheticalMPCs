@@ -345,7 +345,7 @@ class Instructions(Page):
 
 class InstructionsT2(Page):
     form_model = 'player'
-    form_fields = ['prolific_id']
+    form_fields = ['prolific_id','consent']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -385,6 +385,33 @@ class Page2(Page):
 
         if values['household_income_bracket'] is None:
             return "Please select your household income bracket."
+
+        income = values['household_income_exact']
+        bracket = values['household_income_bracket']
+        if income is not None:
+            if income < 0:
+                return "Please enter a positive amount for your household income."
+
+            income_ranges = {
+                1: (0, 15000, False),
+                2: (15000, 25000, True),
+                3: (25000, 50000, True),
+                4: (50000, 75000, True),
+                5: (75000, 100000, True),
+                6: (100000, 150000, True),
+                7: (150000, 200000, True),
+                8: (200000, None, False),
+            }
+            lower, upper, include_upper = income_ranges[bracket]
+            fits_lower = income >= lower
+            fits_upper = True if upper is None else (income <= upper if include_upper else income < upper)
+
+            if not (fits_lower and fits_upper):
+                return (
+                    "The precise income you entered in Question 5 does not fit "
+                    "the income bracket you selected in Question 4. Please update "
+                    "either the bracket or the amount."
+                )
 
 
     def before_next_page(player, timeout_happened):

@@ -15,25 +15,9 @@
         margin-bottom: 10px;
     }
 
-    .end-container h3 {
-        margin-top: 30px;
-        margin-bottom: 20px;
-        font-weight: normal;
-    }
-
-    .payoff {
-        font-size: 1.1em;
-        margin: 8px 0;
-    }
-
-    .total {
-        font-size: 1.4em;
-        font-weight: bold;
-        margin-top: 25px;
-    }
-     .amount {
-        color: #c00000;   /* dark red, readable */
-        font-weight: bold;
+    p {
+        font-size: 1.05em;
+        line-height: 1.6;
     }
 </style>
 
@@ -42,26 +26,13 @@
     <h2>The survey is now over</h2>
     <h2>Thank you for your participation!</h2>
 
-    <div class="total">
-        You will receive a total of   <span class="amount">{{ participant.payoff }}</span>
-    </div>
-
-    <br>
-    <h4>Payment breakdown</h4>
-
-    <p class="payoff"><span class="amount">$2</span> for participating in the experiment</p>
-    <p class="payoff">
-        <span class="amount">+${{ participant.payoff_questions }}</span> for answering
-        {{ participant.payoff_questions }} question(s) correctly in part 3
+    <p>
+        Please click Next to return to Prolific and receive your payment.
     </p>
-
-    <p> Please click Next to return to Prolific and receive your payment.</p>
 
     <button class="btn btn-danger btn-submit" type="submit">
         Next
     </button>
 </div>
-
-
 
 {% endblock %}

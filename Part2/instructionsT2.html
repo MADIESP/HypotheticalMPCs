@@ -2,118 +2,87 @@
 {% block content %}
 
 <style>
-    .content-box {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px 30px;
-    }
+  .content-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
 
-    h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #c82333;
-    }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #c82333;
+  }
 
-    p {
-        text-align: justify;
-        font-size: 1.05em;
-        line-height: 1.6;
-        margin-bottom: 15px;
-    }
+  h4 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #c82333;
+  }
 
-    ul {
-        list-style-type: none;
-        padding-left: 0;
-    }
+  p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
 
-    li {
-        margin-bottom: 25px;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-    }
+  .example-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ccc;
+    padding: 12px 15px;
+    margin: 18px 0;
+    font-size: 1.05em;
+    color: #555;
+  }
 
-    /* LIGHT RED HEADERS */
-    .header {
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.15em;
-        margin-bottom: 10px;
-        padding: 8px;
-        background-color: #f8d7da;
-        color: #721c24;
-        border-radius: 5px;
-    }
+  .example-box ul {
+    margin: 8px 0 0 20px;
+    padding: 0;
+  }
 
-    .btn-container {
-        text-align: center;
-        margin-top: 30px;
-    }
+  .example-box li {
+    margin-bottom: 8px;
+  }
+
+  .btn-container {
+    text-align: center;
+    margin-top: 30px;
+  }
 </style>
 
 <div class="content-box">
 
-    <h2>Part 2 - Page 1/6</h2>
+  <h2>Part 2 - Page 1/3</h2>
+  <h4>Covid stimulus payment</h4>
 
-    <h2>Instructions</h2>
+  <p>
+    You reported that you and your household received a Covid stimulus payment of
+    <b>${{ participant.stimulus_amount }}</b>.
+  </p>
 
-    <p> You reported that you and your household received a Covid stimulus check of <b> ${{participant.stimulus_amount}}. </b> </p>
+  <p>
+    We ask you to think about how you and your household
+    <b>used this money</b> over the <b>next three months</b>,
+    <b>compared to</b> what you would have done <b>if you had not received the payment</b>.
+  </p>
 
-
+  <div class="example-box">
     <p>
-        We'll ask you to think about how you and your household  used this extra money over the
-        <strong>next three months</strong>, <b>compared with</b> what you would have done <strong>if you had not </strong>
-         received the payment.
+      <b>The payment could have affected your household's financial and work-related decisions, such as:</b>
     </p>
-
-    <p>In particular, with this <b>extra money, </b> you and your household could have:</p>
-
     <ul>
-        <li>
-            <div class="header">Changed your working time and earnings</div>
-            <p>You could have changed the <b>number of hours</b> you worked, the
-            <b>work opportunities</b> you pursued, or the <b>gig economy jobs</b> that you accepted, which affected both your <b>free time</b> and your <b>earnings.</b></p>
-        </li>
-
-        <li>
-            <div class="header">Changed your debt repayment</div>
-            <p>You could have changed the <b>amount of debt you repayed</b> (e.g., credit card debt, mortgages, loans, unpaid bills). </p>
-        </li>
-
-        <li>
-            <div class="header">Changed your uptake of new debt</div>
-            <p>You could have changed the amount of <b>new debt you took on</b>
-            (e.g., credit card debt, mortgages, loans, unpaid bills)
-            to <b>finance extra</b> spending, investments and assets.</p>
-        </li>
-
-        <li>
-            <div class="header">Changed your spending</div>
-            <p>You could have changed your consumption of <strong>nondurable goods</strong>
-            (e.g., food, clothes, entertainment),
-            <strong>durable goods</strong> (e.g., vehicles, furniture),
-            and <strong>services</strong> (e.g., babysitting, house-cleaning).</p>
-        </li>
-
-        <li>
-            <div class="header">Changed your investments and assets</div>
-            <p>You could have changed the amount of <b>investments you made</b>
-            (e.g., real estate, investments in your own business, cryptocurrencies)
-            and the amount of <b>assets that you held</b>
-            (e.g., stocks, bonds, retirement, savings accounts).</p>
-        </li>
-
+      <li>how much of your existing debt you repaid</li>
+      <li>how much you spent on goods and services</li>
+      <li>how much new debt you took on</li>
+      <li>how much you worked and earned</li>
+      <li>how much you saved or invested</li>
     </ul>
+  </div>
 
-    <p style="text-align: center;">
-  Any amount not used could have stayed in your <strong>checking account</strong> for future use.
-</p>
-
-    <div class="btn-container">
-        <button class="btn btn-danger custom-submit">Start</button>
-    </div>
+  <div class="btn-container">
+    <button class="btn btn-danger custom-submit">Start</button>
+  </div>
 
 </div>
 
 {% endblock %}
-

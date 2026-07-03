@@ -25,13 +25,18 @@
         display: block;
         margin: 30px auto 0 auto;
     }
+    .center-block {
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 </style>
 
 <h2>Welcome!</h2>
 
 <p>
     We are trying to understand how Americans <strong>make financial decisions</strong>.
-    Often, policymakers do not fully understand people’s
+    Often, policymakers do not fully understand people's
     <strong>concerns and goals</strong>.
     By answering this survey, you are contributing to research that can
     <strong>help families like yours</strong>.
@@ -41,24 +46,46 @@
 
 <ul>
     <li><strong>Part 1:</strong> Questions about you and your household.</li>
-    <li><strong>Part 2:</strong> Questions about how you used your last covid stimulus check or what you would do if you received some money unexpectedly.</li>
-    <li><strong>Part 3:</strong> A task in which you’ll be asked to categorize different actions.
-        Correct answers in this task will earn you <strong>extra bonus money</strong>.
-    </li>
+    <li><strong>Part 2:</strong> Questions about how you used a Covid stimulus payment you received, or what you would do if you received some money unexpectedly.</li>
+    <li><strong>Part 3:</strong> A task in which you'll be asked to categorize different actions.</li>
 </ul>
 
+<div style="font-size: 0.8em; text-align: justify; line-height: 1.5; max-width: 700px; margin: 0 auto; color: #555;">
 
-<p style="text-align: center;">Before starting, please enter your prolific ID.</p>
-<p style="text-align: center;">You can copy it directly from Prolific by clicking "Copy ID".</p>
+    <p style="margin-bottom: 8px;">
+        Participation is voluntary. You may stop at any time by returning your submission on Prolific; however, only completed submissions can be approved for payment.
+    </p>
 
-<div style="max-width: 400px; margin: 20px auto; text-align: center;">
-    {{ formfields }}
+    <p style="margin-bottom: 8px;">
+        Your responses will be kept confidential and used for academic research only.
+    </p>
+
+    <p style="margin-bottom: 0;">
+        We will not collect identifying information beyond your Prolific ID, which is used only for payment and will not be linked to your responses.
+    </p>
+
 </div>
 
+<div style="margin-top: 10px; display: flex; justify-content: center;">
+    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 1.1em;">
+        {{ form.consent }}
+        <span><b>I consent</b> to participate and allow my responses to be used for academic research.</span>
+    </label>
+</div>
 
-<p style="text-align: center;">Thank you for taking the time to participate!</p>
+<p style="margin-top: 20px; text-align: center;">
+    Please enter your Prolific ID before starting.
+</p>
 
-<button class="btn btn-danger start-button" id="button1">
+<p style="text-align: center; margin-top: -10px; font-size: 1.0em;">
+    (you can copy it directly from Prolific by clicking "Copy ID")
+</p>
+
+<div style="max-width: 400px; margin: -25px auto;">
+    {% formfield player.prolific_id %}
+</div>
+
+<button class="btn btn-danger start-button">
     Start
 </button>
 

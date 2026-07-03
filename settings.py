@@ -7,7 +7,7 @@ SESSION_CONFIGS = [
         name='Baseline',
         app_sequence=['Part1','Part2'],
         num_demo_participants=20,
-        Treatment=1,
+        Treatment=0,
         completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
 
      ),
@@ -36,7 +36,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'payoff_questions', 'prolific_id', 'spending_net', 'debt_repay_net', 'new_debt_net', 'labor_income_net', 'save_invest_net']
+PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'spending', 'prolific_id', 'spending_net', 'debt_repay_net', 'new_debt_net', 'labor_income_net', 'save_invest_net']
 SESSION_FIELDS = []
 
 # ISO-639 code
