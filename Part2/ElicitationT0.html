@@ -72,7 +72,7 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
       </div>
       <div class="sub-box amount hidden">
         <div class="amount-line">
-          <span><b>By how much</b> would your debt repayment <b><span class="amount-direction"></span></b>?</span>
+          <span>By how much would your <b>debt repayment <span class="amount-direction"></span></b>?</span>
           <span class="currency-input">
             <span class="currency-symbol">$</span>
             <input type="number" name="debt_amount" id="id_debt_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric">
@@ -80,21 +80,21 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
         </div>
       </div>
       <div class="sub-box allocation hidden">
-        <p>And how would you <b>allocate</b> this <b><span class="amount-direction"></span></b> to the following?</p>
+        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
         <div class="alloc-line">
-          <span class="alloc-label">Pre-existing revolving credit balances</span>
+          <span class="alloc-label">repayment toward pre-existing revolving credit balances</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_cc" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Pre-existing installment loans</span>
+          <span class="alloc-label">repayment toward pre-existing installment loans</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_long" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Pre-existing short-term loans</span>
+          <span class="alloc-label">repayment toward pre-existing short-term loans</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_short" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Pre-existing unpaid bills</span>
+          <span class="alloc-label">repayment toward pre-existing unpaid bills</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_bills" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="warning hidden">The amounts above do not add up to the total.</div>
@@ -131,7 +131,7 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
       </div>
       <div class="sub-box amount hidden">
         <div class="amount-line">
-          <span><b>By how much</b> would your spending <b><span class="amount-direction"></span></b>?</span>
+          <span>By how much would your <b>spending <span class="amount-direction"></span></b>?</span>
           <span class="currency-input">
             <span class="currency-symbol">$</span>
             <input type="number" name="spend_amount" id="id_spend_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric">
@@ -139,21 +139,21 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
         </div>
       </div>
       <div class="sub-box allocation hidden">
-        <p>And how would you <b>allocate</b> this <b><span class="amount-direction"></span></b> to the following?</p>
+        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
         <div class="alloc-line">
-          <span class="alloc-label">Everyday purchases</span>
+          <span class="alloc-label">everyday purchases</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_everyday" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Outings and leisure activities</span>
+          <span class="alloc-label">outings and leisure activities</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_leisure" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Services</span>
+          <span class="alloc-label">services</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_services" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
-          <span class="alloc-label">Durable goods</span>
+          <span class="alloc-label">durable goods</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_durable" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="warning hidden">The amounts above do not add up to the total.</div>
@@ -205,6 +205,9 @@ function setDirections(cat) {
   const direction = selectedDirection(cat) || '';
   cat.querySelectorAll('.amount-direction').forEach(span => {
     span.innerText = direction;
+  });
+  cat.querySelectorAll('.currency-symbol').forEach(span => {
+    span.innerText = direction === 'decrease' ? '-$' : (direction === 'increase' ? '+$' : '$');
   });
 }
 

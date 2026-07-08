@@ -48,8 +48,8 @@
 
 <div class="story-card">
 <p>
-  At the beginning of the month, <b>Charlie unexpectedly receives a $1,000 payment</b>
-  deposited into {{ pronoun_object }} checking account from a stimulus program.
+  <b>Charlie unexpectedly receives a $1,000 payment</b> from a stimulus program.
+  The payment is deposited into {{ pronoun_object }} checking account.
 </p>
 
 <p>
@@ -64,7 +64,6 @@
 
 <p>
   The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.
-  In particular, Charlie did not change {{ pronoun_object }} working hours.
 </p>
 </div>
 
@@ -102,10 +101,10 @@
     </div>
 
     <div class="category-box category" data-field="save_invest_Charlie" data-balance-effect="-1">
-      <div class="category-question"><span class="category-title">Save</span> or <span class="category-title">invest</span> more?</div>
+      <div class="category-question"><span class="category-title">Invest</span> more?</div>
       <div class="radio-line"><label><input type="radio" name="save_invest_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="save_invest_Charlie_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to <b>save or invest less</b>, or did Charlie's saving and investment <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="save_invest_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="save_invest_Charlie_same" value="decrease"> Save/invest less</label></div></div>
-      <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did Charlie's saving or investment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
+      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to <b>invest less</b>, or did Charlie's investment <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="save_invest_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="save_invest_Charlie_same" value="decrease"> Invest less</label></div></div>
+      <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did Charlie's investment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="save_invest_Charlie" id="id_save_invest_Charlie" value="0">
     </div>
   </div>
@@ -135,6 +134,9 @@ function updateCategory(cat) {
   sameBox?.classList.toggle('hidden', first !== 'no');
   amountBox?.classList.toggle('hidden', !direction);
   cat.querySelectorAll('.amount-direction').forEach(span => span.innerText = direction || '');
+  cat.querySelectorAll('.currency-symbol').forEach(span => {
+    span.innerText = direction === 'decrease' ? '-$' : (direction === 'increase' ? '+$' : '$');
+  });
   let value = 0;
   if (direction && amountInput.value !== '') {
     value = Number(amountInput.value) || 0;

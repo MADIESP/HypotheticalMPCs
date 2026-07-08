@@ -31,12 +31,12 @@ class Player(BasePlayer):
         widget=widgets.RadioSelectHorizontal,
         blank=True
     )
-    spend_amount = models.CurrencyField(blank=True)
+    spend_amount = models.CurrencyField(min=0, blank=True)
 
-    spend_everyday = models.CurrencyField(blank=True)
-    spend_leisure = models.CurrencyField(blank=True)
-    spend_services = models.CurrencyField(blank=True)
-    spend_durable = models.CurrencyField(blank=True)
+    spend_everyday = models.CurrencyField(min=0, blank=True)
+    spend_leisure = models.CurrencyField(min=0, blank=True)
+    spend_services = models.CurrencyField(min=0, blank=True)
+    spend_durable = models.CurrencyField(min=0, blank=True)
 
     # ================= DEBT REPAYMENT =================
     debt_increase = models.StringField(
@@ -48,12 +48,12 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=True
     )
-    debt_amount = models.CurrencyField(blank=True)
+    debt_amount = models.CurrencyField(min=0, blank=True)
 
-    debt_cc = models.CurrencyField(blank=True)
-    debt_bills = models.CurrencyField(blank=True)
-    debt_short = models.CurrencyField(blank=True)
-    debt_long = models.CurrencyField(blank=True)
+    debt_cc = models.CurrencyField(min=0, blank=True)
+    debt_bills = models.CurrencyField(min=0, blank=True)
+    debt_short = models.CurrencyField(min=0, blank=True)
+    debt_long = models.CurrencyField(min=0, blank=True)
 
     # ================= LABOR =================
     labor_decrease = models.StringField(
@@ -65,13 +65,13 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=True
     )
-    labor_hours = models.FloatField(blank=True)
-    labor_income = models.CurrencyField(blank=True)
+    labor_hours = models.FloatField(min=0, blank=True)
+    labor_income = models.CurrencyField(min=0, blank=True)
 
-    labor_gigs = models.CurrencyField(blank=True)
-    labor_overtime = models.CurrencyField(blank=True)
-    labor_holidays = models.CurrencyField(blank=True)
-    labor_contract = models.CurrencyField(blank=True)
+    labor_gigs = models.CurrencyField(min=0, blank=True)
+    labor_overtime = models.CurrencyField(min=0, blank=True)
+    labor_holidays = models.CurrencyField(min=0, blank=True)
+    labor_contract = models.CurrencyField(min=0, blank=True)
 
     # ================= NEW DEBT =================
     newdebt_same_or_decrease = models.StringField(
@@ -85,12 +85,12 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=True
     )
-    newdebt_amount = models.CurrencyField(blank=True)
+    newdebt_amount = models.CurrencyField(min=0, blank=True)
 
-    newdebt_cc = models.CurrencyField(blank=True)
-    newdebt_bills = models.CurrencyField(blank=True)
-    newdebt_short = models.CurrencyField(blank=True)
-    newdebt_long = models.CurrencyField(blank=True)
+    newdebt_cc = models.CurrencyField(min=0, blank=True)
+    newdebt_bills = models.CurrencyField(min=0, blank=True)
+    newdebt_short = models.CurrencyField(min=0, blank=True)
+    newdebt_long = models.CurrencyField(min=0, blank=True)
 
     # ================= SAVINGS =================
     save_increase = models.StringField(
@@ -103,13 +103,13 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=True
     )
-    save_amount = models.CurrencyField(blank=True)
+    save_amount = models.CurrencyField(min=0, blank=True)
 
-    save_accounts = models.CurrencyField(blank=True)
-    save_risky = models.CurrencyField(blank=True)
-    save_realestate = models.CurrencyField(blank=True)
-    save_business = models.CurrencyField(blank=True)
-    save_crypto = models.CurrencyField(blank=True)
+    save_accounts = models.CurrencyField(min=0, blank=True)
+    save_risky = models.CurrencyField(min=0, blank=True)
+    save_realestate = models.CurrencyField(min=0, blank=True)
+    save_business = models.CurrencyField(min=0, blank=True)
+    save_crypto = models.CurrencyField(min=0, blank=True)
 
 
     spending = models.IntegerField(min=-1500, max=1500)

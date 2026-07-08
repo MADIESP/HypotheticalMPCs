@@ -69,8 +69,8 @@
 
 <div class="story-card">
 <p>
-  At the beginning of the month, <b>Charlie unexpectedly receives a $1,000 payment</b>
-  deposited into {{ pronoun_object }} checking account from a stimulus program.
+  <b>Charlie unexpectedly receives a $1,000 payment</b> from a stimulus program.
+  The payment is deposited into {{ pronoun_object }} checking account.
 </p>
 
 <p>
@@ -168,6 +168,9 @@ function updateCategory(cat) {
   sameBox?.classList.toggle('hidden', first !== 'no');
   amountBox?.classList.toggle('hidden', !direction);
   cat.querySelectorAll('.amount-direction').forEach(span => span.innerText = direction || '');
+  cat.querySelectorAll('.currency-symbol').forEach(span => {
+    span.innerText = direction === 'decrease' ? '-$' : (direction === 'increase' ? '+$' : '$');
+  });
 
   let value = 0;
   if (direction && amountInput.value !== '') {
