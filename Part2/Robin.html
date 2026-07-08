@@ -65,7 +65,7 @@
 </style>
 
 <div class="content-box">
-<h2>Part 3 - Page 1/4</h2>
+<h2>Part 3 - Page 1/5</h2>
 <h4>Scenario 1: Robin</h4>
 
 <div class="story-card">
@@ -154,24 +154,47 @@
       <input type="hidden" name="debt_new_Robin" id="id_debt_new_Robin" value="0">
     </div>
 
-    <div class="category-box category" data-field="save_invest_Robin" data-balance-effect="-1">
-      <div class="category-question"><span class="category-title">Invest</span> more?</div>
+    <div class="category-box category labor-category" data-field="labor_Robin" data-hours-field="labor_hours_Robin" data-balance-effect="+1">
+      <div class="category-question">Decrease the <span class="category-title">hours {{ pronoun_subject }} worked (and the amount {{ pronoun_subject }} earned)</span>?</div>
+      <div class="radio-line">
+        <label><input type="radio" name="labor_Robin_choice" value="yes"> Yes</label>
+        <label><input type="radio" name="labor_Robin_choice" value="no"> No</label>
+      </div>
+      <div class="sub-box same-decrease hidden">
+        <div>Did the payment instead cause Robin to <b>work more</b>, or did Robin's working hours <b>stay the same</b>?</div>
+        <div class="radio-line">
+          <label><input type="radio" name="labor_Robin_same" value="same"> Stay the same</label>
+          <label><input type="radio" name="labor_Robin_same" value="increase"> Work more</label>
+        </div>
+      </div>
+      <div class="sub-box amount hidden">
+        <div class="amount-line"><span>How many <b><span class="hours-direction"></span> hours</b> did Robin work over the next three months?</span><input type="text" class="inline-number hours-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"><span><b>hours</b></span></div>
+        <div class="amount-line" style="margin-top:8px;"><span>What <b><span class="amount-direction"></span></b> in <b>earnings</b> did this represent?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
+      </div>
+      <input type="hidden" name="labor_Robin" id="id_labor_Robin" value="0">
+      <input type="hidden" name="labor_hours_Robin" id="id_labor_hours_Robin" value="0">
+    </div>
+
+<div class="category-box category" data-field="save_invest_Robin" data-balance-effect="-1">
+      <div class="category-question">Put more money toward <span class="category-title">savings or investments</span>?</div>
       <div class="radio-line">
         <label><input type="radio" name="save_invest_Robin_choice" value="yes"> Yes</label>
         <label><input type="radio" name="save_invest_Robin_choice" value="no"> No</label>
       </div>
       <div class="sub-box same-decrease hidden">
-        <div>Did the payment instead cause Robin to <b>invest less</b>, or did Robin's investment <b>stay the same</b>?</div>
+        <div>Did the payment instead cause Robin to <b>put less money toward savings or investments</b>, or did the amount Robin put toward savings or investments <b>stay the same</b>?</div>
         <div class="radio-line">
           <label><input type="radio" name="save_invest_Robin_same" value="same"> Stay the same</label>
-          <label><input type="radio" name="save_invest_Robin_same" value="decrease"> Invest less</label>
+          <label><input type="radio" name="save_invest_Robin_same" value="decrease"> Put less money toward savings/investments</label>
         </div>
       </div>
       <div class="sub-box amount hidden">
-        <div class="amount-line"><span><b>By how much</b> did Robin's investment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
+        <div class="amount-line"><span><b>By how much</b> did the amount Robin put toward savings or investments <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
       </div>
       <input type="hidden" name="save_invest_Robin" id="id_save_invest_Robin" value="0">
     </div>
+
+    
   </div>
 
   <div class="checking-display">
@@ -189,6 +212,8 @@ const base = 1000;
 function selectedDirection(cat) {
   const first = cat.querySelector('input[name$="_choice"]:checked')?.value;
   const second = cat.querySelector('input[name$="_same"]:checked')?.value;
+  if (cat.classList.contains('labor-category') && first === 'yes') return 'decrease';
+  if (cat.classList.contains('labor-category') && second === 'increase') return 'increase';
   if (first === 'yes') return 'increase';
   if (second === 'decrease') return 'decrease';
   return null;
@@ -201,11 +226,14 @@ function updateCategory(cat) {
   const amountBox = cat.querySelector('.amount');
   const sameBox = cat.querySelector('.same-decrease');
   const amountInput = cat.querySelector('.amount-input');
+  const hoursInput = cat.querySelector('.hours-input');
+  const hoursHidden = cat.dataset.hoursField ? document.getElementById(`id_${cat.dataset.hoursField}`) : null;
   const direction = selectedDirection(cat);
 
   sameBox?.classList.toggle('hidden', first !== 'no');
   amountBox?.classList.toggle('hidden', !direction);
   cat.querySelectorAll('.amount-direction').forEach(span => span.innerText = direction || '');
+  cat.querySelectorAll('.hours-direction').forEach(span => span.innerText = direction === 'decrease' ? 'fewer' : (direction === 'increase' ? 'additional' : ''));
   cat.querySelectorAll('.currency-symbol').forEach(span => {
     span.innerText = direction === 'decrease' ? '-$' : (direction === 'increase' ? '+$' : '$');
   });
@@ -216,6 +244,14 @@ function updateCategory(cat) {
     if (direction === 'decrease') value = -value;
   }
   hidden.value = value;
+  if (hoursHidden) {
+    let hoursValue = 0;
+    if (direction && hoursInput?.value !== '') {
+      hoursValue = Number(hoursInput.value) || 0;
+      if (direction === 'decrease') hoursValue = -hoursValue;
+    }
+    hoursHidden.value = hoursValue;
+  }
 }
 
 function updateBalance() {
@@ -232,7 +268,7 @@ function updateBalance() {
 document.querySelectorAll('.category').forEach(cat => {
   cat.addEventListener('change', event => {
     if (event.target.type === 'radio') {
-      cat.querySelectorAll('.amount-input').forEach(input => input.value = '');
+      cat.querySelectorAll('.amount-input, .hours-input').forEach(input => input.value = '');
     }
     updateCategory(cat);
     updateBalance();
@@ -253,11 +289,12 @@ document.querySelector('form').addEventListener('submit', event => {
     const second = cat.querySelector('input[name$="_same"]:checked')?.value;
     const direction = selectedDirection(cat);
     const amountInput = cat.querySelector('.amount-input');
+    const hoursInput = cat.querySelector('.hours-input');
     if (!first || (first === 'no' && !second)) {
       missingCategory = true;
       ok = false;
     }
-    if (direction && (amountInput.value === '' || Number(amountInput.value) <= 0)) {
+    if (direction && (amountInput.value === '' || Number(amountInput.value) <= 0 || (hoursInput && (hoursInput.value === '' || Number(hoursInput.value) <= 0)))) {
       missingAmount = true;
       ok = false;
     }

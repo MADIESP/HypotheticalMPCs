@@ -157,14 +157,26 @@ class Player(BasePlayer):
     save_invest_Robin = models.IntegerField(min=-1500, max=1500)
     debt_repay_Robin = models.IntegerField(min=-1500, max=1500)
     debt_new_Robin = models.IntegerField(min=-1500, max=1500)
+    labor_Robin = models.IntegerField(min=-1500, max=1500)
+    labor_hours_Robin = models.FloatField(blank=True)
     spending_Taylor = models.IntegerField(min=-10000, max=10000)
     save_invest_Taylor = models.IntegerField(min=-10000, max=10000)
     debt_repay_Taylor = models.IntegerField(min=-10000, max=10000)
     debt_new_Taylor = models.IntegerField(min=-10000, max=10000)
+    labor_Taylor = models.IntegerField(min=-10000, max=10000)
+    labor_hours_Taylor = models.FloatField(blank=True)
     spending_Charlie = models.IntegerField(min=-1500, max=1500)
     save_invest_Charlie = models.IntegerField(min=-1500, max=1500)
     debt_repay_Charlie = models.IntegerField(min=-1500, max=1500)
     debt_new_Charlie = models.IntegerField(min=-1500, max=1500)
+    labor_Charlie = models.IntegerField(min=-1500, max=1500)
+    labor_hours_Charlie = models.FloatField(blank=True)
+    spending_Morgan = models.IntegerField(min=-1500, max=1500)
+    save_invest_Morgan = models.IntegerField(min=-1500, max=1500)
+    debt_repay_Morgan = models.IntegerField(min=-1500, max=1500)
+    debt_new_Morgan = models.IntegerField(min=-1500, max=1500)
+    labor_Morgan = models.IntegerField(min=-1500, max=1500)
+    labor_hours_Morgan = models.FloatField(blank=True)
     categories_cover_scenario = models.IntegerField(
         label="",
         choices=[
@@ -176,6 +188,11 @@ class Player(BasePlayer):
 
     categories_specify_scenario = models.LongStringField(
         label="Please specify:",
+        blank=True
+    )
+
+    final_comments = models.LongStringField(
+        label="Thank you for taking the survey. Do you have any questions or comments for us?",
         blank=True
     )
 
@@ -616,6 +633,20 @@ class FeedbackElicitationT2(Page):
 class InstructionsScenarios(Page):
     form_model = 'player'
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        if is_baseline(player):
+            return dict(
+                scenario_count=4,
+                page_count=5,
+                show_morgan_scenario=True,
+            )
+        return dict(
+            scenario_count=4,
+            page_count=5,
+            show_morgan_scenario=True,
+        )
+
 
 
 class Robin(Page):
@@ -625,6 +656,8 @@ class Robin(Page):
         'save_invest_Robin',
         'debt_repay_Robin',
         'debt_new_Robin',
+        'labor_Robin',
+        'labor_hours_Robin',
     ]
 
 
@@ -713,6 +746,8 @@ class Taylor(Page):
         'save_invest_Taylor',
         'debt_repay_Taylor',
         'debt_new_Taylor',
+        'labor_Taylor',
+        'labor_hours_Taylor',
     ]
 
     def vars_for_template(player: Player):
@@ -744,6 +779,8 @@ class Charlie(Page):
         'save_invest_Charlie',
         'debt_repay_Charlie',
         'debt_new_Charlie',
+        'labor_Charlie',
+        'labor_hours_Charlie',
     ]
 
     def vars_for_template(player: Player):
@@ -766,6 +803,66 @@ class Charlie(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+
+class Morgan(Page):
+    form_model = 'player'
+    form_fields = [
+        'spending_Morgan',
+        'save_invest_Morgan',
+        'debt_repay_Morgan',
+        'debt_new_Morgan',
+        'labor_Morgan',
+        'labor_hours_Morgan',
+    ]
+
+    def vars_for_template(player: Player):
+        gender = player.participant.gender
+        if gender == 1:
+            pronoun_subject = "he"
+            pronoun_object = "his"
+        elif gender == 2:
+            pronoun_subject = "she"
+            pronoun_object = "her"
+        else:
+            pronoun_subject = "they"
+            pronoun_object = "their"
+
+        return dict(
+            pronoun_subject=pronoun_subject,
+            pronoun_object=pronoun_object,
+        )
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+
+class MorganT0(Page):
+    form_model = 'player'
+    form_fields = [
+        'spending_Morgan',
+        'debt_repay_Morgan',
+    ]
+
+    def vars_for_template(player: Player):
+        gender = player.participant.gender
+        if gender == 1:
+            pronoun_subject = "he"
+            pronoun_object = "his"
+        elif gender == 2:
+            pronoun_subject = "she"
+            pronoun_object = "her"
+        else:
+            pronoun_subject = "they"
+            pronoun_object = "their"
+
+        return dict(
+            pronoun_subject=pronoun_subject,
+            pronoun_object=pronoun_object,
+        )
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return is_baseline(player)
 
 class CharlieT0(Page):
     form_model = 'player'
@@ -801,7 +898,20 @@ class FeedbackScenario(Page):
     form_fields = [
         'categories_cover_scenario',
         'categories_specify_scenario',
+        'final_comments',
     ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        if is_baseline(player):
+            return dict(
+                scenario_feedback_page="Part 3 - Page 5/5",
+                scenario_names="Robin, Taylor, Charlie, and Morgan",
+            )
+        return dict(
+            scenario_feedback_page="Part 3 - Page 5/5",
+            scenario_names="Robin, Taylor, Charlie, and Morgan",
+        )
 
 
 class End(Page):
@@ -818,7 +928,7 @@ class ProlificBack(Page):
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
-page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, Morgan, MorganT0, FeedbackScenario,End,ProlificBack]
 #
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 

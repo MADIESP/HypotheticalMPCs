@@ -22,6 +22,18 @@
     margin-top: 15px;
   }
   .question-block { margin-bottom: 25px; }
+  .final-comments-block {
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #ddd;
+  }
+  .final-comments-title {
+    text-align: center;
+    color: #c82333;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
 
   /* optional: center the radio buttons */
   .otree-form-field .controls {
@@ -30,16 +42,21 @@
 
 </style>
 
- <h2>Part 3 - Page 4/4</h2>
+ <h2>{{ scenario_feedback_page }}</h2>
 <!-- Render each field manually -->
 <div class="question-block" >
     <b>1.</b> Did the categories presented cover <b>all the ways</b> you wanted to <b>classify</b> how
-Robin, Taylor, and Charlie <b>used the $1,000 payment</b>, or were any categories missing?
+{{ scenario_names }} <b>used the $1,000 payment</b>, or were any categories missing?
   {{ formfield 'categories_cover_scenario' }}
 </div>
 
 <div id="specify-field" >
   {{ formfield 'categories_specify_scenario' }}
+</div>
+
+<div class="question-block final-comments-block">
+  <div class="final-comments-title">Final comments</div>
+  {{ formfield 'final_comments' }}
 </div>
 
 <button class="btn btn-danger custom-submit" style="display: block; margin: 20px auto;">Submit</button>

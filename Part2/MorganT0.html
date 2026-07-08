@@ -64,12 +64,12 @@
 </style>
 
 <div class="content-box">
-<h2>Part 3 - Page 2/5</h2>
-<h4>Scenario 2: Taylor</h4>
+<h2>Part 3 - Page 4/5</h2>
+<h4>Scenario 4: Morgan</h4>
 
 <div class="story-card">
 <p>
-  <b>Taylor unexpectedly receives a $1,000 payment</b> from a stimulus program.
+  <b>Morgan unexpectedly receives a $1,000 payment</b> from a stimulus program.
   The payment is deposited into {{ pronoun_object }} checking account.
 </p>
 
@@ -78,8 +78,8 @@
 </p>
 
 <ul class="story-list">
-  <li>Taylor decides to invest in a <b>new machine to scale up {{ pronoun_object }} business, costing $1,500</b>.</li>
-  <li>To finance the purchase, Taylor also <b>takes out a loan of $500</b> that is <b>not repaid</b> within the next three months.</li>
+  <li>Morgan <b>buys a guitar for $300</b>.</li>
+  <li>Morgan <b>refuses a gig job</b> that would have taken <b>2 hours</b> and where {{ pronoun_subject }} would have earned <b>$50</b>.</li>
 </ul>
 
 <p>
@@ -88,55 +88,55 @@
 </div>
 
 <p class="answer-intro">
-  Now, please indicate how the $1,000 payment changed Taylor's behavior over the next three months.
+  Now, please indicate how the $1,000 payment changed Morgan's behavior over the next three months.
 </p>
 <p class="scenario-prompt">
-  Did the <b>$1,000 payment</b> cause Taylor to...
+  Did the <b>$1,000 payment</b> cause Morgan to...
 </p>
 
 <form method="post" novalidate>
   <div class="grid-2">
-    <div class="category-box category" data-field="debt_repay_Taylor" data-balance-effect="-1">
+    <div class="category-box category" data-field="debt_repay_Morgan" data-balance-effect="-1">
       <div class="category-question">Repay more of {{ pronoun_object }} <span class="category-title">debts</span>?</div>
       <div class="radio-line">
-        <label><input type="radio" name="debt_repay_Taylor_choice" value="yes"> Yes</label>
-        <label><input type="radio" name="debt_repay_Taylor_choice" value="no"> No</label>
+        <label><input type="radio" name="debt_repay_Morgan_choice" value="yes"> Yes</label>
+        <label><input type="radio" name="debt_repay_Morgan_choice" value="no"> No</label>
       </div>
       <div class="sub-box same-decrease hidden">
-        <div>Did the payment instead cause Taylor to <b>repay less debt</b>, or did Taylor's debt repayment <b>stay the same</b>?</div>
+        <div>Did the payment instead cause Morgan to <b>repay less debt</b>, or did Morgan's debt repayment <b>stay the same</b>?</div>
         <div class="radio-line">
-          <label><input type="radio" name="debt_repay_Taylor_same" value="same"> Stay the same</label>
-          <label><input type="radio" name="debt_repay_Taylor_same" value="decrease"> Repay less debt</label>
+          <label><input type="radio" name="debt_repay_Morgan_same" value="same"> Stay the same</label>
+          <label><input type="radio" name="debt_repay_Morgan_same" value="decrease"> Repay less debt</label>
         </div>
       </div>
       <div class="sub-box amount hidden">
-        <div class="amount-line"><span><b>By how much</b> did Taylor's debt repayment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
+        <div class="amount-line"><span><b>By how much</b> did Morgan's debt repayment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
       </div>
-      <input type="hidden" name="debt_repay_Taylor" id="id_debt_repay_Taylor" value="0">
+      <input type="hidden" name="debt_repay_Morgan" id="id_debt_repay_Morgan" value="0">
     </div>
 
-    <div class="category-box category" data-field="spending_Taylor" data-balance-effect="-1">
+    <div class="category-box category" data-field="spending_Morgan" data-balance-effect="-1">
       <div class="category-question">Spend more <span class="category-title">on goods and services</span>?</div>
       <div class="radio-line">
-        <label><input type="radio" name="spending_Taylor_choice" value="yes"> Yes</label>
-        <label><input type="radio" name="spending_Taylor_choice" value="no"> No</label>
+        <label><input type="radio" name="spending_Morgan_choice" value="yes"> Yes</label>
+        <label><input type="radio" name="spending_Morgan_choice" value="no"> No</label>
       </div>
       <div class="sub-box same-decrease hidden">
-        <div>Did the payment instead cause Taylor to <b>spend less</b>, or did Taylor's spending <b>stay the same</b>?</div>
+        <div>Did the payment instead cause Morgan to <b>spend less</b>, or did Morgan's spending <b>stay the same</b>?</div>
         <div class="radio-line">
-          <label><input type="radio" name="spending_Taylor_same" value="same"> Stay the same</label>
-          <label><input type="radio" name="spending_Taylor_same" value="decrease"> Spend less</label>
+          <label><input type="radio" name="spending_Morgan_same" value="same"> Stay the same</label>
+          <label><input type="radio" name="spending_Morgan_same" value="decrease"> Spend less</label>
         </div>
       </div>
       <div class="sub-box amount hidden">
-        <div class="amount-line"><span><b>By how much</b> did Taylor's spending <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
+        <div class="amount-line"><span><b>By how much</b> did Morgan's spending <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div>
       </div>
-      <input type="hidden" name="spending_Taylor" id="id_spending_Taylor" value="0">
+      <input type="hidden" name="spending_Morgan" id="id_spending_Morgan" value="0">
     </div>
   </div>
 
   <div class="checking-display">
-    Taylor's checking account: <span id="balance-sign">+</span>$<span id="balance">1000</span>
+    Morgan's checking account: <span id="balance-sign">+</span>$<span id="balance">1000</span>
   </div>
 
   <div id="warning" class="warning hidden">Please answer each category before continuing.</div>

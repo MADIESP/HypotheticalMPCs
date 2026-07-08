@@ -33,17 +33,20 @@
 <h2>Welcome to Part 3!</h2>
 
 <p>
-    You will see <b>3 different scenarios</b> of people who received an unexpected $1,000 payment.
+    You will see <b>{{ scenario_count }} different scenarios</b> of people who received an unexpected $1,000 payment.
     For each scenario, you will be asked to classify how they used the $1,000 payment.
 </p>
 
-<p style="text-align: center;"><strong>This part has 4 pages:</strong></p>
+<p style="text-align: center;"><strong>This part has {{ page_count }} pages:</strong></p>
 
 <ul>
     <li><strong>Page 1:</strong> Scenario 1</li>
     <li><strong>Page 2:</strong> Scenario 2</li>
     <li><strong>Page 3:</strong> Scenario 3</li>
-    <li><strong>Page 4:</strong> 1 feedback question</li>
+    {% if show_morgan_scenario %}
+    <li><strong>Page 4:</strong> Scenario 4</li>
+    {% endif %}
+    <li><strong>Page {{ page_count }}:</strong> feedback questions</li>
 </ul>
 
 <div style="text-align: center;">
