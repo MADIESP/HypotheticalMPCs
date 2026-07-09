@@ -63,7 +63,15 @@ SECRET_KEY = '2390561968578'
 
 ROOMS = [
     dict(
-        name='econ_lab',
-        display_name='Name'
+        name='study0',
+        display_name='Study 0'
+    ),
+    dict(
+        name='study1',
+        display_name='Study 1'
+    ),
+    dict(
+        name='study2',
+        display_name='Study 2'
     ),
 ]

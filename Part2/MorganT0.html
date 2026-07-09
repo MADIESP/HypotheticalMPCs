@@ -136,7 +136,7 @@
   </div>
 
   <div class="checking-display">
-    Morgan's checking account: <span id="balance-sign">+</span>$<span id="balance">1000</span>
+    Savings: <span id="balance-sign">+</span>$<span id="balance">1000</span>
   </div>
 
   <div id="warning" class="warning hidden">Please answer each category before continuing.</div>
@@ -206,18 +206,11 @@ document.querySelectorAll('.category').forEach(cat => {
 
 document.querySelector('form').addEventListener('submit', event => {
   let ok = true;
-  let missingCategory = false;
   let missingAmount = false;
   document.querySelectorAll('.category').forEach(cat => {
     updateCategory(cat);
-    const first = cat.querySelector('input[name$="_choice"]:checked')?.value;
-    const second = cat.querySelector('input[name$="_same"]:checked')?.value;
     const direction = selectedDirection(cat);
     const amountInput = cat.querySelector('.amount-input');
-    if (!first || (first === 'no' && !second)) {
-      missingCategory = true;
-      ok = false;
-    }
     if (direction && (amountInput.value === '' || Number(amountInput.value) <= 0)) {
       missingAmount = true;
       ok = false;
@@ -227,7 +220,7 @@ document.querySelector('form').addEventListener('submit', event => {
   if (missingAmount) {
     warning.innerText = 'Please enter an amount whenever you indicate a change.';
   } else {
-    warning.innerText = 'Please answer each category before continuing.';
+    warning.innerText = '';
   }
   warning.classList.toggle('hidden', ok);
   if (!ok) event.preventDefault();

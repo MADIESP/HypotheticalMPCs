@@ -139,14 +139,14 @@ function updateCategory(cat) {
   let value = 0;
   if (direction && amountInput.value !== '') {
     value = Number(amountInput.value) || 0;
-    if (direction === 'decrease') value = -value;
+    if (direction === 'decrease' && !cat.classList.contains('labor-category')) value = -value;
   }
   hidden.value = value;
   if (hoursHidden) {
     let hoursValue = 0;
     if (direction && hoursInput?.value !== '') {
       hoursValue = Number(hoursInput.value) || 0;
-      if (direction === 'decrease') hoursValue = -hoursValue;
+      // Store hours as a positive amount; the question text indicates whether they are fewer or additional.
     }
     hoursHidden.value = hoursValue;
   }
@@ -173,6 +173,7 @@ document.querySelectorAll('.category').forEach(cat => {
 });
 document.querySelector('form').addEventListener('submit', event => {
   let ok = true;
+  let missingCategory = false;
   let missingAmount = false;
   document.querySelectorAll('.category').forEach(cat => {
     updateCategory(cat);
@@ -181,14 +182,21 @@ document.querySelector('form').addEventListener('submit', event => {
     const direction = selectedDirection(cat);
     const amountInput = cat.querySelector('.amount-input');
     const hoursInput = cat.querySelector('.hours-input');
-    if (!first || (first === 'no' && !second)) ok = false;
+    if (!first || (first === 'no' && !second)) {
+      missingCategory = true;
+      ok = false;
+    }
     if (direction && (amountInput.value === '' || Number(amountInput.value) <= 0 || (hoursInput && (hoursInput.value === '' || Number(hoursInput.value) <= 0)))) {
       missingAmount = true;
       ok = false;
     }
   });
   const warning = document.getElementById('warning');
-  warning.innerText = missingAmount ? 'Please enter an amount whenever you indicate a change.' : 'Please answer each category before continuing.';
+  if (missingAmount) {
+    warning.innerText = 'Please enter an amount whenever you indicate a change.';
+  } else {
+    warning.innerText = 'Please answer each category before continuing.';
+  }
   warning.classList.toggle('hidden', ok);
   if (!ok) event.preventDefault();
 });
