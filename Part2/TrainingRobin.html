@@ -58,6 +58,7 @@
     font-weight: normal;
     color: #555;
   }
+  .success-message { color: #155724; background: #d4edda; border-left: 4px solid #28a745; padding: 10px; font-size: 0.95em; font-weight: 600; margin-top: 12px; text-align: center; }
   .warning {
     color: #721c24;
     background: #f8d7da;
@@ -72,8 +73,8 @@
 </style>
 
 <div class="content-box">
-<h2>Part 3 - Page 1/4</h2>
-<h4>Scenario 1: Robin</h4>
+<h2>Part 2 - Page 2/6</h2>
+<h4>Training example 1: Robin</h4>
 
 <div class="story-card">
 <p>
@@ -91,12 +92,12 @@
 </ul>
 
 <p>
-  The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.
+  The remaining amount is left for savings, investments, or future use. The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.
 </p>
 </div>
 
 <p class="answer-intro">
-  Now, please indicate how the $1,000 payment changed Robin's behavior over the next three months.
+  This is a practice question. Please classify how the $1,000 payment changed Robin's behavior.
 </p>
 <p class="scenario-prompt">
   Did the <b>$1,000 payment</b> cause Robin to...
@@ -191,16 +192,18 @@
 
   <div class="checking-display">
     <span class="savings-label">Savings:</span> <span id="balance-sign">+</span>$<span id="balance">1000</span>
-    <div class="savings-note">This is the part of the payment left for future use after the changes entered above.</div>
+    <div class="savings-note">The remaining amount is left for savings, investments, or future use.</div>
   </div>
 
-  <div id="warning" class="warning hidden">Please answer each category before continuing.</div>
-  <button type="submit" class="btn btn-danger">Submit</button>
+  <div id="success-message" class="success-message hidden">Correct. Robin used $200 to repay debt and $500 for spending; the remaining $300 is left for savings, investments, or future use.</div>
+  <div id="warning" class="warning hidden">Please answer each category before checking your answer.</div>
+  <button type="submit" class="btn btn-danger">Check answer</button>
 </form>
 </div>
 
 <script>
 const base = 1000;
+const expectedTrainingAnswers = { debt_repay_Robin: 200, spending_Robin: 500, debt_new_Robin: 0, labor_Robin: 0, labor_hours_Robin: 0, save_invest_Robin: 300 };
 
 function selectedDirection(cat) {
   const first = cat.querySelector('input[name$="_choice"]:checked')?.value;
@@ -271,14 +274,28 @@ document.querySelectorAll('.category').forEach(cat => {
     if (event.target.type === 'radio') {
       cat.querySelectorAll('.amount-input, .hours-input').forEach(input => input.value = '');
     }
+    document.querySelector('form').dataset.confirmed = '';
+    document.getElementById('success-message')?.classList.add('hidden');
+    document.querySelector('button[type="submit"]').innerText = 'Check answer';
     updateCategory(cat);
     updateBalance();
   });
   cat.addEventListener('input', () => {
+    document.querySelector('form').dataset.confirmed = '';
+    document.getElementById('success-message')?.classList.add('hidden');
+    document.querySelector('button[type="submit"]').innerText = 'Check answer';
     updateCategory(cat);
     updateBalance();
   });
 });
+
+function trainingAnswersAreCorrect() {
+  return Object.entries(expectedTrainingAnswers).every(([field, expected]) => {
+    const input = document.getElementById(`id_${field}`);
+    const value = Number(input?.value || 0);
+    return Math.abs(value - expected) < 0.01;
+  });
+}
 
 document.querySelector('form').addEventListener('submit', event => {
   let ok = true;
@@ -304,10 +321,25 @@ document.querySelector('form').addEventListener('submit', event => {
   if (missingAmount) {
     warning.innerText = 'Please enter an amount whenever you indicate a change.';
   } else {
-    warning.innerText = 'Please answer each category before continuing.';
+    warning.innerText = 'Please answer each category before checking your answer.';
   }
   warning.classList.toggle('hidden', ok);
-  if (!ok) event.preventDefault();
+  const success = document.getElementById('success-message');
+  const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+  if (!ok) {
+    success.classList.add('hidden');
+    submitButton.innerText = 'Check answer';
+    event.currentTarget.dataset.confirmed = '';
+    event.preventDefault();
+    return;
+  }
+  if (trainingAnswersAreCorrect() && event.currentTarget.dataset.confirmed !== 'true') {
+    event.preventDefault();
+    success.classList.remove('hidden');
+    warning.classList.add('hidden');
+    submitButton.innerText = 'Continue';
+    event.currentTarget.dataset.confirmed = 'true';
+  }
 });
 </script>
 

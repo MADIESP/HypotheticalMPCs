@@ -50,7 +50,7 @@
   }
 </style>
 
-<h2>Part 2 - Page 3/3</h2>
+<h2>{{ feedback_page_title }}</h2>
 
 <div class="section-title">Feedback questions</div>
 
@@ -107,6 +107,14 @@
 <div id="explain-field">
   {{ formfield 'payment_different_explain' }}
 </div>
+
+{% if is_t4 %}
+<div class="section-title">Final comments</div>
+
+<div class="question-block">
+  {{ formfield 'final_comments' }}
+</div>
+{% endif %}
 
 <button class="btn btn-danger custom-submit" style="display:block; margin:20px auto;">
   Submit

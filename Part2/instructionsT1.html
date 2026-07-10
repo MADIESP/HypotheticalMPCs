@@ -51,7 +51,7 @@
 
 <div class="content-box">
 
-  <h2>Part 2 – Page 1/3</h2>
+  <h2>{% if is_t4 %}Part 2 – Page 1/6{% else %}Part 2 – Page 1/3{% endif %}</h2>
   <h4>Hypothetical scenario</h4>
 
   <p>
@@ -78,17 +78,16 @@
       <li>how much you spend on goods and services</li>
       <li>how much new debt you take on</li>
       <li>how much you work and earn</li>
-      <li>how much you save or invest</li>
+      <li>how much of the payment would be left for savings or future use</li>
     </ul>
   </div>
 
- <!-- <p>
-    On the following pages, you will be asked a short series of questions about
-    <b>each of these categories</b>.
-    For each one, please consider whether — and by how much — the
-    <b>$1,000 payment</b> would change your household’s decisions over the
-    <b>next three months</b>.
-  </p> -->
+  {% if is_t4 %}
+  <p>
+    Before you answer about your own household, you will see three short training examples.
+    These examples will help you practice using the categories.
+  </p>
+  {% endif %}
 
   <div class="btn-container">
     <button class="btn btn-danger custom-submit">Start</button>

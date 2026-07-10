@@ -49,12 +49,19 @@
   .currency-input { display: flex; align-items: center; gap: 4px; }
   .currency-symbol { font-weight: 600; }
   .checking-display { text-align: center; font-size: 1.3em; font-weight: bold; margin-top: 28px; padding-top: 16px; border-top: 1px solid #ccc; }
+  .savings-label { font-weight: 600; }
+  .savings-note {
+    margin-top: 6px;
+    font-size: 0.72em;
+    font-weight: normal;
+    color: #555;
+  }
   .warning { color: #721c24; background: #f8d7da; border-left: 4px solid #c82333; padding: 10px; font-size: 0.95em; font-weight: 600; margin-top: 12px; text-align: center; }
   button.btn-danger { display: block; margin: 30px auto 10px; }
 </style>
 
 <div class="content-box">
-<h2>Part 3 - Page 2/5</h2>
+<h2>Part 3 - Page 2/4</h2>
 <h4>Scenario 2: Taylor</h4>
 
 <div class="story-card">
@@ -119,18 +126,14 @@
       <input type="hidden" name="labor_hours_Taylor" id="id_labor_hours_Taylor" value="0">
     </div>
 
-<div class="category-box category" data-field="save_invest_Taylor" data-balance-effect="-1">
-      <div class="category-question">Put more money toward <span class="category-title">savings or investments</span>?</div>
-      <div class="radio-line"><label><input type="radio" name="save_invest_Taylor_choice" value="yes"> Yes</label><label><input type="radio" name="save_invest_Taylor_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Taylor to <b>put less money toward savings or investments</b>, or did the amount Taylor put toward savings or investments <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="save_invest_Taylor_same" value="same"> Stay the same</label><label><input type="radio" name="save_invest_Taylor_same" value="decrease"> Put less money toward savings/investments</label></div></div>
-      <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did the amount Taylor put toward savings or investments <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
-      <input type="hidden" name="save_invest_Taylor" id="id_save_invest_Taylor" value="0">
-    </div>
+
 
     
   </div>
 
-  <div class="checking-display">Taylor's checking account: <span id="balance-sign">+</span>$<span id="balance">1000</span></div>
+  <input type="hidden" name="save_invest_Taylor" id="id_save_invest_Taylor" value="1000">
+
+  <div class="checking-display"><span class="savings-label">Savings:</span> <span id="balance-sign">+</span>$<span id="balance">1000</span><div class="savings-note">This is the part of the payment left for future use after the changes entered above.</div></div>
   <div id="warning" class="warning hidden">Please answer each category before continuing.</div>
   <button type="submit" class="btn btn-danger">Submit</button>
 </form>
@@ -182,10 +185,18 @@ function updateBalance() {
   let balance = base;
   document.querySelectorAll('.category').forEach(cat => {
     const value = Number(document.getElementById(`id_${cat.dataset.field}`).value) || 0;
+    if (cat.classList.contains('labor-category')) {
+      const direction = selectedDirection(cat);
+      if (direction === 'decrease') balance -= value;
+      if (direction === 'increase') balance += value;
+      return;
+    }
     balance += Number(cat.dataset.balanceEffect) * value;
   });
   document.getElementById('balance-sign').innerText = balance > 0 ? '+' : balance < 0 ? '-' : '';
   document.getElementById('balance').innerText = Math.abs(balance).toFixed(0);
+  const residual = document.getElementById('id_save_invest_Taylor');
+  if (residual) residual.value = Math.round(balance);
 }
 document.querySelectorAll('.category').forEach(cat => {
   cat.addEventListener('change', event => {

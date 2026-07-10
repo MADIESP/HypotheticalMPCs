@@ -1,0 +1,54 @@
+{% block content %}
+
+<style>
+  .content-box {
+    max-width: 900px;
+    margin: auto;
+    padding: 25px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #c82333;
+    margin-bottom: 24px;
+  }
+
+  .transition-box {
+    max-width: 820px;
+    margin: 0 auto 24px auto;
+    padding: 18px 22px;
+    border: 1px solid #ddd;
+    border-left: 4px solid #c82333;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 1.05em;
+    line-height: 1.5;
+  }
+
+  .start-button {
+    display: block;
+    margin: 30px auto 10px auto;
+  }
+</style>
+
+<div class="content-box">
+  <h2>Before You Start</h2>
+
+  <div class="transition-box">
+    <p>
+      You have now completed the training examples. Next, we will ask the same type of questions about <b>you and your household</b>.
+    </p>
+    <p>
+      Please think again about the hypothetical situation from Page 1:
+      you receive an <b>unexpected one-time payment of $1,000</b>, not taxed,
+      deposited into your <b>checking account</b> within a few days.
+    </p>
+    <p>
+      As in the examples, any remaining amount is left for <b>savings, investments, or future use</b>.
+    </p>
+  </div>
+
+  <button class="btn btn-danger start-button">Start</button>
+</div>
+
+{% endblock %}

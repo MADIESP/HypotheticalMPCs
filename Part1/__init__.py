@@ -337,7 +337,11 @@ class Instructions(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment <3
+        return player.subsession.Treatment < 3 or player.subsession.Treatment == 4
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t4=player.subsession.Treatment == 4)
 
     def before_next_page(player, timeout_happened):
         prolific_id(player)

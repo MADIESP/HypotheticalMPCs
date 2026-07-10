@@ -92,31 +92,11 @@ class Player(BasePlayer):
     newdebt_short = models.CurrencyField(min=0, blank=True)
     newdebt_long = models.CurrencyField(min=0, blank=True)
 
-    # ================= SAVINGS =================
-    save_increase = models.StringField(
-        choices=[('yes', 'Yes'), ('no', 'No')],
-        widget=widgets.RadioSelect,
-        blank=True
-    )
-    save_same_or_decrease = models.StringField(
-        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
-        widget=widgets.RadioSelect,
-        blank=True
-    )
-    save_amount = models.CurrencyField(min=0, blank=True)
-
-    save_accounts = models.CurrencyField(min=0, blank=True)
-    save_risky = models.CurrencyField(min=0, blank=True)
-    save_realestate = models.CurrencyField(min=0, blank=True)
-    save_business = models.CurrencyField(min=0, blank=True)
-    save_crypto = models.CurrencyField(min=0, blank=True)
-
-
-    spending = models.IntegerField(min=-1500, max=1500)
-    save_invest = models.IntegerField(min=-1500, max=1500)
-    debt_repay = models.IntegerField(min=-1500, max=1500)
-    debt_new = models.IntegerField(min=-1500, max=1500)
-    labor = models.IntegerField(min=-1500, max=1500)
+    spending = models.IntegerField(min=-10000, max=10000)
+    save_invest = models.IntegerField(min=-10000, max=10000)
+    debt_repay = models.IntegerField(min=-10000, max=10000)
+    debt_new = models.IntegerField(min=-10000, max=10000)
+    labor = models.IntegerField(min=-10000, max=10000)
 
     # 0–10 integer scales
     understanding_difficulty = models.IntegerField(
@@ -177,6 +157,9 @@ class Player(BasePlayer):
     debt_new_Morgan = models.IntegerField(min=-1500, max=1500)
     labor_Morgan = models.IntegerField(min=-1500, max=1500)
     labor_hours_Morgan = models.FloatField(blank=True)
+    training_trials_Robin = models.IntegerField(initial=0)
+    training_trials_Charlie = models.IntegerField(initial=0)
+    training_trials_Morgan = models.IntegerField(initial=0)
     categories_cover_scenario = models.IntegerField(
         label="",
         choices=[
@@ -248,6 +231,38 @@ def creating_session(subsession: Subsession):
 def is_baseline(player):
     return player.subsession.Treatment in [0, 1]
 
+
+def is_t4_training(player):
+    return player.subsession.Treatment == 4
+
+
+def scenario_pronouns(player):
+    gender = player.participant.gender
+    if gender == 1:
+        return dict(pronoun_subject="he", pronoun_object="his")
+    if gender == 2:
+        return dict(pronoun_subject="she", pronoun_object="her")
+    return dict(pronoun_subject="they", pronoun_object="their")
+
+
+def validate_training_response(values, expected, hints):
+    for field, target in expected.items():
+        value = values.get(field)
+        if value is None:
+            value = 0
+        if isinstance(target, float):
+            if abs(float(value or 0) - target) > 0.01:
+                return hints[field]
+        elif int(value or 0) != target:
+            return hints[field]
+    return None
+
+
+def add_training_trial(player, field_name):
+    current = player.field_maybe_none(field_name) or 0
+    setattr(player, field_name, current + 1)
+
+
 def debtBaseline(player):
     if player.debt_increase == 'yes':
         debt_repay = int(player.debt_amount or 0)
@@ -300,11 +315,10 @@ def save_elicitation_totals(player):
         player.field_maybe_none('labor_income'),
         yes_sign=-1,
     )
-    save_invest = signed(
-        player.field_maybe_none('save_increase'),
-        player.field_maybe_none('save_same_or_decrease'),
-        player.field_maybe_none('save_amount'),
-    )
+    base_amount = 1000
+    if player.subsession.Treatment == 3 and player.participant.field_maybe_none('received_stimulus') == 1:
+        base_amount = int(player.participant.field_maybe_none('stimulus_amount') or 0)
+    save_invest = base_amount - spending - debt_repay + debt_new + labor
 
     player.spending = spending
     player.debt_repay = debt_repay
@@ -328,7 +342,11 @@ class InstructionsPart2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment <3 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+        return player.subsession.Treatment < 3 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t4=player.subsession.Treatment == 4)
 
 
 class InstructionsPart2T2(Page):
@@ -352,7 +370,11 @@ class instructionsT1(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus==2
+        return player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus==2
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t4=player.subsession.Treatment == 4)
 
 class instructionsT2(Page):
     form_model = 'player'
@@ -420,6 +442,167 @@ class ElicitationT0(Page):
     def before_next_page(player, timeout_happened):
         debtBaseline(player)
 
+
+class TrainingRobin(Page):
+    form_model = 'player'
+    template_name = 'Part2/TrainingRobin.html'
+    form_fields = [
+        'spending_Robin',
+        'save_invest_Robin',
+        'debt_repay_Robin',
+        'debt_new_Robin',
+        'labor_Robin',
+        'labor_hours_Robin',
+    ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return scenario_pronouns(player)
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return is_t4_training(player)
+
+    @staticmethod
+    def error_message(player, values):
+        error = validate_training_response(
+            values,
+            dict(
+                debt_repay_Robin=200,
+                spending_Robin=500,
+                debt_new_Robin=0,
+                labor_Robin=0,
+                labor_hours_Robin=0.0,
+                save_invest_Robin=300,
+            ),
+            dict(
+                debt_repay_Robin="Look at the first bullet: Robin repays $200 of credit card debt, so debt repayment increases by $200.",
+                spending_Robin="Look at the second bullet: Robin buys a computer for $500, so spending increases by $500.",
+                debt_new_Robin="Robin does not borrow or leave new bills unpaid in this example, so new debt should stay the same.",
+                labor_Robin="Robin's working hours and earnings do not change in this example.",
+                labor_hours_Robin="Robin's working hours do not change in this example.",
+                save_invest_Robin="After $200 in debt repayment and $500 in spending, the remaining $300 is left for savings, investments, or future use.",
+            )
+        )
+        if error:
+            add_training_trial(player, 'training_trials_Robin')
+            return error
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        add_training_trial(player, 'training_trials_Robin')
+
+
+class TrainingCharlie(Page):
+    form_model = 'player'
+    template_name = 'Part2/TrainingCharlie.html'
+    form_fields = [
+        'spending_Charlie',
+        'save_invest_Charlie',
+        'debt_repay_Charlie',
+        'debt_new_Charlie',
+        'labor_Charlie',
+        'labor_hours_Charlie',
+    ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return scenario_pronouns(player)
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return is_t4_training(player)
+
+    @staticmethod
+    def error_message(player, values):
+        error = validate_training_response(
+            values,
+            dict(
+                debt_repay_Charlie=600,
+                spending_Charlie=200,
+                debt_new_Charlie=200,
+                labor_Charlie=0,
+                labor_hours_Charlie=0.0,
+                save_invest_Charlie=400,
+            ),
+            dict(
+                debt_repay_Charlie="Look at the first bullet: Charlie repays $600 in credit card debt, so debt repayment increases by $600.",
+                spending_Charlie="The birthday surprise counts as spending, even though Charlie pays for it with a credit card.",
+                debt_new_Charlie="Because the $200 credit card charge is not repaid within the next three months, it also counts as new debt.",
+                labor_Charlie="Charlie does not change working hours or earnings in this example.",
+                labor_hours_Charlie="Charlie does not change working hours in this example.",
+                save_invest_Charlie="After the debt repayment, spending, and new debt are counted, the remaining $400 is left for savings, investments, or future use.",
+            )
+        )
+        if error:
+            add_training_trial(player, 'training_trials_Charlie')
+            return error
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        add_training_trial(player, 'training_trials_Charlie')
+
+
+class TrainingMorgan(Page):
+    form_model = 'player'
+    template_name = 'Part2/TrainingMorgan.html'
+    form_fields = [
+        'spending_Morgan',
+        'save_invest_Morgan',
+        'debt_repay_Morgan',
+        'debt_new_Morgan',
+        'labor_Morgan',
+        'labor_hours_Morgan',
+    ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return scenario_pronouns(player)
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return is_t4_training(player)
+
+    @staticmethod
+    def error_message(player, values):
+        error = validate_training_response(
+            values,
+            dict(
+                debt_repay_Morgan=0,
+                spending_Morgan=300,
+                debt_new_Morgan=0,
+                labor_Morgan=50,
+                labor_hours_Morgan=2.0,
+                save_invest_Morgan=650,
+            ),
+            dict(
+                debt_repay_Morgan="Morgan does not repay debt in this example, so debt repayment should stay the same.",
+                spending_Morgan="Look at the first bullet: Morgan buys a guitar for $300, so spending increases by $300.",
+                debt_new_Morgan="Morgan does not borrow or leave new bills unpaid in this example, so new debt should stay the same.",
+                labor_Morgan="Look at the second bullet: Morgan refuses a gig job that would have paid $50, so earnings decrease by $50.",
+                labor_hours_Morgan="Look at the second bullet: Morgan refuses a gig job that would have taken 2 hours, so hours worked decrease by 2.",
+                save_invest_Morgan="After the $300 guitar purchase and the $50 decrease in earnings, the remaining $650 is left for savings, investments, or future use.",
+            )
+        )
+        if error:
+            add_training_trial(player, 'training_trials_Morgan')
+            return error
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        add_training_trial(player, 'training_trials_Morgan')
+
+
+
+class TrainingTransition(Page):
+    form_model = 'player'
+    template_name = 'Part2/TrainingTransition.html'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return is_t4_training(player)
+
+
 class ElicitationT1(Page):
     form_model = 'player'
     form_fields = [
@@ -440,51 +623,64 @@ class ElicitationT1(Page):
         'newdebt_increase', 'newdebt_amount','newdebt_same_or_decrease',
         'newdebt_cc', 'newdebt_bills', 'newdebt_short', 'newdebt_long',
 
-        # Savings
-        'save_increase', 'save_same_or_decrease', 'save_amount',
-        'save_accounts', 'save_risky',
-        'save_realestate', 'save_business', 'save_crypto',
     ]
 
     @staticmethod
     def is_displayed(player: Player):
         return (
             player.subsession.Treatment == 2
+            or player.subsession.Treatment == 4
             or player.subsession.Treatment == 3
             and player.participant.received_stimulus == 2
         )
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t4=player.subsession.Treatment == 4)
+
     def error_message(player, values):
-        def check(total, components):
-            if not total:
-                return True
-            alloc_sum = sum(v or 0 for v in components)
-            return abs(alloc_sum - total) < 1
+        def check_category(first, second, total, components, label, yes_direction='increase', no_direction='decrease'):
+            if first == 'yes':
+                direction = yes_direction
+            elif first == 'no' and second == no_direction:
+                direction = no_direction
+            elif first == 'no' and second == 'same':
+                return None
+            else:
+                return f"Please answer the follow-up question for {label}."
+
+            if total is None or total <= 0:
+                return f"Please enter the amount for {label}."
+
+            allocation_sum = sum(value or 0 for value in components)
+            if abs(allocation_sum - total) > 0.01:
+                return (
+                    f"The amounts allocated for {label} add up to ${int(allocation_sum)}, "
+                    f"but the total {direction} is ${int(total)}. Please make sure these amounts match."
+                )
 
         checks = [
-            check(values['spend_amount'], [
+            check_category(values['spend_increase'], values['spend_same_or_decrease'], values['spend_amount'], [
                 values['spend_everyday'], values['spend_leisure'],
                 values['spend_services'], values['spend_durable']
-            ]),
-            check(values['debt_amount'], [
+            ], 'spending'),
+            check_category(values['debt_increase'], values['debt_same_or_decrease'], values['debt_amount'], [
                 values['debt_cc'], values['debt_bills'],
                 values['debt_short'], values['debt_long']
-            ]),
-            check(values['newdebt_amount'], [
+            ], 'debt repayment'),
+            check_category(values['newdebt_increase'], values['newdebt_same_or_decrease'], values['newdebt_amount'], [
                 values['newdebt_cc'], values['newdebt_bills'],
                 values['newdebt_short'], values['newdebt_long']
-            ]),
-            check(values['save_amount'], [
-                values['save_accounts'], values['save_risky'], values['save_realestate'],
-                values['save_business'], values['save_crypto']
-            ]),
+            ], 'new debt'),
+            check_category(values['labor_decrease'], values['labor_same_or_increase'], values['labor_income'], [
+                values['labor_gigs'], values['labor_overtime'],
+                values['labor_holidays'], values['labor_contract']
+            ], 'earnings', yes_direction='decrease', no_direction='increase'),
         ]
 
-        if not all(checks):
-            return (
-                "Some allocations do not add up to the total amounts you entered. "
-                "Please correct them before continuing."
-            )
+        for error in checks:
+            if error:
+                return error
 
     def before_next_page(player, timeout_happened):
         save_elicitation_totals(player)
@@ -510,46 +706,54 @@ class ElicitationT2(Page):
         'newdebt_increase', 'newdebt_amount', 'newdebt_same_or_decrease',
         'newdebt_cc', 'newdebt_bills', 'newdebt_short', 'newdebt_long',
 
-        # Savings
-        'save_increase', 'save_same_or_decrease', 'save_amount',
-        'save_accounts', 'save_risky',
-        'save_realestate', 'save_business', 'save_crypto',
     ]
     @staticmethod
     def is_displayed(player: Player):
         return  player.subsession.Treatment == 3 and player.participant.received_stimulus ==1
 
     def error_message(player, values):
-        def check(total, components):
-            if not total:
-                return True
-            alloc_sum = sum(v or 0 for v in components)
-            return abs(alloc_sum - total) < 1
+        def check_category(first, second, total, components, label, yes_direction='increase', no_direction='decrease'):
+            if first == 'yes':
+                direction = yes_direction
+            elif first == 'no' and second == no_direction:
+                direction = no_direction
+            elif first == 'no' and second == 'same':
+                return None
+            else:
+                return f"Please answer the follow-up question for {label}."
+
+            if total is None or total <= 0:
+                return f"Please enter the amount for {label}."
+
+            allocation_sum = sum(value or 0 for value in components)
+            if abs(allocation_sum - total) > 0.01:
+                return (
+                    f"The amounts allocated for {label} add up to ${int(allocation_sum)}, "
+                    f"but the total {direction} is ${int(total)}. Please make sure these amounts match."
+                )
 
         checks = [
-            check(values['spend_amount'], [
+            check_category(values['spend_increase'], values['spend_same_or_decrease'], values['spend_amount'], [
                 values['spend_everyday'], values['spend_leisure'],
                 values['spend_services'], values['spend_durable']
-            ]),
-            check(values['debt_amount'], [
+            ], 'spending'),
+            check_category(values['debt_increase'], values['debt_same_or_decrease'], values['debt_amount'], [
                 values['debt_cc'], values['debt_bills'],
                 values['debt_short'], values['debt_long']
-            ]),
-            check(values['newdebt_amount'], [
+            ], 'debt repayment'),
+            check_category(values['newdebt_increase'], values['newdebt_same_or_decrease'], values['newdebt_amount'], [
                 values['newdebt_cc'], values['newdebt_bills'],
                 values['newdebt_short'], values['newdebt_long']
-            ]),
-            check(values['save_amount'], [
-                values['save_accounts'], values['save_risky'], values['save_realestate'],
-                values['save_business'], values['save_crypto']
-            ]),
+            ], 'new debt'),
+            check_category(values['labor_decrease'], values['labor_same_or_increase'], values['labor_income'], [
+                values['labor_gigs'], values['labor_overtime'],
+                values['labor_holidays'], values['labor_contract']
+            ], 'earnings', yes_direction='decrease', no_direction='increase'),
         ]
 
-        if not all(checks):
-            return (
-                "Some allocations do not add up to the total amounts you entered. "
-                "Please correct them before continuing."
-            )
+        for error in checks:
+            if error:
+                return error
 
     def before_next_page(player, timeout_happened):
         save_elicitation_totals(player)
@@ -566,11 +770,12 @@ class FeedbackElicitation(Page):
         'payment_access',
         'payment_different_if_personal',
         'payment_different_explain',
+        'final_comments',
     ]
 
     @staticmethod
     def is_displayed(player: Player):
-        return is_baseline(player) or player.subsession.Treatment == 2 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+        return is_baseline(player) or player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -585,10 +790,14 @@ class FeedbackElicitation(Page):
                 'spending more on goods and services',
                 'taking on more new debt',
                 'decreasing the hours you work',
-                'saving or investing more',
+                'the amount left for savings, investments, or future use',
             ]
 
-        return dict(categories=categories)
+        return dict(
+            categories=categories,
+            is_t4=player.subsession.Treatment == 4,
+            feedback_page_title="Part 2 - Page 6/6" if player.subsession.Treatment == 4 else "Part 2 - Page 3/3",
+        )
 
     def error_message(player, values):
         if values['categories_cover'] == 1 and not values['categories_specify']:
@@ -634,16 +843,20 @@ class InstructionsScenarios(Page):
     form_model = 'player'
 
     @staticmethod
+    def is_displayed(player: Player):
+        return not is_t4_training(player)
+
+    @staticmethod
     def vars_for_template(player: Player):
         if is_baseline(player):
             return dict(
                 scenario_count=4,
-                page_count=5,
+                page_count=4,
                 show_morgan_scenario=True,
             )
         return dict(
             scenario_count=4,
-            page_count=5,
+            page_count=4,
             show_morgan_scenario=True,
         )
 
@@ -928,7 +1141,7 @@ class ProlificBack(Page):
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
-page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, Morgan, MorganT0, FeedbackScenario,End,ProlificBack]
+page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, TrainingRobin, TrainingCharlie, TrainingMorgan, TrainingTransition, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation, FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, Morgan, MorganT0, End, ProlificBack]
 #
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 

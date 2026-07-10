@@ -169,7 +169,7 @@ h5 { text-align:center; margin-bottom:25px; }
 </style>
 
 <div class="content-box">
-<h2>Part 2 – Page 2/3</h2>
+<h2>{% if is_t4 %}Part 2 – Page 5/6{% else %}Part 2 – Page 2/3{% endif %}</h2>
 
 <h5>
 Over the next <b>three months</b>, would the $1,000 payment cause you and your household to...
@@ -454,84 +454,14 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
   </div>
 </div>
 
-<!-- SAVINGS -->
-<div class="category-box category full-row" data-balance-effect="-1">
-  <div class="category-question">
-    Put more money toward <span class="category-title">savings or investments</span>?
-  </div>
-
-  <div class="radio-line">
-    <label><input type="radio" name="save_increase" value="yes"> Yes</label>
-    <label><input type="radio" name="save_increase" value="no"> No</label>
-  </div>
-
-  <div class="sub-box same-decrease hidden">
-    <div>Would the payment instead cause you to <b>put less money toward savings or investments</b>, or would the amount you put toward savings or investments <b>stay the same</b>?</div>
-    <div class="radio-line">
-      <label><input type="radio" name="save_same_or_decrease" value="same"> Stay the same</label>
-      <label><input type="radio" name="save_same_or_decrease" value="decrease"> Put less money toward savings/investments</label>
-    </div>
-  </div>
-
-  <div class="example-box">
-    <div class="example-header">
-      <span class="example-title">Examples</span>
-      <button type="button" class="example-toggle">(Hide)</button>
-    </div>
-    <div class="example-content">
-      <ul>
-        <li><span class="example-increase">Putting more into</span><span class="example-decrease hidden">Putting less into</span> <b>savings or retirement accounts</b></li>
-        <li><span class="example-increase">Buying more</span><span class="example-decrease hidden">Buying less</span> <b>stocks and index funds</b></li>
-        <li><span class="example-increase">Buying more</span><span class="example-decrease hidden">Buying less</span> <b>real estate</b></li>
-        <li><span class="example-increase">Making more</span><span class="example-decrease hidden">Making fewer</span> <b>direct investments</b> (including investments in your own business)</li>
-        <li><span class="example-increase">Buying more</span><span class="example-decrease hidden">Buying less</span> <b>cryptocurrencies</b></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="sub-box amount hidden">
-    <div class="amount-line">
-      <span>By how much would the <b>amount you put toward savings or investments <span class="amount-direction"></span></b>?</span>
-      <span class="currency-input">
-        <span class="currency-symbol">$</span>
-        <input type="number" name="save_amount" id="id_save_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric">
-      </span>
-    </div>
-  </div>
-
-  <div class="sub-box allocation hidden">
-    <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
-    <div class="alloc-line">
-      <span class="alloc-label">savings & retirement accounts</span>
-      <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_accounts" class="inline-number allocation-input" min="0" step="1" inputmode="numeric"></span>
-    </div>
-    <div class="alloc-line">
-      <span class="alloc-label">stocks and index funds</span>
-      <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_risky" class="inline-number allocation-input" min="0" step="1" inputmode="numeric"></span>
-    </div>
-    <div class="alloc-line">
-      <span class="alloc-label">real estate</span>
-      <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_realestate" class="inline-number allocation-input" min="0" step="1" inputmode="numeric"></span>
-    </div>
-    <div class="alloc-line">
-      <span class="alloc-label">direct investments</span>
-      <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_business" class="inline-number allocation-input" min="0" step="1" inputmode="numeric"></span>
-    </div>
-    <div class="alloc-line">
-      <span class="alloc-label">cryptocurrencies</span>
-      <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_crypto" class="inline-number allocation-input" min="0" step="1" inputmode="numeric"></span>
-    </div>
-    <div class="warning hidden">The amounts above do not add up to the total.</div>
-  </div>
-</div>
 
 </div>
 
 <div class="balance-box">
-  Checking account balance:
+  <b>Savings:</b>
   <b><span id="balance-sign">+</span>$<span id="balance">1000</span></b>
   <p class="balance-note">
-    The balance was initially set at $1,000 (the payment amount) and updates automatically based on your answers.
+    This is the part of the payment left for future use after the changes entered above.
   </p>
 </div>
 
@@ -553,7 +483,7 @@ function numberValue(input) {
 
 function mainAnswer(cat) {
   const firstRadio = cat.querySelector(
-    'input[name="debt_increase"]:checked, input[name="spend_increase"]:checked, input[name="newdebt_increase"]:checked, input[name="labor_decrease"]:checked, input[name="save_increase"]:checked'
+    'input[name="debt_increase"]:checked, input[name="spend_increase"]:checked, input[name="newdebt_increase"]:checked, input[name="labor_decrease"]:checked'
   );
   return firstRadio ? firstRadio.value : null;
 }
@@ -614,6 +544,16 @@ function clearAmounts(cat) {
   });
 }
 
+function setBoxHidden(box, hidden) {
+  if (!box) return;
+  box.classList.toggle('hidden', hidden);
+  if (hidden) {
+    box.querySelectorAll('input[type="number"]').forEach(input => {
+      input.value = '';
+    });
+  }
+}
+
 function updateCategory(cat) {
   const answer = mainAnswer(cat);
   const sameDec = cat.querySelector('.same-decrease');
@@ -627,7 +567,7 @@ function updateCategory(cat) {
   updateDirectionalExamples(cat);
 
   const showAmount = selectedDirection(cat) !== null;
-  if (amountBox) amountBox.classList.toggle('hidden', !showAmount);
+  setBoxHidden(amountBox, !showAmount);
 
   if (cat.classList.contains('labor-category')) {
     updateLabor(cat);
@@ -635,7 +575,7 @@ function updateCategory(cat) {
   }
 
   const total = numberValue(cat.querySelector('.total-input'));
-  if (allocation) allocation.classList.toggle('hidden', !(showAmount && total !== null && total > 0));
+  setBoxHidden(allocation, !(showAmount && total !== null && total > 0));
 }
 
 function updateLabor(cat) {
@@ -649,7 +589,7 @@ function updateLabor(cat) {
   const laborDirections = cat.querySelectorAll('.labor-direction');
   const direction = selectedDirection(cat);
 
-  if (hoursBox) hoursBox.classList.toggle('hidden', !showHours);
+  setBoxHidden(hoursBox, !showHours);
 
   if (direction === 'increase') {
     hoursText.innerHTML = 'How many <b>additional hours</b> would you work over the next three months?';
@@ -664,16 +604,16 @@ function updateLabor(cat) {
 
   const hours = numberValue(hoursInput);
   const showIncome = showHours && hours !== null && hours > 0;
-  incomeLine?.classList.toggle('hidden', !showIncome);
+  setBoxHidden(incomeLine, !showIncome);
 
   if (!showIncome && incomeInput) {
     incomeInput.value = '';
-    allocation?.classList.add('hidden');
+    setBoxHidden(allocation, true);
     return;
   }
 
   const income = numberValue(incomeInput);
-  allocation?.classList.toggle('hidden', !(income !== null && income > 0));
+  setBoxHidden(allocation, !(income !== null && income > 0));
 }
 
 function validateAllocation(cat, showWhenValid) {
