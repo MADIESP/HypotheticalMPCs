@@ -26,7 +26,7 @@ SESSION_CONFIGS = [
         completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
     ),
     dict(
-        name='T4',
+        name='T3',
         app_sequence=['Part1', 'Part2'],
         num_demo_participants=20,
         Treatment=4,
@@ -82,7 +82,7 @@ ROOMS = [
         display_name='Study 2'
     ),
     dict(
-        name='study4',
-        display_name='Study 4'
+        name='study3',
+        display_name='Study 3'
     ),
 ]
