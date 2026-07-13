@@ -139,12 +139,6 @@ class Player(BasePlayer):
     debt_new_Robin = models.IntegerField(min=-1500, max=1500)
     labor_Robin = models.IntegerField(min=-1500, max=1500)
     labor_hours_Robin = models.FloatField(blank=True)
-    spending_Taylor = models.IntegerField(min=-10000, max=10000)
-    save_invest_Taylor = models.IntegerField(min=-10000, max=10000)
-    debt_repay_Taylor = models.IntegerField(min=-10000, max=10000)
-    debt_new_Taylor = models.IntegerField(min=-10000, max=10000)
-    labor_Taylor = models.IntegerField(min=-10000, max=10000)
-    labor_hours_Taylor = models.FloatField(blank=True)
     spending_Charlie = models.IntegerField(min=-1500, max=1500)
     save_invest_Charlie = models.IntegerField(min=-1500, max=1500)
     debt_repay_Charlie = models.IntegerField(min=-1500, max=1500)
@@ -160,6 +154,24 @@ class Player(BasePlayer):
     training_trials_Robin = models.IntegerField(initial=0)
     training_trials_Charlie = models.IntegerField(initial=0)
     training_trials_Morgan = models.IntegerField(initial=0)
+    training_first_Robin_spending = models.IntegerField(initial=0)
+    training_first_Robin_save_invest = models.IntegerField(initial=0)
+    training_first_Robin_debt_repay = models.IntegerField(initial=0)
+    training_first_Robin_debt_new = models.IntegerField(initial=0)
+    training_first_Robin_labor = models.IntegerField(initial=0)
+    training_first_Robin_labor_hours = models.FloatField(initial=0)
+    training_first_Charlie_spending = models.IntegerField(initial=0)
+    training_first_Charlie_save_invest = models.IntegerField(initial=0)
+    training_first_Charlie_debt_repay = models.IntegerField(initial=0)
+    training_first_Charlie_debt_new = models.IntegerField(initial=0)
+    training_first_Charlie_labor = models.IntegerField(initial=0)
+    training_first_Charlie_labor_hours = models.FloatField(initial=0)
+    training_first_Morgan_spending = models.IntegerField(initial=0)
+    training_first_Morgan_save_invest = models.IntegerField(initial=0)
+    training_first_Morgan_debt_repay = models.IntegerField(initial=0)
+    training_first_Morgan_debt_new = models.IntegerField(initial=0)
+    training_first_Morgan_labor = models.IntegerField(initial=0)
+    training_first_Morgan_labor_hours = models.FloatField(initial=0)
     categories_cover_scenario = models.IntegerField(
         label="",
         choices=[
@@ -261,6 +273,17 @@ def validate_training_response(values, expected, hints):
 def add_training_trial(player, field_name):
     current = player.field_maybe_none(field_name) or 0
     setattr(player, field_name, current + 1)
+
+
+def save_first_training_attempt(player, scenario_name, values):
+    trial_field = f'training_trials_{scenario_name}'
+    if player.field_maybe_none(trial_field):
+        return
+
+    for category in ['spending', 'save_invest', 'debt_repay', 'debt_new', 'labor', 'labor_hours']:
+        source_field = f'{category}_{scenario_name}'
+        target_field = f'training_first_{scenario_name}_{category}'
+        setattr(player, target_field, values.get(source_field) or 0)
 
 
 def debtBaseline(player):
@@ -465,6 +488,7 @@ class TrainingRobin(Page):
 
     @staticmethod
     def error_message(player, values):
+        save_first_training_attempt(player, 'Robin', values)
         error = validate_training_response(
             values,
             dict(
@@ -515,6 +539,7 @@ class TrainingCharlie(Page):
 
     @staticmethod
     def error_message(player, values):
+        save_first_training_attempt(player, 'Charlie', values)
         error = validate_training_response(
             values,
             dict(
@@ -565,6 +590,7 @@ class TrainingMorgan(Page):
 
     @staticmethod
     def error_message(player, values):
+        save_first_training_attempt(player, 'Morgan', values)
         error = validate_training_response(
             values,
             dict(
@@ -850,14 +876,14 @@ class InstructionsScenarios(Page):
     def vars_for_template(player: Player):
         if is_baseline(player):
             return dict(
-                scenario_count=4,
-                page_count=4,
-                show_morgan_scenario=True,
+                scenario_count=3,
+                page_count=3,
+                show_morgan_scenario=False,
             )
         return dict(
-            scenario_count=4,
-            page_count=4,
-            show_morgan_scenario=True,
+            scenario_count=3,
+            page_count=3,
+            show_morgan_scenario=False,
         )
 
 
@@ -922,68 +948,6 @@ class RobinT0(Page):
     @staticmethod
     def is_displayed(player: Player):
         return is_baseline(player)
-
-class TaylorT0(Page):
-    form_model = 'player'
-    form_fields = [
-        'spending_Taylor',
-        'debt_repay_Taylor',
-    ]
-
-    def vars_for_template(player: Player):
-        gender = player.participant.gender
-        if gender == 1:
-            pronoun_subject = "he"
-            pronoun_object = "his"
-        elif gender == 2:
-            pronoun_subject = "she"
-            pronoun_object = "her"
-        else:
-            pronoun_subject = "they"
-            pronoun_object = "their"
-
-        return dict(
-            pronoun_subject=pronoun_subject,
-            pronoun_object=pronoun_object,
-        )
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return is_baseline(player)
-
-
-class Taylor(Page):
-    form_model = 'player'
-    form_fields = [
-        'spending_Taylor',
-        'save_invest_Taylor',
-        'debt_repay_Taylor',
-        'debt_new_Taylor',
-        'labor_Taylor',
-        'labor_hours_Taylor',
-    ]
-
-    def vars_for_template(player: Player):
-        gender = player.participant.gender
-        if gender == 1:
-            pronoun_subject = "he"
-            pronoun_object = "his"
-        elif gender == 2:
-            pronoun_subject = "she"
-            pronoun_object = "her"
-        else:
-            pronoun_subject = "they"
-            pronoun_object = "their"
-
-        return dict(
-            pronoun_subject=pronoun_subject,
-            pronoun_object=pronoun_object,
-        )
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
-
 
 class Charlie(Page):
     form_model = 'player'
@@ -1119,11 +1083,11 @@ class FeedbackScenario(Page):
         if is_baseline(player):
             return dict(
                 scenario_feedback_page="Part 3 - Page 5/5",
-                scenario_names="Robin, Taylor, Charlie, and Morgan",
+                scenario_names="Robin, Charlie, and Morgan",
             )
         return dict(
             scenario_feedback_page="Part 3 - Page 5/5",
-            scenario_names="Robin, Taylor, Charlie, and Morgan",
+            scenario_names="Robin, Charlie, and Morgan",
         )
 
 
@@ -1138,11 +1102,11 @@ class ProlificBack(Page):
             completionlink=
             player.subsession.session.config['completionlink']
         )
-#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
-page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, TrainingRobin, TrainingCharlie, TrainingMorgan, TrainingTransition, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation, FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, Morgan, MorganT0, End, ProlificBack]
+page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, TrainingRobin, TrainingCharlie, TrainingMorgan, TrainingTransition, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation, FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, Morgan, MorganT0, End, ProlificBack]
 #
-#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 
-#page_sequence =[Robin, RobinT0, Taylor, TaylorT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
+#page_sequence =[Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]

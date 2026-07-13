@@ -50,8 +50,8 @@
 </style>
 
 <div class="content-box">
-<h2>Part 3 - Page 3/4</h2>
-<h4>Scenario 3: Charlie</h4>
+<h2>Part 3 - Page 2/3</h2>
+<h4>Scenario 2: Charlie</h4>
 
 <div class="story-card">
 <p>
@@ -86,7 +86,7 @@
     <div class="category-box category" data-field="debt_repay_Charlie" data-balance-effect="-1">
       <div class="category-question">Repay more of {{ pronoun_object }} <span class="category-title">pre-existing debts</span>?</div>
       <div class="radio-line"><label><input type="radio" name="debt_repay_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="debt_repay_Charlie_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to <b>repay less debt</b>, or did Charlie's debt repayment <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="debt_repay_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="debt_repay_Charlie_same" value="decrease"> Repay less debt</label></div></div>
+      <div class="sub-box same-decrease hidden"><div>Did Charlie's debt repayment <b>stay the same</b>, or did the payment instead cause Charlie to <b>repay less debt</b>?</div><div class="radio-line"><label><input type="radio" name="debt_repay_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="debt_repay_Charlie_same" value="decrease"> Repay less debt</label></div></div>
       <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did Charlie's debt repayment <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="debt_repay_Charlie" id="id_debt_repay_Charlie" value="0">
     </div>
@@ -94,15 +94,15 @@
     <div class="category-box category" data-field="spending_Charlie" data-balance-effect="-1">
       <div class="category-question">Spend more <span class="category-title">on goods and services</span>?</div>
       <div class="radio-line"><label><input type="radio" name="spending_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="spending_Charlie_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to <b>spend less</b>, or did Charlie's spending <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="spending_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="spending_Charlie_same" value="decrease"> Spend less</label></div></div>
+      <div class="sub-box same-decrease hidden"><div>Did Charlie's spending <b>stay the same</b>, or did the payment instead cause Charlie to <b>spend less</b>?</div><div class="radio-line"><label><input type="radio" name="spending_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="spending_Charlie_same" value="decrease"> Spend less</label></div></div>
       <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did Charlie's spending <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="spending_Charlie" id="id_spending_Charlie" value="0">
     </div>
 
     <div class="category-box category" data-field="debt_new_Charlie" data-balance-effect="+1">
-      <div class="category-question">Take on more <span class="category-title">new debt</span>?</div>
+      <div class="category-question">Issue more <span class="category-title">new debt</span>?</div>
       <div class="radio-line"><label><input type="radio" name="debt_new_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="debt_new_Charlie_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to take on <b>less new debt</b>, or did Charlie's new debt <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="debt_new_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="debt_new_Charlie_same" value="decrease"> Less new debt</label></div></div>
+      <div class="sub-box same-decrease hidden"><div>Did Charlie's new debt <b>stay the same</b>, or did the payment instead cause Charlie to issue <b>less new debt</b>?</div><div class="radio-line"><label><input type="radio" name="debt_new_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="debt_new_Charlie_same" value="decrease"> Issue less new debt</label></div></div>
       <div class="sub-box amount hidden"><div class="amount-line"><span><b>By how much</b> did Charlie's new debt <b><span class="amount-direction"></span></b>?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="debt_new_Charlie" id="id_debt_new_Charlie" value="0">
     </div>
@@ -110,7 +110,7 @@
     <div class="category-box category labor-category" data-field="labor_Charlie" data-hours-field="labor_hours_Charlie" data-balance-effect="+1">
       <div class="category-question">Decrease the <span class="category-title">hours {{ pronoun_subject }} worked (and the amount {{ pronoun_subject }} earned)</span>?</div>
       <div class="radio-line"><label><input type="radio" name="labor_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="labor_Charlie_choice" value="no"> No</label></div>
-      <div class="sub-box same-decrease hidden"><div>Did the payment instead cause Charlie to <b>work more</b>, or did Charlie's working hours <b>stay the same</b>?</div><div class="radio-line"><label><input type="radio" name="labor_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="labor_Charlie_same" value="increase"> Work more</label></div></div>
+      <div class="sub-box same-decrease hidden"><div>Did Charlie's working hours <b>stay the same</b>, or did the payment instead cause Charlie to <b>work more</b>?</div><div class="radio-line"><label><input type="radio" name="labor_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="labor_Charlie_same" value="increase"> Work more</label></div></div>
       <div class="sub-box amount hidden"><div class="amount-line"><span>How many <b><span class="hours-direction"></span> hours</b> did Charlie work over the next three months?</span><input type="text" class="inline-number hours-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"><span><b>hours</b></span></div><div class="amount-line" style="margin-top:8px;"><span>What <b><span class="amount-direction"></span></b> in <b>earnings</b> did this represent?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="labor_Charlie" id="id_labor_Charlie" value="0">
       <input type="hidden" name="labor_hours_Charlie" id="id_labor_hours_Charlie" value="0">
