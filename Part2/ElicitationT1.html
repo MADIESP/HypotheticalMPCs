@@ -200,10 +200,10 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
 
   <div class="example-box">
     <div class="example-header">
-      <span class="example-title">Examples</span>
-      <button type="button" class="example-toggle">(Hide)</button>
+      {% if is_t4 %}{% else %}<span class="example-title">Examples</span>{% endif %}
+      <button type="button" class="example-toggle" data-show-label="{% if is_t4 %}Show examples{% else %}(Show){% endif %}" data-hide-label="{% if is_t4 %}Hide examples{% else %}(Hide){% endif %}">{% if is_t4 %}Show examples{% else %}(Hide){% endif %}</button>
     </div>
-    <div class="example-content">
+    <div class="example-content{% if is_t4 %} hidden{% endif %}">
       <ul>
         <li><span class="example-increase">Paying down more of your</span><span class="example-decrease hidden">Paying down less of your</span> <b>revolving credit balances</b> (e.g., credit cards, home equity lines of credit)</li>
         <li><span class="example-increase">Making larger payments on your</span><span class="example-decrease hidden">Making smaller payments on your</span> <b>pre-existing installment loans</b> (e.g., auto loans, student loans)</li>
@@ -266,10 +266,10 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
 
   <div class="example-box">
     <div class="example-header">
-      <span class="example-title">Examples</span>
-      <button type="button" class="example-toggle">(Hide)</button>
+      {% if is_t4 %}{% else %}<span class="example-title">Examples</span>{% endif %}
+      <button type="button" class="example-toggle" data-show-label="{% if is_t4 %}Show examples{% else %}(Show){% endif %}" data-hide-label="{% if is_t4 %}Hide examples{% else %}(Hide){% endif %}">{% if is_t4 %}Show examples{% else %}(Hide){% endif %}</button>
     </div>
-    <div class="example-content">
+    <div class="example-content{% if is_t4 %} hidden{% endif %}">
       <ul>
         <li><span class="example-increase">Spending more on</span><span class="example-decrease hidden">Spending less on</span> <b>everyday purchases</b> (e.g., food, personal care, health-related products)</li>
         <li><span class="example-increase">Spending more on</span><span class="example-decrease hidden">Spending less on</span> <b>outings and leisure activities</b> (e.g., restaurants, entertainment, vacations)</li>
@@ -337,10 +337,10 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
 
   <div class="example-box">
     <div class="example-header">
-      <span class="example-title">Examples</span>
-      <button type="button" class="example-toggle">(Hide)</button>
+      {% if is_t4 %}{% else %}<span class="example-title">Examples</span>{% endif %}
+      <button type="button" class="example-toggle" data-show-label="{% if is_t4 %}Show examples{% else %}(Show){% endif %}" data-hide-label="{% if is_t4 %}Hide examples{% else %}(Hide){% endif %}">{% if is_t4 %}Show examples{% else %}(Hide){% endif %}</button>
     </div>
-    <div class="example-content">
+    <div class="example-content{% if is_t4 %} hidden{% endif %}">
       <ul class="newdebt-examples">
         <li><span class="newdebt-more">Opening more <b>revolving credit lines</b> or adding higher new charges month to month</span><span class="newdebt-less hidden">Opening fewer <b>revolving credit lines</b> or adding lower new charges month to month</span> (e.g., credit cards, home equity lines of credit)</li>
         <li><span class="newdebt-more">Taking out more <b>new installment loans or debt</b></span><span class="newdebt-less hidden">Taking out fewer <b>new installment loans or debt</b></span> (e.g., auto loans, student loans, personal loans)</li>
@@ -403,10 +403,10 @@ Over the next <b>three months</b>, would the $1,000 payment cause you and your h
 
   <div class="example-box">
     <div class="example-header">
-      <span class="example-title">Examples</span>
-      <button type="button" class="example-toggle">(Hide)</button>
+      {% if is_t4 %}{% else %}<span class="example-title">Examples</span>{% endif %}
+      <button type="button" class="example-toggle" data-show-label="{% if is_t4 %}Show examples{% else %}(Show){% endif %}" data-hide-label="{% if is_t4 %}Hide examples{% else %}(Hide){% endif %}">{% if is_t4 %}Show examples{% else %}(Hide){% endif %}</button>
     </div>
-    <div class="example-content">
+    <div class="example-content{% if is_t4 %} hidden{% endif %}">
       <ul>
         <li><span class="example-decrease">Accepting fewer</span><span class="example-increase hidden">Accepting more</span> <b>gigs</b></li>
         <li><span class="example-decrease">Working fewer</span><span class="example-increase hidden">Working additional</span> <b>extra hours</b></li>
@@ -670,8 +670,8 @@ document.querySelectorAll('.example-toggle').forEach(toggle => {
     const content = toggle.closest('.example-box').querySelector('.example-content');
     content.classList.toggle('hidden');
     toggle.innerText = content.classList.contains('hidden')
-      ? '(Show)'
-      : '(Hide)';
+      ? toggle.dataset.showLabel
+      : toggle.dataset.hideLabel;
   });
 });
 
@@ -697,7 +697,16 @@ document.querySelectorAll('.category').forEach(cat => {
   });
 });
 
+function syncBeforeSubmit() {
+  document.querySelectorAll('.category').forEach(cat => {
+    setDirections(cat);
+    updateCategory(cat);
+  });
+  updateBalance();
+}
+
 document.querySelector('form').addEventListener('submit', event => {
+  syncBeforeSubmit();
   const valid = updateAllWarnings(true);
   if (!valid) {
     event.preventDefault();
