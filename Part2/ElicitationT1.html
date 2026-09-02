@@ -87,6 +87,10 @@ h5 { text-align:center; margin-bottom:25px; }
   margin:12px 0;
 }
 
+{% if is_t4 %}{% else %}
+.example-box { display:none; }
+{% endif %}
+
 .example-header {
   display:flex;
   justify-content:center;
@@ -169,10 +173,10 @@ h5 { text-align:center; margin-bottom:25px; }
 </style>
 
 <div class="content-box">
-<h2>{% if is_t4 %}Part 2 – Page 5/6{% else %}Part 2 – Page 2/3{% endif %}</h2>
+<h2>Part 2 – Page 2/4</h2>
 
 <h5>
-Over the next <b>three months</b>, would the $1,000 payment cause you and your household to...
+Over the <b>month following the payment</b>, would the $1,000 payment cause you and your household to...
 </h5>
 
 <form method="post" novalidate>
@@ -592,10 +596,10 @@ function updateLabor(cat) {
   setBoxHidden(hoursBox, !showHours);
 
   if (direction === 'increase') {
-    hoursText.innerHTML = 'How many <b>additional hours</b> would you work over the next three months?';
+    hoursText.innerHTML = 'How many <b>additional hours</b> would you work by the end of the month?';
     laborDirections.forEach(span => { span.innerText = 'increase'; });
   } else if (direction === 'decrease') {
-    hoursText.innerHTML = 'How many <b>fewer hours</b> would you work over the next three months?';
+    hoursText.innerHTML = 'How many <b>fewer hours</b> would you work by the end of the month?';
     laborDirections.forEach(span => { span.innerText = 'decrease'; });
   } else {
     hoursText.innerHTML = '';

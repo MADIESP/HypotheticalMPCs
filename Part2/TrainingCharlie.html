@@ -51,7 +51,7 @@
 </style>
 
 <div class="content-box">
-<h2>Part 2 - Page 3/6</h2>
+<h2>Part 2 - Page 3/7</h2>
 <h4>Training example 2: Charlie</h4>
 
 <div class="story-card">
@@ -67,16 +67,16 @@
 <ul class="story-list">
   <li>Charlie immediately <b>repays $600 in credit card debt</b>.</li>
   <li>Charlie <b>spends $200 more than usual</b> on a birthday surprise for {{ pronoun_object }} partner.</li>
-  <li>Charlie <b>charges this $200 to {{ pronoun_object }} credit card</b> and does <b>not repay</b> this new debt within the next three months.</li>
+  <li>Charlie <b>charges this $200 to {{ pronoun_object }} credit card</b> and does <b>not repay</b> this new debt by the end of the month.</li>
 </ul>
 
 <p>
-  The remaining amount is left for savings, investments, or future use. The rest of {{ pronoun_object }} behavior over the three months following the payment is unchanged.
+  The remaining amount is left for savings, investments, or future use. The rest of {{ pronoun_object }} behavior by the end of the month is unchanged.
 </p>
 </div>
 
 <p class="answer-intro">
-  This is a practice question. Please classify how the $1,000 payment changed Charlie's behavior over the next three months.
+  This is a practice question. Please classify how the $1,000 payment changed Charlie's behavior by the end of the month.
 </p>
 <p class="scenario-prompt">
   Did the <b>$1,000 payment</b> cause Charlie to...
@@ -112,7 +112,7 @@
       <div class="category-question">Decrease the <span class="category-title">hours {{ pronoun_subject }} worked (and the amount {{ pronoun_subject }} earned)</span>?</div>
       <div class="radio-line"><label><input type="radio" name="labor_Charlie_choice" value="yes"> Yes</label><label><input type="radio" name="labor_Charlie_choice" value="no"> No</label></div>
       <div class="sub-box same-decrease hidden"><div>Did Charlie's working hours <b>stay the same</b>, or did the payment instead cause Charlie to <b>work more</b>?</div><div class="radio-line"><label><input type="radio" name="labor_Charlie_same" value="same"> Stay the same</label><label><input type="radio" name="labor_Charlie_same" value="increase"> Work more</label></div></div>
-      <div class="sub-box amount hidden"><div class="amount-line"><span>How many <b><span class="hours-direction"></span> hours</b> did Charlie work over the next three months?</span><input type="text" class="inline-number hours-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"><span><b>hours</b></span></div><div class="amount-line" style="margin-top:8px;"><span>What <b><span class="amount-direction"></span></b> in <b>earnings</b> did this represent?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
+      <div class="sub-box amount hidden"><div class="amount-line"><span>How many <b><span class="hours-direction"></span> hours</b> did Charlie work by the end of the month?</span><input type="text" class="inline-number hours-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"><span><b>hours</b></span></div><div class="amount-line" style="margin-top:8px;"><span>What <b><span class="amount-direction"></span></b> in <b>earnings</b> did this represent?</span><span class="currency-input"><span class="currency-symbol">$</span><input type="text" class="inline-number amount-input" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></span></div></div>
       <input type="hidden" name="labor_Charlie" id="id_labor_Charlie" value="0">
       <input type="hidden" name="labor_hours_Charlie" id="id_labor_hours_Charlie" value="0">
     </div>

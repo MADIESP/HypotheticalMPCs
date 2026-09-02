@@ -55,31 +55,17 @@
   }
 </style>
 
-<h2>Part 2 - Page 3/3</h2>
+<h2>{{ feedback_page_title }}</h2>
 
 <div class="section-title">Feedback questions</div>
 
-<p class="intro">For questions 1 and 2 below, please answer on a <b>scale from 0 to 10:</b></p>
-<p class="intro"><b>0 = Not difficult at all</b></p>
-<p class="intro"><b>10 = Extremely difficult</b></p>
-
-<div class="question-block">
-  <b>1.</b> How difficult was it to <b>understand the different categories?</b>
-  {{ formfield 'understanding_difficulty' }}
-</div>
-
-<div class="question-block">
-  <b>2.</b> How difficult was it to <b>remember how the Covid stimulus payment changed your behavior</b> across these categories?
-  {{ formfield 'mental_effort' }}
-</div>
-
 <div class="radio-block">
-  <b>3.</b> Attention check: Please select "Slightly concerned" to continue.
+  <b>1.</b> Attention check: Please select "Slightly concerned" to continue.
   {{ formfield 'attention2' }}
 </div>
 
 <div class="radio-block">
-  <b>4.</b> Did the categories presented <b>cover all the ways</b> you and your household <b>used this payment,</b> or were there expenses that you found <b>difficult to classify?</b>
+  <b>2.</b> Did the categories on Page 2 <b>cover all the ways</b> you and your household <b>used the Covid stimulus payment,</b> or were there expenses or decisions that you found <b>difficult to classify?</b>
   {{ formfield 'categories_cover' }}
 </div>
 
@@ -96,14 +82,14 @@
 
 <div class="question-block">
   <label class="question-label">
-    <b>5.</b> On which <b>bank account</b> was the payment deposited?
+    <b>3.</b> On which <b>bank account</b> was the payment deposited?
   </label>
   {{ formfield 'deposit_account' }}
 </div>
 
 <div id="q2-field" class="question-block">
   <label class="question-label">
-    <b>6.</b> Do you think your <b>use of the payment</b> would have been <b>different</b> if the
+    <b>4.</b> Do you think your <b>use of the payment</b> would have been <b>different</b> if the
     ${{ participant.stimulus_amount }} had been deposited directly into your
     <b>personal account</b> and could not be accessed by other household members?
   </label>
@@ -112,6 +98,12 @@
 
 <div id="explain-field">
   {{ formfield 'payment_different_explain' }}
+</div>
+
+<div class="section-title">Final comments</div>
+
+<div class="question-block">
+  {{ formfield 'final_comments' }}
 </div>
 
 <button class="btn btn-danger custom-submit" style="display:block; margin:20px auto;">

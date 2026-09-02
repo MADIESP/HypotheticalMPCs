@@ -53,6 +53,22 @@
         display: block;
         margin: 35px auto 0 auto;
     }
+
+    .percent-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .percent-row input {
+        width: 120px;
+    }
+
+    .percent-symbol {
+        font-weight: bold;
+        line-height: 1;
+    }
 </style>
 
 <h2> Part 1 - Page 3/3 </h2>
@@ -83,19 +99,31 @@
 
     <!-- 9 -->
     <div class="form-section">
-        <p><b>3.</b> How often  does your household pay  the <b>full  amount due</b> on its<b> credit cards or other revolving credit? </b> </p>
+        <p><b>3.</b> How often does your household pay the <b>full amount due</b> on its <b>credit cards or other revolving credit?</b></p>
         {% formfield player.credit_card_payment %}
+    </div>
+
+    <div id="credit_card_fraction_section" class="form-section" style="display:none;">
+        <p>
+            <b>3.b.</b> When your household does not pay the full amount due,
+            what <b>fraction of the amount due</b> does it typically pay?
+        </p>
+        {{ formfield_errors 'credit_card_fraction_repaid' }}
+        <div class="percent-row">
+            {{ form.credit_card_fraction_repaid }}
+            <span class="percent-symbol">%</span>
+        </div>
     </div>
 
     <!-- 10 -->
     <div class="form-section">
-        <p><b>4.</b> How often  does your household  pay <b> the full amount due </b> on its <b>installment loans</b> (e.g., auto, student, or personal loans)? </p>
+        <p><b>4.</b> How often does your household pay the <b>full amount due</b> on its <b>installment loans</b> (e.g., auto, student, or personal loans)?</p>
         {% formfield player.installment_payment %}
     </div>
 
      <!-- 10 -->
     <div class="form-section">
-        <p><b>5.</b> How often  does your household    pay   the <b>full amount due</b> on its<b> payday or other short-term loans</b>? </p>
+        <p><b>5.</b> How often does your household pay the <b>full amount due</b> on its <b>payday or other short-term loans</b>?</p>
         {% formfield player.payday_payment %}
     </div>
 
@@ -116,5 +144,27 @@
     </button>
 
 </form>
+
+<script>
+    function updateCreditCardFractionQuestion() {
+        const selected = parseInt(
+            document.querySelector('input[name="credit_card_payment"]:checked')?.value
+        );
+        const section = document.getElementById("credit_card_fraction_section");
+        const input = document.getElementById("id_credit_card_fraction_repaid");
+        const shouldShow = [3, 4, 5, 6].includes(selected);
+
+        section.style.display = shouldShow ? "block" : "none";
+        if (!shouldShow && input) {
+            input.value = "";
+        }
+    }
+
+    updateCreditCardFractionQuestion();
+
+    document.querySelectorAll('input[name="credit_card_payment"]').forEach(el => {
+        el.addEventListener("change", updateCreditCardFractionQuestion);
+    });
+</script>
 
 {% endblock %}

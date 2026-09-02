@@ -38,6 +38,23 @@ class Player(BasePlayer):
     spend_services = models.CurrencyField(min=0, blank=True)
     spend_durable = models.CurrencyField(min=0, blank=True)
 
+    # ================= PAYMENT METHOD FOR ADDITIONAL SPENDING =================
+    spend_pay_credit_card = models.CurrencyField(min=0, blank=True)
+    spend_pay_debit_card = models.CurrencyField(min=0, blank=True)
+    spend_pay_cash = models.CurrencyField(min=0, blank=True)
+    spend_pay_bank_transfer = models.CurrencyField(min=0, blank=True)
+    spend_pay_bnpl = models.CurrencyField(min=0, blank=True)
+    spend_pay_store_financing = models.CurrencyField(min=0, blank=True)
+    spend_pay_bills_later = models.CurrencyField(min=0, blank=True)
+    spend_pay_prepaid = models.CurrencyField(min=0, blank=True)
+    spend_pay_other = models.CurrencyField(min=0, blank=True)
+    spend_credit_balance_use_accounts = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelectHorizontal,
+        blank=True
+    )
+    spend_credit_balance_repaid = models.CurrencyField(min=0, blank=True)
+
     # ================= DEBT REPAYMENT =================
     debt_increase = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
@@ -241,11 +258,15 @@ def creating_session(subsession: Subsession):
     subsession.Treatment = subsession.session.config['Treatment']
 
 def is_baseline(player):
-    return player.subsession.Treatment in [0, 1]
+    return player.subsession.Treatment in [0, 1, 5]
+
+
+def has_training_examples(player):
+    return False
 
 
 def is_t4_training(player):
-    return player.subsession.Treatment == 4
+    return has_training_examples(player)
 
 
 def scenario_pronouns(player):
@@ -365,11 +386,11 @@ class InstructionsPart2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment < 3 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+        return is_baseline(player) or player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(is_t4=player.subsession.Treatment == 4)
+        return dict(is_t4=has_training_examples(player))
 
 
 class InstructionsPart2T2(Page):
@@ -397,7 +418,7 @@ class instructionsT1(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(is_t4=player.subsession.Treatment == 4)
+        return dict(is_t4=has_training_examples(player))
 
 class instructionsT2(Page):
     form_model = 'player'
@@ -553,7 +574,7 @@ class TrainingCharlie(Page):
             dict(
                 debt_repay_Charlie="Look at the first bullet: Charlie repays $600 in credit card debt, so debt repayment increases by $600.",
                 spending_Charlie="The birthday surprise counts as spending, even though Charlie pays for it with a credit card.",
-                debt_new_Charlie="Because the $200 credit card charge is not repaid within the next three months, it also counts as new debt.",
+                debt_new_Charlie="Because the $200 credit card charge is not repaid by the end of the month, it also counts as new debt.",
                 labor_Charlie="Charlie does not change working hours or earnings in this example.",
                 labor_hours_Charlie="Charlie does not change working hours in this example.",
                 save_invest_Charlie="After the debt repayment, spending, and new debt are counted, the remaining $400 is left for savings, investments, or future use.",
@@ -628,6 +649,12 @@ class TrainingTransition(Page):
     def is_displayed(player: Player):
         return is_t4_training(player)
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            is_t2_received=player.subsession.Treatment == 3 and player.participant.received_stimulus == 1
+        )
+
 
 class ElicitationT1(Page):
     form_model = 'player'
@@ -662,7 +689,7 @@ class ElicitationT1(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(is_t4=player.subsession.Treatment == 4)
+        return dict(is_t4=has_training_examples(player))
 
     def error_message(player, values):
         def check_category(first, second, total, components, label, yes_direction='increase', no_direction='decrease'):
@@ -737,6 +764,10 @@ class ElicitationT2(Page):
     def is_displayed(player: Player):
         return  player.subsession.Treatment == 3 and player.participant.received_stimulus ==1
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t4=has_training_examples(player))
+
     def error_message(player, values):
         def check_category(first, second, total, components, label, yes_direction='increase', no_direction='decrease'):
             if first == 'yes':
@@ -784,11 +815,98 @@ class ElicitationT2(Page):
     def before_next_page(player, timeout_happened):
         save_elicitation_totals(player)
 
+
+class SpendingPaymentMethods(Page):
+    form_model = 'player'
+    template_name = 'Part2/SpendingPaymentMethods.html'
+    form_fields = [
+        'spend_pay_credit_card',
+        'spend_pay_debit_card',
+        'spend_pay_cash',
+        'spend_pay_bank_transfer',
+        'spend_pay_bnpl',
+        'spend_pay_store_financing',
+        'spend_pay_bills_later',
+        'spend_pay_prepaid',
+        'spend_pay_other',
+        'spend_credit_balance_use_accounts',
+        'spend_credit_balance_repaid',
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.field_maybe_none('spend_increase') == 'yes' and (player.field_maybe_none('spend_amount') or 0) > 0
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            page_title="Part 2 - Page 3/4",
+            spending_amount=int(player.field_maybe_none('spend_amount') or 0),
+            is_t2_received=player.subsession.Treatment == 3 and player.participant.received_stimulus == 1,
+        )
+
+    @staticmethod
+    def error_message(player, values):
+        spending_amount = player.field_maybe_none('spend_amount') or 0
+        payment_total = sum([
+            values['spend_pay_credit_card'] or 0,
+            values['spend_pay_debit_card'] or 0,
+            values['spend_pay_cash'] or 0,
+            values['spend_pay_bank_transfer'] or 0,
+            values['spend_pay_bnpl'] or 0,
+            values['spend_pay_store_financing'] or 0,
+            values['spend_pay_bills_later'] or 0,
+            values['spend_pay_prepaid'] or 0,
+            values['spend_pay_other'] or 0,
+        ])
+        if abs(payment_total - spending_amount) > 0.01:
+            return (
+                f"The amounts allocated across payment methods add up to ${int(payment_total)}, "
+                f"but your spending increase is ${int(spending_amount)}. Please make sure these amounts match."
+            )
+
+        credit_like_total = sum([
+            values['spend_pay_credit_card'] or 0,
+            values['spend_pay_bnpl'] or 0,
+            values['spend_pay_store_financing'] or 0,
+            values['spend_pay_bills_later'] or 0,
+        ])
+        use_accounts = values['spend_credit_balance_use_accounts']
+        repaid = values['spend_credit_balance_repaid']
+
+        if credit_like_total > 0:
+            if use_accounts is None:
+                return "Please answer whether you would use money from your accounts to pay off this balance over the month following the payment."
+            if use_accounts == 'yes' and (repaid is None or repaid <= 0):
+                return "Please enter how much money you would use from your accounts."
+            if use_accounts == 'no':
+                repaid = 0
+            if repaid > credit_like_total:
+                return (
+                    f"The amount paid from your accounts cannot be more than ${int(credit_like_total)}, "
+                    "the amount paid using methods that can create a balance to be paid later."
+                )
+        elif use_accounts not in [None, ''] or repaid not in [None, 0]:
+            return "Please leave the balance repayment field blank unless you used credit, Buy-Now-Pay-Later, retailer financing, or bills paid later."
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        credit_like_total = sum([
+            player.field_maybe_none('spend_pay_credit_card') or 0,
+            player.field_maybe_none('spend_pay_bnpl') or 0,
+            player.field_maybe_none('spend_pay_store_financing') or 0,
+            player.field_maybe_none('spend_pay_bills_later') or 0,
+        ])
+        if credit_like_total <= 0:
+            player.spend_credit_balance_use_accounts = None
+            player.spend_credit_balance_repaid = None
+        elif player.spend_credit_balance_use_accounts == 'no':
+            player.spend_credit_balance_repaid = None
+
+
 class FeedbackElicitation(Page):
     form_model = 'player'
     form_fields = [
-        'understanding_difficulty',
-        'mental_effort',
         'categories_cover',
         'attention2',
         'categories_specify',
@@ -814,15 +932,15 @@ class FeedbackElicitation(Page):
             categories = [
                 'repaying more of your pre-existing debts',
                 'spending more on goods and services',
-                'taking on more new debt',
+                'issuing more new debt',
                 'decreasing the hours you work',
                 'the amount left for savings, investments, or future use',
             ]
 
         return dict(
             categories=categories,
-            is_t4=player.subsession.Treatment == 4,
-            feedback_page_title="Part 2 - Page 6/6" if player.subsession.Treatment == 4 else "Part 2 - Page 3/3",
+            is_t4=has_training_examples(player),
+            feedback_page_title="Part 2 - Page 4/4",
         )
 
     def error_message(player, values):
@@ -836,19 +954,24 @@ class FeedbackElicitation(Page):
 class FeedbackElicitationT2(Page):
     form_model = 'player'
     form_fields = [
-        'understanding_difficulty',
-        'mental_effort',
         'categories_cover',
         'attention2',
         'categories_specify',
         'deposit_account',
         'payment_different_if_personal',
         'payment_different_explain',
+        'final_comments',
     ]
 
     @staticmethod
     def is_displayed(player: Player):
         return  player.subsession.Treatment == 3 and player.participant.received_stimulus==1
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            feedback_page_title="Part 2 - Page 4/4"
+        )
 
     def error_message(self, values):
         if values['categories_cover'] == 1 and not values['categories_specify']:
@@ -860,17 +983,17 @@ class FeedbackElicitationT2(Page):
 
         if dep in [2, 3, 4]:
             if diff is None:
-                return 'Please answer Question 6.'
+                return 'Please answer Question 4.'
 
             if diff in [1, '1', 'Yes'] and not explain:
-                return 'Please explain your answer to Question 6.'
+                return 'Please explain your answer to Question 4.'
 
 class InstructionsScenarios(Page):
     form_model = 'player'
 
     @staticmethod
     def is_displayed(player: Player):
-        return not is_t4_training(player)
+        return not has_training_examples(player)
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -919,7 +1042,7 @@ class Robin(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+        return player.subsession.Treatment == 2
 
 class RobinT0(Page):
     form_model = 'player'
@@ -979,7 +1102,7 @@ class Charlie(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+        return player.subsession.Treatment == 2
 
 class Morgan(Page):
     form_model = 'player'
@@ -1011,7 +1134,7 @@ class Morgan(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 3
+        return player.subsession.Treatment == 2
 
 class MorganT0(Page):
     form_model = 'player'
@@ -1105,7 +1228,7 @@ class ProlificBack(Page):
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
-page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, TrainingRobin, TrainingCharlie, TrainingMorgan, TrainingTransition, ElicitationT1, instructionsT2, ElicitationT0, ElicitationT2, FeedbackElicitation, FeedbackElicitationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, Morgan, MorganT0, End, ProlificBack]
+page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, instructionsT2, ElicitationT1, ElicitationT0, ElicitationT2, SpendingPaymentMethods, FeedbackElicitation, FeedbackElicitationT2, End, ProlificBack]
 #
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 

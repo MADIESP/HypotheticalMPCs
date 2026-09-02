@@ -88,6 +88,11 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect
     )
 
+    occupation_employed_text = models.StringField(
+        label="",
+        blank=True,
+    )
+
     job_flexibility_hours = models.IntegerField(
         label="",
         choices=[
@@ -119,6 +124,11 @@ class Player(BasePlayer):
         ],
         blank=True,
         widget=widgets.RadioSelect
+    )
+
+    occupation_unemployed_text = models.StringField(
+        label="",
+        blank=True,
     )
 
     patience_scale = models.IntegerField(
@@ -273,30 +283,57 @@ class Player(BasePlayer):
     bill_payment_ability = models.IntegerField(
         label="",
         choices=[
-            [1, "Often"],
-            [2, "Sometimes"],
-            [3, "Rarely"],
-            [4, "Never"],
+            [1, "Always"],
+            [2, "Often"],
+            [3, "Sometimes"],
+            [4, "Rarely"],
+            [5, "Never"],
         ],
         widget=widgets.RadioSelect
     )
 
     credit_card_payment = models.IntegerField(
         label="",
-        choices=[[1, "Not applicable (no credit cards or revolving credit)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"], [5, "Never"]],
+        choices=[
+            [1, "No credit cards or revolving credit"],
+            [2, "Always (every month)"],
+            [3, "Often (10 or 11 months per year)"],
+            [4, "Sometimes (6 to 9 months per year)"],
+            [5, "Rarely (1 to 5 months per year)"],
+            [6, "Never (0 months per year)"],
+        ],
         widget=widgets.RadioSelect
+    )
+
+    credit_card_fraction_repaid = models.IntegerField(
+        label="",
+        min=0,
+        blank=True,
     )
 
     installment_payment = models.IntegerField(
         label="",
-        choices=[[1, "Not applicable (no installment loans)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"], [5, "Never"]],
+        choices=[
+            [1, "No installment loans"],
+            [2, "Always"],
+            [3, "Often"],
+            [4, "Sometimes"],
+            [5, "Rarely"],
+            [6, "Never"],
+        ],
         widget=widgets.RadioSelect
     )
 
     payday_payment = models.IntegerField(
         label="",
-        choices=[[1, "Not applicable (no payday or short-term loans)"], [2, "Often"], [3, "Sometimes"], [4, "Rarely"],
-                 [5, "Never"]],
+        choices=[
+            [1, "No payday or short-term loans"],
+            [2, "Always"],
+            [3, "Often"],
+            [4, "Sometimes"],
+            [5, "Rarely"],
+            [6, "Never"],
+        ],
         widget=widgets.RadioSelect
     )
 
@@ -337,7 +374,7 @@ class Instructions(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment < 3 or player.subsession.Treatment == 4
+        return player.subsession.Treatment < 3 or player.subsession.Treatment in [4, 5]
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -365,12 +402,27 @@ class InstructionsPart1(Page):
 class Page1(Page):
     form_model = 'player'
     form_fields = ['gender','education','marital_status','zip_code','employment_status', 'occupation_employed','occupation_unemployed',
+                'occupation_employed_text','occupation_unemployed_text',
                 'job_flexibility_hours','job_flexibility_overtime','patience_scale','risk_scale' ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t5=player.subsession.Treatment == 5)
 
     def before_next_page(player, timeout_happened):
         gender(player)
 
-    def error_message(self, values):
+    def error_message(player, values):
+        def has_three_letters(text):
+            return sum(char.isalpha() for char in (text or "")) >= 3
+
+        if player.subsession.Treatment == 5:
+            status = values.get('employment_status')
+            if status in [1, 2, 3] and not has_three_letters(values.get('occupation_employed_text')):
+                return "Please type in your main occupation."
+            if status in [4, 6, 7] and not has_three_letters(values.get('occupation_unemployed_text')):
+                return "Please type in your most recent main occupation."
+
         if values['risk_scale'] is None:
             return "Please select a value before continuing."
         if values['patience_scale'] is None:
@@ -434,11 +486,28 @@ class Page3(Page):
         'fico_score',
         'bill_payment_ability',
         'credit_card_payment',
+        'credit_card_fraction_repaid',
         'installment_payment',
         'payday_payment',
         'attention1'
     ]
 
+    def error_message(player, values):
+        credit_card_payment = values.get('credit_card_payment')
+        fraction = values.get('credit_card_fraction_repaid')
+
+        if credit_card_payment in [3, 4, 5, 6]:
+            if fraction is None:
+                return "Please enter the fraction of the amount due that your household typically pays."
+            if fraction > 99:
+                return (
+                    "Please enter a number below 100. Since you indicated that your household "
+                    "does not always pay the full amount due, this fraction should be less than 100%."
+                )
+
+    def before_next_page(player, timeout_happened):
+        if player.credit_card_payment not in [3, 4, 5, 6]:
+            player.credit_card_fraction_repaid = None
 
 
 

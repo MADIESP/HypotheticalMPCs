@@ -98,8 +98,14 @@
 
 <!-- Employed conditional fields -->
 <div id="employed_questions" class="form-section" style="display:none;">
+    {% if is_t5 %}
+    <p><b>5.b.</b> What is your <b>main occupation?</b></p>
+    <p><i>Please type your answer in the box below.</i></p>
+    {% formfield player.occupation_employed_text %}
+    {% else %}
     <p><b>5.b.</b> Which category best describes your <b>main occupation?</b></p>
     {% formfield player.occupation_employed %}
+    {% endif %}
 
     <div id="job_flex_hours" class="form-section">
         <p><b>5.c.</b> How often are you able to <b>choose or change your work hours</b>?</p>
@@ -118,8 +124,14 @@
 
 <!-- Unemployed conditional field -->
 <div id="unemployed_questions" class="form-section" style="display:none;">
+    {% if is_t5 %}
+    <p><b>5.b.</b> What was your <b>most recent main occupation?</b></p>
+    <p><i>Please type your answer in the box below.</i></p>
+    {% formfield player.occupation_unemployed_text %}
+    {% else %}
     <p><b>5.b.</b> Which category best describes your <b>most recent main occupation?</b></p>
     {% formfield player.occupation_unemployed %}
+    {% endif %}
 </div>
 
 <br>

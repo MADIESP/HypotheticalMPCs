@@ -1,0 +1,199 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+.content-box { max-width:900px; margin:auto; padding:25px; }
+h2 { text-align:center; color:#c82333; margin-bottom:25px; }
+.intro { text-align:center; font-size:1.08em; line-height:1.5; margin-bottom:22px; }
+.main-question { text-align:center; font-weight:bold; font-size:1.18em; margin:24px 0 10px; }
+.allocate-note { text-align:center; font-style:italic; font-size:1.05em; margin-bottom:18px; }
+.method-box { border:1px solid #ddd; border-radius:6px; padding:18px; }
+.method-line { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:10px 0; }
+.method-label { flex:1; line-height:1.35; }
+.currency-input { display:flex; align-items:center; gap:4px; white-space:nowrap; }
+.currency-symbol { font-weight:600; }
+.amount-input { width:95px; padding:4px 6px; font-size:0.95em; }
+.balance-box { margin-top:22px; }
+.balance-box.hidden { display:none; }
+.question { margin:0 0 14px; line-height:1.5; font-size:1.08em; }
+.radio-line { display:flex; justify-content:center; gap:24px; margin:12px 0 14px; }
+.radio-line label { display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer; }
+.amount-followup.hidden { display:none; }
+.warning { color:#721c24; background:#f8d7da; border-left:4px solid #c82333; padding:10px; font-size:0.95em; font-weight:600; margin-top:14px; display:none; }
+.warning.visible { display:block; }
+.submit-row { text-align:center; margin-top:28px; }
+@media (max-width:700px) {
+  .method-line { align-items:flex-start; flex-direction:column; gap:6px; }
+}
+</style>
+
+<div class="content-box">
+  <h2>{{ page_title }}</h2>
+
+  <p class="intro">
+    You reported that the payment {% if is_t2_received %}caused{% else %}would cause{% endif %}
+    you and your household to spend <b>${{ spending_amount }}</b> more on goods and services.
+  </p>
+
+  <div class="main-question">What payment methods would you use?</div>
+
+  <p class="allocate-note">
+    Please allocate the <b>${{ spending_amount }}</b> across the payment methods below.
+  </p>
+
+  <form method="post" novalidate>
+    <div class="method-box">
+      <div class="method-line">
+        <div class="method-label">Credit card, including a credit card used through Apple Pay, Google Pay, PayPal, or another digital wallet</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_credit_card" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Debit card, including a debit card used through Apple Pay, Google Pay, PayPal, or another digital wallet</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_debit_card" class="amount-input payment-method" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Cash</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_cash" class="amount-input payment-method" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Bank transfer, Venmo, Zelle, check, or similar</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_bank_transfer" class="amount-input payment-method" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Buy-Now-Pay-Later</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_bnpl" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Store credit card or store financing</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_store_financing" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Bills or invoices paid later</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_bills_later" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Prepaid card, gift card, or voucher</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_prepaid" class="amount-input payment-method" min="0" step="1" inputmode="numeric"></span>
+      </div>
+
+      <div class="method-line">
+        <div class="method-label">Other</div>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_other" class="amount-input payment-method" min="0" step="1" inputmode="numeric"></span>
+      </div>
+    </div>
+
+    <div id="payment-warning" class="warning">
+      The amounts above do not add up to ${{ spending_amount }}.
+    </div>
+
+    <div id="balance-box" class="balance-box hidden">
+      <p class="question">
+        You reported that <b>$<span id="credit-like-total">0</span></b> of the additional purchases
+        would be paid later, creating a balance.
+      </p>
+      <p class="question">
+        <b>a.</b> Would you use money from your checking account, savings account, or other household accounts
+        to pay off this balance over the month following the payment?
+      </p>
+      <div class="radio-line">
+        <label><input type="radio" name="spend_credit_balance_use_accounts" value="yes"> Yes</label>
+        <label><input type="radio" name="spend_credit_balance_use_accounts" value="no"> No</label>
+      </div>
+      <div id="amount-followup" class="amount-followup hidden">
+        <p class="question"><b>b.</b> How much money would you use?</p>
+        <span class="currency-input">
+          <span class="currency-symbol">$</span>
+          <input type="number" name="spend_credit_balance_repaid" id="id_spend_credit_balance_repaid" class="amount-input" min="0" step="1" inputmode="numeric">
+        </span>
+      </div>
+      <div id="balance-warning" class="warning">
+        Please enter an amount no larger than the balance above.
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn btn-danger">Submit</button>
+    </div>
+  </form>
+</div>
+
+<script>
+const spendingAmount = Number('{{ spending_amount }}');
+
+function numberValue(input) {
+  if (!input || input.value === '') return 0;
+  const value = Number(input.value);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function updatePage(showWarnings) {
+  let paymentTotal = 0;
+  let creditLikeTotal = 0;
+
+  document.querySelectorAll('.payment-method').forEach(input => {
+    const value = numberValue(input);
+    paymentTotal += value;
+    if (input.classList.contains('credit-like')) {
+      creditLikeTotal += value;
+    }
+  });
+
+  const paymentWarning = document.getElementById('payment-warning');
+  const allocationComplete = Math.abs(paymentTotal - spendingAmount) < 0.01;
+  paymentWarning.classList.toggle('visible', showWarnings && !allocationComplete);
+
+  const balanceBox = document.getElementById('balance-box');
+  const balanceInput = document.getElementById('id_spend_credit_balance_repaid');
+  const amountFollowup = document.getElementById('amount-followup');
+  const useAccounts = document.querySelector('input[name="spend_credit_balance_use_accounts"]:checked')?.value || null;
+  document.getElementById('credit-like-total').innerText = creditLikeTotal.toFixed(0);
+  const showBalanceBox = creditLikeTotal > 0 && allocationComplete;
+  balanceBox.classList.toggle('hidden', !showBalanceBox);
+  amountFollowup.classList.toggle('hidden', !(showBalanceBox && useAccounts === 'yes'));
+
+  if (!showBalanceBox || useAccounts !== 'yes') {
+    balanceInput.value = '';
+  }
+
+  const balanceWarning = document.getElementById('balance-warning');
+  const responseMissing = showBalanceBox && !useAccounts;
+  const balanceMissing = showBalanceBox && useAccounts === 'yes' && balanceInput.value === '';
+  const balanceTooHigh = showBalanceBox && useAccounts === 'yes' && numberValue(balanceInput) > creditLikeTotal;
+  balanceWarning.classList.toggle('visible', showWarnings && (responseMissing || balanceMissing || balanceTooHigh));
+
+  return {
+    allocationComplete,
+    creditLikeTotal,
+    balanceValid: !showBalanceBox || (!responseMissing && !balanceMissing && !balanceTooHigh),
+  };
+}
+
+document.querySelectorAll('input[type="number"]').forEach(input => {
+  input.addEventListener('wheel', event => {
+    event.preventDefault();
+  }, { passive:false });
+  input.addEventListener('input', () => updatePage(false));
+});
+
+document.querySelectorAll('input[name="spend_credit_balance_use_accounts"]').forEach(input => {
+  input.addEventListener('change', () => updatePage(false));
+});
+
+document.querySelector('form').addEventListener('submit', event => {
+  const state = updatePage(true);
+  if (!state.allocationComplete || (state.creditLikeTotal > 0 && !state.balanceValid)) {
+    event.preventDefault();
+  }
+});
+
+updatePage(false);
+</script>
+
+{% endblock %}

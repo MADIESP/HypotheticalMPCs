@@ -38,11 +38,18 @@
     <p>
       You have now completed the training examples. Next, we will ask the same type of questions about <b>you and your household</b>.
     </p>
+    {% if is_t2_received %}
+    <p>
+      Please think again about the <b>${{ participant.stimulus_amount }} Covid stimulus payment you reported receiving</b>
+      and how you used this money.
+    </p>
+    {% else %}
     <p>
       Please think again about the hypothetical situation from Page 1:
       you receive an <b>unexpected one-time payment of $1,000</b>, not taxed,
       deposited into your <b>checking account</b> within a few days.
     </p>
+    {% endif %}
     <p>
       As in the examples, any remaining amount is left for <b>savings, investments, or future use</b>.
     </p>
