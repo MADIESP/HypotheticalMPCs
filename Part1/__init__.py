@@ -295,12 +295,12 @@ class Player(BasePlayer):
     credit_card_payment = models.IntegerField(
         label="",
         choices=[
-            [1, "No credit cards or revolving credit"],
             [2, "Always (every month)"],
             [3, "Often (10 or 11 months per year)"],
             [4, "Sometimes (6 to 9 months per year)"],
             [5, "Rarely (1 to 5 months per year)"],
             [6, "Never (0 months per year)"],
+            [1, "No credit cards or revolving credit"],
         ],
         widget=widgets.RadioSelect
     )
@@ -314,12 +314,12 @@ class Player(BasePlayer):
     installment_payment = models.IntegerField(
         label="",
         choices=[
-            [1, "No installment loans"],
             [2, "Always"],
             [3, "Often"],
             [4, "Sometimes"],
             [5, "Rarely"],
             [6, "Never"],
+            [1, "No installment loans"],
         ],
         widget=widgets.RadioSelect
     )
@@ -327,12 +327,12 @@ class Player(BasePlayer):
     payday_payment = models.IntegerField(
         label="",
         choices=[
-            [1, "No payday or short-term loans"],
             [2, "Always"],
             [3, "Often"],
             [4, "Sometimes"],
             [5, "Rarely"],
             [6, "Never"],
+            [1, "No payday or short-term loans"],
         ],
         widget=widgets.RadioSelect
     )
