@@ -39,6 +39,13 @@ SESSION_CONFIGS = [
         Treatment=5,
         completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
     ),
+    dict(
+        name='T5',
+        app_sequence=['Part1', 'Part2'],
+        num_demo_participants=20,
+        Treatment=6,
+        completionlink= 'https://app.prolific.com/submissions/complete?cc=CY9R67RM',
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
@@ -95,5 +102,9 @@ ROOMS = [
     dict(
         name='study4',
         display_name='Study 4'
+    ),
+    dict(
+        name='study5',
+        display_name='Study 5'
     ),
 ]

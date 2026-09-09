@@ -48,12 +48,33 @@ class Player(BasePlayer):
     spend_pay_bills_later = models.CurrencyField(min=0, blank=True)
     spend_pay_prepaid = models.CurrencyField(min=0, blank=True)
     spend_pay_other = models.CurrencyField(min=0, blank=True)
-    spend_credit_balance_use_accounts = models.StringField(
-        choices=[('yes', 'Yes'), ('no', 'No')],
-        widget=widgets.RadioSelectHorizontal,
-        blank=True
+    spend_cc_repaid = models.CurrencyField(min=0, blank=True)
+    spend_cc_fraction_paid = models.IntegerField(min=0, max=100, blank=True)
+    spend_cc_remaining_timing = models.StringField(
+        choices=[
+            ('within_one_month', "By the next statement's due date"),
+            ('one_to_three_months', 'By a statement due date 2 to 3 months later'),
+            ('more_than_three_months', 'By a statement due date more than 3 months later'),
+            ('not_sure', 'I am not sure'),
+        ],
+        widget=widgets.RadioSelect,
+        blank=True,
     )
-    spend_credit_balance_repaid = models.CurrencyField(min=0, blank=True)
+    spend_cc_timing_specify = models.LongStringField(blank=True)
+
+    spend_other_paylater_repaid = models.CurrencyField(min=0, blank=True)
+    spend_other_paylater_fraction_paid = models.IntegerField(min=0, max=100, blank=True)
+    spend_other_paylater_remaining_timing = models.StringField(
+        choices=[
+            ('within_one_month', 'Within one month after it is due'),
+            ('one_to_three_months', '1 to 3 months after it is due'),
+            ('more_than_three_months', 'More than 3 months after it is due'),
+            ('not_sure', 'I am not sure'),
+        ],
+        widget=widgets.RadioSelect,
+        blank=True,
+    )
+    spend_other_paylater_timing_specify = models.LongStringField(blank=True)
 
     # ================= DEBT REPAYMENT =================
     debt_increase = models.StringField(
@@ -71,6 +92,9 @@ class Player(BasePlayer):
     debt_bills = models.CurrencyField(min=0, blank=True)
     debt_short = models.CurrencyField(min=0, blank=True)
     debt_long = models.CurrencyField(min=0, blank=True)
+
+    debt_repay_description = models.LongStringField(blank=True)
+    spending_description = models.LongStringField(blank=True)
 
     # ================= LABOR =================
     labor_decrease = models.StringField(
@@ -261,6 +285,33 @@ def is_baseline(player):
     return player.subsession.Treatment in [0, 1, 5]
 
 
+def participant_value(player, field_name, default=None):
+    return getattr(player.participant, field_name, default)
+
+
+def is_t5_covid_received(player):
+    return player.subsession.Treatment == 6 and participant_value(player, 'received_stimulus') == 1
+
+
+def is_t5_hypothetical(player):
+    return player.subsession.Treatment == 6 and participant_value(player, 'received_stimulus') != 1
+
+
+def uses_two_category_elicitation(player):
+    return is_baseline(player) or player.subsession.Treatment == 6
+
+
+def uses_open_descriptions(player):
+    return player.subsession.Treatment in [5, 6]
+
+
+def actual_stimulus_elicitation(player):
+    return (
+        player.subsession.Treatment == 3
+        and participant_value(player, 'received_stimulus') == 1
+    ) or is_t5_covid_received(player)
+
+
 def has_training_examples(player):
     return False
 
@@ -360,8 +411,8 @@ def save_elicitation_totals(player):
         yes_sign=-1,
     )
     base_amount = 1000
-    if player.subsession.Treatment == 3 and player.participant.field_maybe_none('received_stimulus') == 1:
-        base_amount = int(player.participant.field_maybe_none('stimulus_amount') or 0)
+    if actual_stimulus_elicitation(player):
+        base_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
     save_invest = base_amount - spending - debt_repay + debt_new + labor
 
     player.spending = spending
@@ -386,7 +437,13 @@ class InstructionsPart2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return is_baseline(player) or player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+        return (
+            is_baseline(player)
+            or player.subsession.Treatment == 2
+            or player.subsession.Treatment == 4
+            or player.subsession.Treatment == 3 and participant_value(player, 'received_stimulus') == 2
+            or is_t5_hypothetical(player)
+        )
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -398,7 +455,7 @@ class InstructionsPart2T2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 3 and player.participant.received_stimulus == 1
+        return actual_stimulus_elicitation(player)
 
 
 class instructionsT0(Page):
@@ -406,7 +463,17 @@ class instructionsT0(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return is_baseline(player)
+        return uses_two_category_elicitation(player)
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        payment_amount = 1000
+        if is_t5_covid_received(player):
+            payment_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
+        return dict(
+            is_covid_actual=is_t5_covid_received(player),
+            payment_amount=payment_amount,
+        )
 
 
 class instructionsT1(Page):
@@ -414,7 +481,11 @@ class instructionsT1(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus==2
+        return (
+            player.subsession.Treatment == 2
+            or player.subsession.Treatment == 4
+            or player.subsession.Treatment == 3 and participant_value(player, 'received_stimulus') == 2
+        )
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -425,7 +496,7 @@ class instructionsT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.participant.received_stimulus==1
+        return player.subsession.Treatment == 3 and participant_value(player, 'received_stimulus') == 1
 
 
 class ElicitationT0(Page):
@@ -433,16 +504,69 @@ class ElicitationT0(Page):
     form_fields = [
         'debt_increase', 'debt_same_or_decrease', 'debt_amount',
         'debt_cc', 'debt_bills', 'debt_short', 'debt_long',
+        'debt_repay_description',
         'spend_increase', 'spend_same_or_decrease', 'spend_amount',
         'spend_everyday', 'spend_leisure', 'spend_services', 'spend_durable',
+        'spending_description',
         'spending', 'debt_repay',
     ]
 
     @staticmethod
     def is_displayed(player: Player):
-        return is_baseline(player)
+        return uses_two_category_elicitation(player)
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        payment_amount = 1000
+        if is_t5_covid_received(player):
+            payment_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
+        return dict(
+            is_t4=uses_open_descriptions(player),
+            is_covid_actual=is_t5_covid_received(player),
+            payment_amount=payment_amount,
+        )
 
     def error_message(player, values):
+        if uses_open_descriptions(player):
+            def check_open_field(first, second, total, description, label):
+                if first == 'yes':
+                    requires_description = True
+                elif first == 'no' and second == 'decrease':
+                    requires_description = False
+                elif first == 'no' and second == 'same':
+                    return None
+                else:
+                    return f"Please answer the follow-up question for {label}."
+
+                if first == 'yes' or second == 'decrease':
+                    if total is None or total <= 0:
+                        return f"Please enter the amount for {label}."
+
+                if requires_description and not (description or '').strip():
+                    return f"Please answer the open-ended question for {label}."
+
+            debt_open_error = check_open_field(
+                values['debt_increase'],
+                values['debt_same_or_decrease'],
+                values['debt_amount'],
+                values['debt_repay_description'],
+                'debt repayment',
+            )
+            if debt_open_error:
+                return debt_open_error
+
+            spend_open_error = check_open_field(
+                values['spend_increase'],
+                values['spend_same_or_decrease'],
+                values['spend_amount'],
+                values['spending_description'],
+                'spending',
+            )
+            if spend_open_error:
+                return spend_open_error
+
+            return None
+
         def check_category(first, second, total, components, label):
             if first == 'yes':
                 direction = 'increase'
@@ -484,6 +608,21 @@ class ElicitationT0(Page):
             return spend_error
 
     def before_next_page(player, timeout_happened):
+        if uses_open_descriptions(player):
+            for field in [
+                'debt_cc', 'debt_bills', 'debt_short', 'debt_long',
+                'spend_everyday', 'spend_leisure', 'spend_services', 'spend_durable',
+            ]:
+                setattr(player, field, None)
+        else:
+            player.debt_repay_description = None
+            player.spending_description = None
+
+        if player.field_maybe_none('debt_increase') != 'yes' or player.field_maybe_none('debt_amount') in [None, 0]:
+            player.debt_repay_description = None
+        if player.field_maybe_none('spend_increase') != 'yes' or player.field_maybe_none('spend_amount') in [None, 0]:
+            player.spending_description = None
+
         debtBaseline(player)
 
 
@@ -652,7 +791,7 @@ class TrainingTransition(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            is_t2_received=player.subsession.Treatment == 3 and player.participant.received_stimulus == 1
+            is_t2_received=actual_stimulus_elicitation(player)
         )
 
 
@@ -684,7 +823,7 @@ class ElicitationT1(Page):
             player.subsession.Treatment == 2
             or player.subsession.Treatment == 4
             or player.subsession.Treatment == 3
-            and player.participant.received_stimulus == 2
+            and participant_value(player, 'received_stimulus') == 2
         )
 
     @staticmethod
@@ -762,7 +901,10 @@ class ElicitationT2(Page):
     ]
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.participant.received_stimulus ==1
+        return (
+            player.subsession.Treatment == 3
+            and participant_value(player, 'received_stimulus') == 1
+        )
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -829,8 +971,14 @@ class SpendingPaymentMethods(Page):
         'spend_pay_bills_later',
         'spend_pay_prepaid',
         'spend_pay_other',
-        'spend_credit_balance_use_accounts',
-        'spend_credit_balance_repaid',
+        'spend_cc_repaid',
+        'spend_cc_fraction_paid',
+        'spend_cc_remaining_timing',
+        'spend_cc_timing_specify',
+        'spend_other_paylater_repaid',
+        'spend_other_paylater_fraction_paid',
+        'spend_other_paylater_remaining_timing',
+        'spend_other_paylater_timing_specify',
     ]
 
     @staticmethod
@@ -842,7 +990,7 @@ class SpendingPaymentMethods(Page):
         return dict(
             page_title="Part 2 - Page 3/4",
             spending_amount=int(player.field_maybe_none('spend_amount') or 0),
-            is_t2_received=player.subsession.Treatment == 3 and player.participant.received_stimulus == 1,
+            is_t2_received=actual_stimulus_elicitation(player),
         )
 
     @staticmethod
@@ -865,43 +1013,84 @@ class SpendingPaymentMethods(Page):
                 f"but your spending increase is ${int(spending_amount)}. Please make sure these amounts match."
             )
 
-        credit_like_total = sum([
-            values['spend_pay_credit_card'] or 0,
+        credit_card_total = values['spend_pay_credit_card'] or 0
+        other_paylater_total = sum([
             values['spend_pay_bnpl'] or 0,
             values['spend_pay_store_financing'] or 0,
             values['spend_pay_bills_later'] or 0,
         ])
-        use_accounts = values['spend_credit_balance_use_accounts']
-        repaid = values['spend_credit_balance_repaid']
 
-        if credit_like_total > 0:
-            if use_accounts is None:
-                return "Please answer whether you would use money from your accounts to pay off this balance over the month following the payment."
-            if use_accounts == 'yes' and (repaid is None or repaid <= 0):
-                return "Please enter how much money you would use from your accounts."
-            if use_accounts == 'no':
-                repaid = 0
-            if repaid > credit_like_total:
-                return (
-                    f"The amount paid from your accounts cannot be more than ${int(credit_like_total)}, "
-                    "the amount paid using methods that can create a balance to be paid later."
-                )
-        elif use_accounts not in [None, ''] or repaid not in [None, 0]:
-            return "Please leave the balance repayment field blank unless you used credit, Buy-Now-Pay-Later, retailer financing, or bills paid later."
+        def check_paylater(total, fraction_paid, remaining_timing, timing_specify, label):
+            pay_verb = 'paid' if actual_stimulus_elicitation(player) else 'would pay'
+            if total <= 0:
+                if (
+                    fraction_paid not in [None, 0]
+                    or remaining_timing not in [None, '']
+                    or (timing_specify or '').strip()
+                ):
+                    return f"Please leave the {label} follow-up fields blank unless they apply."
+                return None
+
+            if fraction_paid is None:
+                return f"Please enter the share of the {label} you {pay_verb} using money from your accounts."
+            if fraction_paid < 0 or fraction_paid > 100:
+                return "Please enter a share between 0 and 100."
+            if fraction_paid < 100:
+                if not remaining_timing:
+                    return "Please answer when you think you would pay the remaining amount."
+                if remaining_timing == 'not_sure' and not (timing_specify or '').strip():
+                    return "Please specify."
+
+        cc_error = check_paylater(
+            credit_card_total,
+            values['spend_cc_fraction_paid'],
+            values['spend_cc_remaining_timing'],
+            values['spend_cc_timing_specify'],
+            'credit card balance',
+        )
+        if cc_error:
+            return cc_error
+
+        other_error = check_paylater(
+            other_paylater_total,
+            values['spend_other_paylater_fraction_paid'],
+            values['spend_other_paylater_remaining_timing'],
+            values['spend_other_paylater_timing_specify'],
+            'pay-later amounts',
+        )
+        if other_error:
+            return other_error
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        credit_like_total = sum([
-            player.field_maybe_none('spend_pay_credit_card') or 0,
+        credit_card_total = player.field_maybe_none('spend_pay_credit_card') or 0
+        other_paylater_total = sum([
             player.field_maybe_none('spend_pay_bnpl') or 0,
             player.field_maybe_none('spend_pay_store_financing') or 0,
             player.field_maybe_none('spend_pay_bills_later') or 0,
         ])
-        if credit_like_total <= 0:
-            player.spend_credit_balance_use_accounts = None
-            player.spend_credit_balance_repaid = None
-        elif player.spend_credit_balance_use_accounts == 'no':
-            player.spend_credit_balance_repaid = None
+
+        def save_paylater(total, prefix):
+            fraction_paid = player.field_maybe_none(f'{prefix}_fraction_paid')
+
+            if total <= 0:
+                setattr(player, f'{prefix}_repaid', None)
+                setattr(player, f'{prefix}_fraction_paid', None)
+                setattr(player, f'{prefix}_remaining_timing', None)
+                setattr(player, f'{prefix}_timing_specify', None)
+                return
+
+            if fraction_paid is not None:
+                setattr(player, f'{prefix}_repaid', total * fraction_paid / 100)
+            if fraction_paid == 100:
+                setattr(player, f'{prefix}_remaining_timing', None)
+                setattr(player, f'{prefix}_timing_specify', None)
+
+            if player.field_maybe_none(f'{prefix}_remaining_timing') != 'not_sure':
+                setattr(player, f'{prefix}_timing_specify', None)
+
+        save_paylater(credit_card_total, 'spend_cc')
+        save_paylater(other_paylater_total, 'spend_other_paylater')
 
 
 class FeedbackElicitation(Page):
@@ -919,11 +1108,17 @@ class FeedbackElicitation(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return is_baseline(player) or player.subsession.Treatment == 2 or player.subsession.Treatment == 4 or player.subsession.Treatment == 3 and player.participant.received_stimulus == 2
+        return (
+            is_baseline(player)
+            or player.subsession.Treatment == 2
+            or player.subsession.Treatment == 4
+            or player.subsession.Treatment == 3 and participant_value(player, 'received_stimulus') == 2
+            or is_t5_hypothetical(player)
+        )
 
     @staticmethod
     def vars_for_template(player: Player):
-        if is_baseline(player):
+        if uses_two_category_elicitation(player):
             categories = [
                 'repaying more of your pre-existing debts',
                 'spending more on goods and services',
@@ -965,7 +1160,7 @@ class FeedbackElicitationT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return  player.subsession.Treatment == 3 and player.participant.received_stimulus==1
+        return actual_stimulus_elicitation(player)
 
     @staticmethod
     def vars_for_template(player: Player):

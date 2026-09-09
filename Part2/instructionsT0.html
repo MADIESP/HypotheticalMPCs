@@ -53,8 +53,20 @@
 <div class="content-box">
 
   <h2>Part 2 - Page 1/4</h2>
-  <h4>Hypothetical scenario</h4>
+  <h4>{% if is_covid_actual %}Covid stimulus payment{% else %}Hypothetical scenario{% endif %}</h4>
 
+  {% if is_covid_actual %}
+  <p>
+    You reported that you and your household received a
+    <b>${{ payment_amount }} Covid stimulus payment</b>.
+  </p>
+
+  <p>
+    We ask you to think about how you and your household
+    <b>used this money</b> over the <b>month following the payment</b>,
+    <b>compared to</b> what you would have done <b>if you had not received it</b>.
+  </p>
+  {% else %}
   <p>
     Suppose that today you learn that you and your household will receive an
     <b>unexpected one-time payment of $1,000</b> (e.g., an unexpected stimulus check, tax refund, bonus, inheritance, gift, or
@@ -68,15 +80,16 @@
     <b>would use this money</b> over the <b>month following the payment</b>,
     <b>compared to</b> what you would have done <b>if you had not received it</b>.
   </p>
+  {% endif %}
 
   <div class="example-box">
     <p>
-      <b>The payment could affect your household's financial decisions, such as:</b>
+      <b>The payment could {% if is_covid_actual %}have affected{% else %}affect{% endif %} your household's financial decisions, such as:</b>
     </p>
     <ul>
-      <li>how much of your debt you repay</li>
-      <li>how much you spend on goods and services</li>
-      <li>how much is left for savings, investments, or future use</li>
+      <li>how much of your debt you {% if is_covid_actual %}repaid{% else %}repay{% endif %}</li>
+      <li>how much you {% if is_covid_actual %}spent{% else %}spend{% endif %} on goods and services</li>
+      <li>how much {% if is_covid_actual %}was{% else %}is{% endif %} left for savings, investments, or future use</li>
     </ul>
   </div>
 

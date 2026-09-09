@@ -24,9 +24,12 @@ h5 { text-align:center; margin-bottom:25px; }
 .example-toggle { border:none; background:none; padding:0; cursor:pointer; color:#c82333; font-size:0.9em; text-decoration:underline; }
 .example-toggle:hover { color:#721c24; }
 .alloc-line { display:flex; align-items:center; gap:10px; margin:4px 0; }
-.alloc-label { min-width:260px; font-size:0.85em; }
-.alloc-line input { width:90px; padding:4px 6px; font-size:0.95em; }
-.balance-box { margin-top:32px; padding-top:16px; border-top:1px solid #ccc; font-size:1.1em; text-align:center; }
+	.alloc-label { min-width:260px; font-size:0.85em; }
+	.alloc-line input { width:90px; padding:4px 6px; font-size:0.95em; }
+	.open-question { margin-bottom:4px; }
+	.open-instruction { margin-top:0; font-size:0.85em; font-style:italic; }
+	.open-response textarea { width:100%; min-height:90px; padding:8px; font-size:0.95em; }
+	.balance-box { margin-top:32px; padding-top:16px; border-top:1px solid #ccc; font-size:1.1em; text-align:center; }
 .balance-note { margin-top:12px; font-size:0.85em; font-style:italic; }
 .warning { color:#721c24; background:#f8d7da; border-left:4px solid #c82333; padding:10px; font-size:0.95em; font-weight:600; margin-top:12px; text-align:left; }
 #page-warning { text-align:center; margin-top:18px; }
@@ -37,7 +40,11 @@ button.btn-danger { display:block; margin:30px auto 10px; }
 <h2>Part 2 - Page 2/4</h2>
 
 <h5>
+{% if is_covid_actual %}
+Over the <b>month following the ${{ payment_amount }} Covid stimulus payment</b>, did it cause you and your household to...
+{% else %}
 Over the <b>month following the payment</b>, would the $1,000 payment cause you and your household to...
+{% endif %}
 </h5>
 
 <form method="post" novalidate>
@@ -50,7 +57,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
         <label><input type="radio" name="debt_increase" value="no"> No</label>
       </div>
       <div class="sub-box same-decrease hidden">
-        <div>Would your debt repayment <b>stay the same</b>, or would the payment instead cause you to <b>repay less debt</b>?</div>
+        <div>{% if is_covid_actual %}Did{% else %}Would{% endif %} your debt repayment <b>stay the same</b>, or {% if is_covid_actual %}did{% else %}would{% endif %} the payment instead cause you to <b>repay less debt</b>?</div>
         <div class="radio-line">
           <label><input type="radio" name="debt_same_or_decrease" value="same"> Stay the same</label>
           <label><input type="radio" name="debt_same_or_decrease" value="decrease"> Repay less debt</label>
@@ -72,17 +79,24 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
       </div>
       <div class="sub-box amount hidden">
         <div class="amount-line">
-          <span>By how much would your <b>debt repayment <span class="amount-direction"></span></b>?</span>
+          <span>By how much {% if is_covid_actual %}did{% else %}would{% endif %} your <b>debt repayment <span class="amount-direction"></span></b>?</span>
           <span class="currency-input">
             <span class="currency-symbol">$</span>
             <input type="number" name="debt_amount" id="id_debt_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric">
           </span>
         </div>
       </div>
-      <div class="sub-box allocation hidden">
-        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
-        <div class="alloc-line">
-          <span class="alloc-label">repayment toward revolving credit balances</span>
+	      {% if is_t4 %}
+	      <div class="sub-box open-response hidden">
+	        <p class="open-question">Which <b>types of debts</b> {% if is_covid_actual %}did{% else %}would{% endif %} you repay?</p>
+	        <p class="open-instruction">Please type your answer in the box below.</p>
+	        <textarea name="debt_repay_description" id="id_debt_repay_description"></textarea>
+	      </div>
+	      {% else %}
+	      <div class="sub-box allocation hidden">
+	        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
+	        <div class="alloc-line">
+	          <span class="alloc-label">repayment toward revolving credit balances</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_cc" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
@@ -96,11 +110,12 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
         <div class="alloc-line">
           <span class="alloc-label">repayment toward unpaid bills</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_bills" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
-        </div>
-        <div class="warning hidden">The amounts above do not add up to the total.</div>
-      </div>
-      <input type="hidden" name="debt_repay" id="id_debt_repay" value="0">
-    </div>
+	        </div>
+	        <div class="warning hidden">The amounts above do not add up to the total.</div>
+	      </div>
+	      {% endif %}
+	      <input type="hidden" name="debt_repay" id="id_debt_repay" value="0">
+	    </div>
 
     <div class="category-box category" data-hidden-field="spending" data-balance-effect="-1">
       <div class="category-question">Spend more <span class="category-title">on goods and services</span>?</div>
@@ -109,7 +124,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
         <label><input type="radio" name="spend_increase" value="no"> No</label>
       </div>
       <div class="sub-box same-decrease hidden">
-        <div>Would your spending <b>stay the same</b>, or would the payment instead cause you to <b>spend less</b>?</div>
+        <div>{% if is_covid_actual %}Did{% else %}Would{% endif %} your spending <b>stay the same</b>, or {% if is_covid_actual %}did{% else %}would{% endif %} the payment instead cause you to <b>spend less</b>?</div>
         <div class="radio-line">
           <label><input type="radio" name="spend_same_or_decrease" value="same"> Stay the same</label>
           <label><input type="radio" name="spend_same_or_decrease" value="decrease"> Spend less</label>
@@ -131,17 +146,24 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
       </div>
       <div class="sub-box amount hidden">
         <div class="amount-line">
-          <span>By how much would your <b>spending <span class="amount-direction"></span></b>?</span>
+          <span>By how much {% if is_covid_actual %}did{% else %}would{% endif %} your <b>spending <span class="amount-direction"></span></b>?</span>
           <span class="currency-input">
             <span class="currency-symbol">$</span>
             <input type="number" name="spend_amount" id="id_spend_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric">
           </span>
         </div>
       </div>
-      <div class="sub-box allocation hidden">
-        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
-        <div class="alloc-line">
-          <span class="alloc-label">everyday purchases</span>
+	      {% if is_t4 %}
+	      <div class="sub-box open-response hidden">
+	        <p class="open-question">What <b>types of goods or services</b> {% if is_covid_actual %}did{% else %}would{% endif %} you spend this money on?</p>
+	        <p class="open-instruction">Please type your answer in the box below.</p>
+	        <textarea name="spending_description" id="id_spending_description"></textarea>
+	      </div>
+	      {% else %}
+	      <div class="sub-box allocation hidden">
+	        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
+	        <div class="alloc-line">
+	          <span class="alloc-label">everyday purchases</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_everyday" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
         </div>
         <div class="alloc-line">
@@ -155,29 +177,30 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
         <div class="alloc-line">
           <span class="alloc-label">durable goods</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_durable" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
-        </div>
-        <div class="warning hidden">The amounts above do not add up to the total.</div>
-      </div>
-      <input type="hidden" name="spending" id="id_spending" value="0">
-    </div>
+	        </div>
+	        <div class="warning hidden">The amounts above do not add up to the total.</div>
+	      </div>
+	      {% endif %}
+	      <input type="hidden" name="spending" id="id_spending" value="0">
+	    </div>
 
   </div>
 
   <div class="balance-box">
     <b>Savings:</b>
-    <b><span id="balance-sign">+</span>$<span id="balance">1000</span></b>
+    <b><span id="balance-sign">+</span>$<span id="balance">{{ payment_amount }}</span></b>
     <p class="balance-note">
-      This is the part of the payment left for future use after the changes entered above.
+      This is the part of the {% if is_covid_actual %}Covid stimulus payment{% else %}payment{% endif %} left for future use after the changes entered above.
     </p>
   </div>
 
-  <div id="page-warning" class="warning hidden">Please answer each category, enter an amount whenever you indicate a change, and make sure allocations add up to the total.</div>
+	  <div id="page-warning" class="warning hidden">Please answer each category, enter an amount whenever you indicate a change, and answer the follow-up question when it appears.</div>
   <button type="submit" class="btn btn-danger">Submit</button>
 </form>
 </div>
 
 <script>
-const base = 1000;
+const base = Number('{{ payment_amount }}');
 
 function numberValue(input) {
   if (!input || input.value === '') return null;
@@ -226,7 +249,13 @@ function clearAmounts(cat) {
   cat.querySelectorAll('input[type="number"]').forEach(input => {
     input.value = '';
   });
+  cat.querySelectorAll('textarea').forEach(input => {
+    input.value = '';
+  });
   cat.querySelectorAll('.allocation').forEach(box => {
+    box.classList.add('hidden');
+  });
+  cat.querySelectorAll('.open-response').forEach(box => {
     box.classList.add('hidden');
   });
   cat.querySelectorAll('.warning').forEach(warning => {
@@ -251,6 +280,7 @@ function updateCategory(cat) {
   const sameDec = cat.querySelector('.same-decrease');
   const amountBox = cat.querySelector('.amount');
   const allocation = cat.querySelector('.allocation');
+  const openResponse = cat.querySelector('.open-response');
 
   if (sameDec) sameDec.classList.toggle('hidden', answer !== 'no');
   updateDirectionalExamples(cat);
@@ -260,6 +290,7 @@ function updateCategory(cat) {
 
   const total = numberValue(cat.querySelector('.total-input'));
   if (allocation) allocation.classList.toggle('hidden', !(showAmount && total !== null && total > 0));
+  if (openResponse) openResponse.classList.toggle('hidden', !(answer === 'yes' && total !== null && total > 0));
   updateHiddenTotal(cat);
 }
 
@@ -287,6 +318,11 @@ function validateCategory(cat, showWarning) {
   const total = numberValue(cat.querySelector('.total-input'));
 
   if (!answer || (answer === 'no' && !second) || (direction && (total === null || total <= 0))) {
+    return false;
+  }
+
+  const openResponse = cat.querySelector('.open-response:not(.hidden) textarea');
+  if (openResponse && !openResponse.value.trim()) {
     return false;
   }
 

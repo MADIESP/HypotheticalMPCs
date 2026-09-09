@@ -390,7 +390,7 @@ class InstructionsT2(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.subsession.Treatment == 3
+        return player.subsession.Treatment in [3, 6]
 
     def before_next_page(player, timeout_happened):
         prolific_id(player)
@@ -407,7 +407,7 @@ class Page1(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(is_t5=player.subsession.Treatment == 5)
+        return dict(is_t5=player.subsession.Treatment in [5, 6])
 
     def before_next_page(player, timeout_happened):
         gender(player)
@@ -416,7 +416,7 @@ class Page1(Page):
         def has_three_letters(text):
             return sum(char.isalpha() for char in (text or "")) >= 3
 
-        if player.subsession.Treatment == 5:
+        if player.subsession.Treatment in [5, 6]:
             status = values.get('employment_status')
             if status in [1, 2, 3] and not has_three_letters(values.get('occupation_employed_text')):
                 return "Please type in your main occupation."
