@@ -41,7 +41,7 @@ button.btn-danger { display:block; margin:30px auto 10px; }
 
 <h5>
 {% if is_covid_actual %}
-Over the <b>month following the ${{ payment_amount }} Covid stimulus payment</b>, did it cause you and your household to...
+Over the <b>month following the {{ payment_label_with_amount }}</b>, did it cause you and your household to...
 {% else %}
 Over the <b>month following the payment</b>, would the $1,000 payment cause you and your household to...
 {% endif %}
@@ -190,7 +190,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
     <b>Savings:</b>
     <b><span id="balance-sign">+</span>$<span id="balance">{{ payment_amount }}</span></b>
     <p class="balance-note">
-      This is the part of the {% if is_covid_actual %}Covid stimulus payment{% else %}payment{% endif %} left for future use after the changes entered above.
+      This is the part of the {% if is_covid_actual %}{{ payment_label }}{% else %}payment{% endif %} left for future use after the changes entered above.
     </p>
   </div>
 

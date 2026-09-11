@@ -65,7 +65,7 @@
 </div>
 
 <div class="radio-block">
-  <b>2.</b> Did the categories on Page 2 <b>cover all the ways</b> you and your household <b>used the Covid stimulus payment,</b> or were there expenses or decisions that you found <b>difficult to classify?</b>
+  <b>2.</b> Did the categories on Page 2 <b>cover all the ways</b> you and your household <b>used the {{ payment_label }},</b> or were there expenses or decisions that you found <b>difficult to classify?</b>
   {{ formfield 'categories_cover' }}
 </div>
 
@@ -76,8 +76,8 @@
 <div class="section-title">How you received the payment</div>
 
 <p class="intro">
-  Earlier you reported that you and your household received a Covid stimulus payment of
-  <b>${{ participant.stimulus_amount }}</b>.
+  Earlier you reported that you and your household received a
+  <b>{{ payment_label_with_amount }}</b>.
 </p>
 
 <div class="question-block">

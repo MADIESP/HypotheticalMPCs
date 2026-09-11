@@ -46,7 +46,11 @@
 
 <ul>
     <li><strong>Part 1:</strong> Questions about you and your household.</li>
+    {% if is_t5 %}
+    <li><strong>Part 2:</strong> Questions about how you used an unexpected one-time payment you received, or what you would do if you received some money unexpectedly.</li>
+    {% else %}
     <li><strong>Part 2:</strong> Questions about how you used a Covid stimulus payment you received, or what you would do if you received some money unexpectedly.</li>
+    {% endif %}
 </ul>
 
 <div style="font-size: 0.8em; text-align: justify; line-height: 1.5; max-width: 700px; margin: 0 auto; color: #555;">

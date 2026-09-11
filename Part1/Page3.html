@@ -69,6 +69,21 @@
         font-weight: bold;
         line-height: 1;
     }
+
+    .dollar-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .dollar-row input {
+        width: 140px;
+    }
+
+    .dollar-symbol {
+        font-weight: bold;
+    }
 </style>
 
 <h2> Part 1 - Page 3/3 </h2>
@@ -115,6 +130,17 @@
         </div>
     </div>
 
+    <div id="credit_card_statement_balance_section" class="form-section" style="display:none;">
+        <p>
+            <b>3.c.</b> Thinking about all your credit cards or other revolving credit,
+            what is the typical <b>total balance</b> shown on your <b>monthly statement</b>?
+        </p>
+        {{ formfield_errors 'credit_card_statement_balance' }}
+        <div class="dollar-row">
+            {{ form.credit_card_statement_balance }}
+        </div>
+    </div>
+
     <!-- 10 -->
     <div class="form-section">
         <p><b>4.</b> How often does your household pay the <b>full amount due</b> on its <b>installment loans</b> (e.g., auto, student, or personal loans)?</p>
@@ -150,9 +176,17 @@
         const selected = parseInt(
             document.querySelector('input[name="credit_card_payment"]:checked')?.value
         );
+        const balanceSection = document.getElementById("credit_card_statement_balance_section");
+        const balanceInput = document.getElementById("id_credit_card_statement_balance");
         const section = document.getElementById("credit_card_fraction_section");
         const input = document.getElementById("id_credit_card_fraction_repaid");
+        const shouldShowBalance = [2, 3, 4, 5, 6].includes(selected);
         const shouldShow = [3, 4, 5, 6].includes(selected);
+
+        balanceSection.style.display = shouldShowBalance ? "block" : "none";
+        if (!shouldShowBalance && balanceInput) {
+            balanceInput.value = "";
+        }
 
         section.style.display = shouldShow ? "block" : "none";
         if (!shouldShow && input) {

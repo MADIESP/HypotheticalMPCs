@@ -57,7 +57,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'debt_new', 'debt_repay', 'spending', 'prolific_id', 'spending_net', 'debt_repay_net', 'new_debt_net', 'labor_income_net', 'save_invest_net']
+PARTICIPANT_FIELDS = ['gender','received_stimulus', 'stimulus_amount', 'stimulus_payment_type', 'debt_new', 'debt_repay', 'spending', 'prolific_id', 'spending_net', 'debt_repay_net', 'new_debt_net', 'labor_income_net', 'save_invest_net']
 SESSION_FIELDS = []
 
 # ISO-639 code

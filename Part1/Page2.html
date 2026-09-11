@@ -73,19 +73,41 @@
         </div>
     </div>
 
-    <!-- Covid stimulus -->
+    <!-- Covid stimulus / unexpected payment -->
     <div class="form-section">
+        {% if is_t5 %}
+        <p>
+            <b>6.</b> Have you and your household ever received an <b>unexpected one-time payment</b>
+            (for example, a Covid stimulus check, another unexpected government payment,
+            an unexpected tax refund, an inheritance, or an unexpected bonus)?
+        </p>
+        {% else %}
         <p><b>6.</b> Have you and your household ever received a <b>Covid stimulus check?</b></p>
+        {% endif %}
         {% formfield player.received_stimulus %}
     </div>
 
     <div id="stimulus_amount_question" class="form-section" style="display:none;">
+        {% if is_t5 %}
+        <p><b>7.</b> What was the approximate <b>amount</b> of the most recent unexpected one-time payment your household received?</p>
+        {% else %}
         <p><b>7.</b> What was the approximate <b>amount</b> of the last Covid stimulus check your household received?</p>
+        {% endif %}
         <div class="dollar-input">
             <span>$</span>
             {% formfield player.stimulus_amount %}
         </div>
     </div>
+
+    {% if is_t5 %}
+    <div id="stimulus_type_question" class="form-section" style="display:none;">
+        <p><b>7.b.</b> What <b>type of payment</b> was it?</p>
+        <p style="font-size:0.95em; font-style:italic; margin-top:3px;">
+            Please type your answer in the box below.
+        </p>
+        {% formfield player.stimulus_payment_type %}
+    </div>
+    {% endif %}
 
     <button class="btn btn-danger btn-submit" type="submit">Submit</button>
 </form>
@@ -104,15 +126,24 @@
         // Covid stimulus logic
         const stimulusValue = document.querySelector('input[name="received_stimulus"]:checked')?.value;
         const stimulusDiv = document.getElementById("stimulus_amount_question");
+        const stimulusTypeDiv = document.getElementById("stimulus_type_question");
         const stimulusInput = stimulusDiv.querySelector("input");
+        const stimulusTypeInput = stimulusTypeDiv ? stimulusTypeDiv.querySelector("textarea, input") : null;
 
         if (stimulusValue === "1") {
             stimulusDiv.style.display = "block";
             stimulusInput.required = true;
+            if (stimulusTypeDiv) stimulusTypeDiv.style.display = "block";
+            if (stimulusTypeInput) stimulusTypeInput.required = true;
         } else {
             stimulusDiv.style.display = "none";
             stimulusInput.required = false;
             stimulusInput.value = ""; // clear value to avoid accidental submission
+            if (stimulusTypeDiv) stimulusTypeDiv.style.display = "none";
+            if (stimulusTypeInput) {
+                stimulusTypeInput.required = false;
+                stimulusTypeInput.value = "";
+            }
         }
     }
 

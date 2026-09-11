@@ -53,12 +53,12 @@
 <div class="content-box">
 
   <h2>Part 2 - Page 1/4</h2>
-  <h4>{% if is_covid_actual %}Covid stimulus payment{% else %}Hypothetical scenario{% endif %}</h4>
+  <h4>{% if is_covid_actual %}Payment received{% else %}Hypothetical scenario{% endif %}</h4>
 
   {% if is_covid_actual %}
   <p>
     You reported that you and your household received a
-    <b>${{ payment_amount }} Covid stimulus payment</b>.
+    <b>{{ payment_label_with_amount }}</b>.
   </p>
 
   <p>

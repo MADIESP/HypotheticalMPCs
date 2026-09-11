@@ -312,6 +312,17 @@ def actual_stimulus_elicitation(player):
     ) or is_t5_covid_received(player)
 
 
+def actual_payment_label(player):
+    if player.subsession.Treatment == 6:
+        return 'unexpected one-time payment'
+    return 'Covid stimulus payment'
+
+
+def actual_payment_label_with_amount(player):
+    amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
+    return f'${amount} {actual_payment_label(player)}'
+
+
 def has_training_examples(player):
     return False
 
@@ -457,6 +468,12 @@ class InstructionsPart2T2(Page):
     def is_displayed(player: Player):
         return actual_stimulus_elicitation(player)
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            payment_label_with_amount=actual_payment_label_with_amount(player),
+        )
+
 
 class instructionsT0(Page):
     form_model = 'player'
@@ -472,6 +489,8 @@ class instructionsT0(Page):
             payment_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
         return dict(
             is_covid_actual=is_t5_covid_received(player),
+            payment_label=actual_payment_label(player),
+            payment_label_with_amount=actual_payment_label_with_amount(player),
             payment_amount=payment_amount,
         )
 
@@ -523,6 +542,8 @@ class ElicitationT0(Page):
         return dict(
             is_t4=uses_open_descriptions(player),
             is_covid_actual=is_t5_covid_received(player),
+            payment_label=actual_payment_label(player),
+            payment_label_with_amount=actual_payment_label_with_amount(player),
             payment_amount=payment_amount,
         )
 
@@ -991,6 +1012,7 @@ class SpendingPaymentMethods(Page):
             page_title="Part 2 - Page 3/4",
             spending_amount=int(player.field_maybe_none('spend_amount') or 0),
             is_t2_received=actual_stimulus_elicitation(player),
+            payment_label_with_amount=actual_payment_label_with_amount(player),
         )
 
     @staticmethod
@@ -1165,7 +1187,9 @@ class FeedbackElicitationT2(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            feedback_page_title="Part 2 - Page 4/4"
+            feedback_page_title="Part 2 - Page 4/4",
+            payment_label=actual_payment_label(player),
+            payment_label_with_amount=actual_payment_label_with_amount(player),
         )
 
     def error_message(self, values):

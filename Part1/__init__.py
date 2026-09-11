@@ -238,6 +238,11 @@ class Player(BasePlayer):
         blank=True
     )
 
+    stimulus_payment_type = models.LongStringField(
+        label="",
+        blank=True
+    )
+
 
 
     # --- Page 3: Household financial questions ---
@@ -311,6 +316,12 @@ class Player(BasePlayer):
         blank=True,
     )
 
+    credit_card_statement_balance = models.CurrencyField(
+        label="",
+        min=0,
+        blank=True,
+    )
+
     installment_payment = models.IntegerField(
         label="",
         choices=[
@@ -361,9 +372,11 @@ def covid_stimulus(player):
     if player.received_stimulus==2:
         player.participant.received_stimulus=2
         player.participant.stimulus_amount = 0
+        player.participant.stimulus_payment_type = ''
     elif player.received_stimulus==1:
         player.participant.received_stimulus = 1
         player.participant.stimulus_amount=player.stimulus_amount
+        player.participant.stimulus_payment_type = player.stimulus_payment_type
 
 
 # PAGES
@@ -391,6 +404,10 @@ class InstructionsT2(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.Treatment in [3, 6]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t5=player.subsession.Treatment == 6)
 
     def before_next_page(player, timeout_happened):
         prolific_id(player)
@@ -430,7 +447,11 @@ class Page1(Page):
 
 class Page2(Page):
     form_model = 'player'
-    form_fields = ['household_size','household_children', 'residence_owner', 'rent_amount', 'home_value', 'household_income_bracket','household_income_exact', 'received_stimulus','stimulus_amount'  ]
+    form_fields = ['household_size','household_children', 'residence_owner', 'rent_amount', 'home_value', 'household_income_bracket','household_income_exact', 'received_stimulus','stimulus_amount', 'stimulus_payment_type'  ]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(is_t5=player.subsession.Treatment == 6)
 
     def error_message(self, values):
         if values['residence_owner'] == 2 and values['rent_amount'] is None:
@@ -469,6 +490,11 @@ class Page2(Page):
                     "either the bracket or the amount."
                 )
 
+        if values['received_stimulus'] == 1:
+            if values['stimulus_amount'] is None:
+                return "Please provide the approximate amount of the payment."
+            if self.subsession.Treatment == 6 and not (values['stimulus_payment_type'] or '').strip():
+                return "Please type in what type of payment it was."
 
     def before_next_page(player, timeout_happened):
         covid_stimulus(player)
@@ -486,6 +512,7 @@ class Page3(Page):
         'fico_score',
         'bill_payment_ability',
         'credit_card_payment',
+        'credit_card_statement_balance',
         'credit_card_fraction_repaid',
         'installment_payment',
         'payday_payment',
@@ -494,7 +521,11 @@ class Page3(Page):
 
     def error_message(player, values):
         credit_card_payment = values.get('credit_card_payment')
+        statement_balance = values.get('credit_card_statement_balance')
         fraction = values.get('credit_card_fraction_repaid')
+
+        if credit_card_payment in [2, 3, 4, 5, 6] and statement_balance is None:
+            return "Please enter the typical total balance shown on your monthly credit card statement."
 
         if credit_card_payment in [3, 4, 5, 6]:
             if fraction is None:
@@ -506,6 +537,8 @@ class Page3(Page):
                 )
 
     def before_next_page(player, timeout_happened):
+        if player.credit_card_payment == 1:
+            player.credit_card_statement_balance = None
         if player.credit_card_payment not in [3, 4, 5, 6]:
             player.credit_card_fraction_repaid = None
 

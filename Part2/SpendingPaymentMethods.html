@@ -39,7 +39,7 @@ h2 { text-align:center; color:#c82333; margin-bottom:25px; }
 
   <p class="intro">
     {% if is_t2_received %}
-    You reported that the <b>${{ participant.stimulus_amount }} Covid stimulus payment</b>
+    You reported that the <b>{{ payment_label_with_amount }}</b>
     caused you and your household to spend <b>${{ spending_amount }}</b> more on goods and services.
     {% else %}
     You reported that the payment would cause you and your household to spend
