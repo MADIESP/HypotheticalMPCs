@@ -96,6 +96,25 @@ class Player(BasePlayer):
     debt_repay_description = models.LongStringField(blank=True)
     spending_description = models.LongStringField(blank=True)
 
+    # ================= SAVINGS AND INVESTMENTS =================
+    save_increase = models.StringField(
+        choices=[('yes', 'Yes'), ('no', 'No')],
+        widget=widgets.RadioSelectHorizontal,
+        blank=True,
+    )
+    save_same_or_decrease = models.StringField(
+        choices=[('same', 'Keep the same'), ('decrease', 'Decrease')],
+        widget=widgets.RadioSelectHorizontal,
+        blank=True,
+    )
+    save_amount = models.CurrencyField(min=0, blank=True)
+    save_retirement = models.CurrencyField(min=0, blank=True)
+    save_lowrisk = models.CurrencyField(min=0, blank=True)
+    save_risky = models.CurrencyField(min=0, blank=True)
+    save_realestate = models.CurrencyField(min=0, blank=True)
+    save_business = models.CurrencyField(min=0, blank=True)
+    save_crypto = models.CurrencyField(min=0, blank=True)
+
     # ================= LABOR =================
     labor_decrease = models.StringField(
         choices=[('yes', 'Yes'), ('no', 'No')],
@@ -290,11 +309,25 @@ def participant_value(player, field_name, default=None):
 
 
 def is_t5_covid_received(player):
-    return player.subsession.Treatment == 6 and participant_value(player, 'received_stimulus') == 1
+    """Use the reported payment only when it is at least $300.
+
+    T5 respondents who report a smaller unexpected one-time payment complete
+    the hypothetical-payment path instead.
+    """
+    payment_amount = participant_value(player, 'stimulus_amount', 0) or 0
+    return (
+        player.subsession.Treatment == 6
+        and participant_value(player, 'received_stimulus') == 1
+        and payment_amount >= 300
+    )
 
 
 def is_t5_hypothetical(player):
-    return player.subsession.Treatment == 6 and participant_value(player, 'received_stimulus') != 1
+    return player.subsession.Treatment == 6 and not is_t5_covid_received(player)
+
+
+def is_t5_actual_payment(player):
+    return is_t5_covid_received(player)
 
 
 def uses_two_category_elicitation(player):
@@ -424,7 +457,13 @@ def save_elicitation_totals(player):
     base_amount = 1000
     if actual_stimulus_elicitation(player):
         base_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
-    save_invest = base_amount - spending - debt_repay + debt_new + labor
+    # T5 actual-payment respondents report savings/investments directly on
+    # the combined response page. For every other path, it remains the
+    # calculated residual.
+    if is_t5_actual_payment(player):
+        save_invest = player.field_maybe_none('save_invest') or 0
+    else:
+        save_invest = base_amount - spending - debt_repay + debt_new + labor
 
     player.spending = spending
     player.debt_repay = debt_repay
@@ -472,6 +511,7 @@ class InstructionsPart2T2(Page):
     def vars_for_template(player: Player):
         return dict(
             payment_label_with_amount=actual_payment_label_with_amount(player),
+            page_count=3,
         )
 
 
@@ -480,7 +520,9 @@ class instructionsT0(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return uses_two_category_elicitation(player)
+        # The actual-payment introduction is displayed at the top of the
+        # combined response page for T5 instead of on its own page.
+        return uses_two_category_elicitation(player) and not is_t5_actual_payment(player)
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -527,7 +569,10 @@ class ElicitationT0(Page):
         'spend_increase', 'spend_same_or_decrease', 'spend_amount',
         'spend_everyday', 'spend_leisure', 'spend_services', 'spend_durable',
         'spending_description',
-        'spending', 'debt_repay',
+        'save_increase', 'save_same_or_decrease', 'save_amount',
+        'save_retirement', 'save_lowrisk', 'save_risky', 'save_realestate',
+        'save_business', 'save_crypto',
+        'spending', 'debt_repay', 'save_invest',
     ]
 
     @staticmethod
@@ -541,6 +586,8 @@ class ElicitationT0(Page):
             payment_amount = int(participant_value(player, 'stimulus_amount', 0) or 0)
         return dict(
             is_t4=uses_open_descriptions(player),
+            use_allocations=is_t5_actual_payment(player) or not uses_open_descriptions(player),
+            show_actual_intro=is_t5_actual_payment(player),
             is_covid_actual=is_t5_covid_received(player),
             payment_label=actual_payment_label(player),
             payment_label_with_amount=actual_payment_label_with_amount(player),
@@ -548,7 +595,7 @@ class ElicitationT0(Page):
         )
 
     def error_message(player, values):
-        if uses_open_descriptions(player):
+        if uses_open_descriptions(player) and not is_t5_actual_payment(player):
             def check_open_field(first, second, total, description, label):
                 if first == 'yes':
                     requires_description = True
@@ -628,8 +675,34 @@ class ElicitationT0(Page):
         if spend_error:
             return spend_error
 
+        if is_t5_actual_payment(player):
+            first = values['save_increase']
+            second = values['save_same_or_decrease']
+            total = values['save_amount']
+            if first == 'yes':
+                direction = 'increase'
+            elif first == 'no' and second == 'decrease':
+                direction = 'decrease'
+            elif first == 'no' and second == 'same':
+                return None
+            else:
+                return 'Please answer the follow-up question for savings and investments.'
+
+            if total is None or total <= 0:
+                return 'Please enter the amount for savings and investments.'
+
+            allocation_sum = sum(values[field] or 0 for field in [
+                'save_retirement', 'save_lowrisk',
+                'save_realestate', 'save_business', 'save_crypto',
+            ])
+            if abs(allocation_sum - total) > 0.01:
+                return (
+                    f'The amounts allocated for savings and investments add up to ${int(allocation_sum)}, '
+                    f'but the total {direction} is ${int(total)}. Please make sure these amounts match.'
+                )
+
     def before_next_page(player, timeout_happened):
-        if uses_open_descriptions(player):
+        if uses_open_descriptions(player) and not is_t5_actual_payment(player):
             for field in [
                 'debt_cc', 'debt_bills', 'debt_short', 'debt_long',
                 'spend_everyday', 'spend_leisure', 'spend_services', 'spend_durable',
@@ -644,7 +717,22 @@ class ElicitationT0(Page):
         if player.field_maybe_none('spend_increase') != 'yes' or player.field_maybe_none('spend_amount') in [None, 0]:
             player.spending_description = None
 
-        debtBaseline(player)
+        if is_t5_actual_payment(player):
+            def signed(first, second, amount):
+                if first == 'yes':
+                    return int(amount or 0)
+                if first == 'no' and second == 'decrease':
+                    return -int(amount or 0)
+                return 0
+
+            player.save_invest = signed(
+                player.field_maybe_none('save_increase'),
+                player.field_maybe_none('save_same_or_decrease'),
+                player.field_maybe_none('save_amount'),
+            )
+            save_elicitation_totals(player)
+        else:
+            debtBaseline(player)
 
 
 class TrainingRobin(Page):
@@ -1009,7 +1097,7 @@ class SpendingPaymentMethods(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            page_title="Part 2 - Page 3/4",
+            page_title="Part 2 - Page 2/3" if is_t5_actual_payment(player) else "Part 2 - Page 3/4",
             spending_amount=int(player.field_maybe_none('spend_amount') or 0),
             is_t2_received=actual_stimulus_elicitation(player),
             payment_label_with_amount=actual_payment_label_with_amount(player),
@@ -1187,7 +1275,7 @@ class FeedbackElicitationT2(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            feedback_page_title="Part 2 - Page 4/4",
+            feedback_page_title="Part 2 - Page 3/3" if is_t5_actual_payment(player) else "Part 2 - Page 4/4",
             payment_label=actual_payment_label(player),
             payment_label_with_amount=actual_payment_label_with_amount(player),
         )

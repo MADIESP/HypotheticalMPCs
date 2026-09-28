@@ -5,8 +5,10 @@
 .content-box { max-width:1200px; margin:auto; padding:25px; }
 h2 { text-align:center; color:#c82333; margin-bottom:25px; }
 h5 { text-align:center; margin-bottom:25px; }
+.reported-payment { font-size:1.25rem; }
 .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
 .category-box { border:1px solid #ddd; padding:18px; border-radius:6px; }
+.savings-category { grid-column:1 / -1; width:calc(50% - 10px); justify-self:center; }
 .category-question { font-size:1.15em; text-align:center; margin-bottom:4px; }
 .category-title { color:#c82333; font-weight:600; }
 .radio-line { display:flex; justify-content:center; gap:20px; margin-top:4px; }
@@ -37,11 +39,18 @@ button.btn-danger { display:block; margin:30px auto 10px; }
 </style>
 
 <div class="content-box">
-<h2>Part 2 - Page 2/4</h2>
+<h2>{% if show_actual_intro %}Part 2 - Page 1/3{% else %}Part 2 - Page 2/4{% endif %}</h2>
+
+{% if show_actual_intro %}
+<p class="reported-payment">
+  You reported that you and your household received a
+  <b>{{ payment_label_with_amount }}</b>.
+</p>
+{% endif %}
 
 <h5>
 {% if is_covid_actual %}
-Over the <b>month following the {{ payment_label_with_amount }}</b>, did it cause you and your household to...
+<b>Over the month</b> following the {{ payment_label_with_amount }}, did it cause you and your household to...
 {% else %}
 Over the <b>month following the payment</b>, would the $1,000 payment cause you and your household to...
 {% endif %}
@@ -51,7 +60,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
   <div class="grid-2">
 
     <div class="category-box category" data-hidden-field="debt_repay" data-balance-effect="-1">
-      <div class="category-question">Repay more of your <span class="category-title">debts</span>?</div>
+      <div class="category-question">Repay more of your <span class="category-title">pre-existing debts</span>?</div>
       <div class="radio-line">
         <label><input type="radio" name="debt_increase" value="yes"> Yes</label>
         <label><input type="radio" name="debt_increase" value="no"> No</label>
@@ -86,7 +95,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
           </span>
         </div>
       </div>
-	      {% if is_t4 %}
+	      {% if not use_allocations and is_t4 %}
 	      <div class="sub-box open-response hidden">
 	        <p class="open-question">Which <b>types of debts</b> {% if is_covid_actual %}did{% else %}would{% endif %} you repay?</p>
 	        <p class="open-instruction">Please type your answer in the box below.</p>
@@ -94,7 +103,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
 	      </div>
 	      {% else %}
 	      <div class="sub-box allocation hidden">
-	        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
+	        <p>And how {% if is_covid_actual %}did{% else %}would{% endif %} you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
 	        <div class="alloc-line">
 	          <span class="alloc-label">repayment toward revolving credit balances</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="debt_cc" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
@@ -153,7 +162,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
           </span>
         </div>
       </div>
-	      {% if is_t4 %}
+	      {% if not use_allocations and is_t4 %}
 	      <div class="sub-box open-response hidden">
 	        <p class="open-question">What <b>types of goods or services</b> {% if is_covid_actual %}did{% else %}would{% endif %} you spend this money on?</p>
 	        <p class="open-instruction">Please type your answer in the box below.</p>
@@ -161,7 +170,7 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
 	      </div>
 	      {% else %}
 	      <div class="sub-box allocation hidden">
-	        <p>And how would you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
+	        <p>And how {% if is_covid_actual %}did{% else %}would{% endif %} you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
 	        <div class="alloc-line">
 	          <span class="alloc-label">everyday purchases</span>
           <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_everyday" class="allocation-input" min="0" step="1" inputmode="numeric"></span>
@@ -184,10 +193,53 @@ Over the <b>month following the payment</b>, would the $1,000 payment cause you 
 	      <input type="hidden" name="spending" id="id_spending" value="0">
 	    </div>
 
+    {% if show_actual_intro %}
+    <div class="category-box category savings-category" data-hidden-field="save_invest" data-balance-effect="-1">
+      <div class="category-question">Put more money into <span class="category-title">savings or investments</span>?</div>
+      <div class="radio-line">
+        <label><input type="radio" name="save_increase" value="yes"> Yes</label>
+        <label><input type="radio" name="save_increase" value="no"> No</label>
+      </div>
+      <div class="sub-box same-decrease hidden">
+        <div>
+          {% if is_covid_actual %}Did{% else %}Would{% endif %} the payment cause you to <b>put less money into savings or investments</b>, or {% if is_covid_actual %}did{% else %}would{% endif %} the amount you put in <b>stay the same</b>?
+        </div>
+        <div class="radio-line">
+          <label><input type="radio" name="save_same_or_decrease" value="same"> Stay the same</label>
+          <label><input type="radio" name="save_same_or_decrease" value="decrease"> Put less money into savings or investments</label>
+        </div>
+      </div>
+      <div class="example-box">
+        <div class="example-header"><span class="example-title">Examples</span></div>
+        <div class="example-content"><ul>
+          <li>savings and retirement accounts</li>
+          <li>stocks and index funds</li>
+          <li>real estate</li>
+          <li>direct investments (including business investments)</li>
+          <li>cryptocurrencies</li>
+        </ul></div>
+      </div>
+      <div class="sub-box amount hidden"><div class="amount-line">
+        <span>By how much {% if is_covid_actual %}did{% else %}would{% endif %} the amount you put into savings or investments <b><span class="amount-direction"></span></b>?</span>
+        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_amount" class="inline-number total-input" min="0" step="1" inputmode="numeric"></span>
+      </div></div>
+      <div class="sub-box allocation hidden">
+        <p>And how {% if is_covid_actual %}did{% else %}would{% endif %} you allocate this <b><span class="amount-direction"></span></b> to the following?</p>
+        <div class="alloc-line"><span class="alloc-label">savings and retirement accounts</span><span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_retirement" class="allocation-input" min="0" step="1" inputmode="numeric"></span></div>
+        <div class="alloc-line"><span class="alloc-label">stocks and index funds</span><span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_lowrisk" class="allocation-input" min="0" step="1" inputmode="numeric"></span></div>
+        <div class="alloc-line"><span class="alloc-label">real estate</span><span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_realestate" class="allocation-input" min="0" step="1" inputmode="numeric"></span></div>
+        <div class="alloc-line"><span class="alloc-label">business investments or other direct investments</span><span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_business" class="allocation-input" min="0" step="1" inputmode="numeric"></span></div>
+        <div class="alloc-line"><span class="alloc-label">cryptocurrencies</span><span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="save_crypto" class="allocation-input" min="0" step="1" inputmode="numeric"></span></div>
+        <div class="warning hidden">The amounts above do not add up to the total.</div>
+      </div>
+      <input type="hidden" name="save_invest" id="id_save_invest" value="0">
+    </div>
+    {% endif %}
+
   </div>
 
   <div class="balance-box">
-    <b>Savings:</b>
+    <b>{% if show_actual_intro %}Amount left on checking account:{% else %}Savings:{% endif %}</b>
     <b><span id="balance-sign">+</span>$<span id="balance">{{ payment_amount }}</span></b>
     <p class="balance-note">
       This is the part of the {% if is_covid_actual %}{{ payment_label }}{% else %}payment{% endif %} left for future use after the changes entered above.
@@ -210,7 +262,7 @@ function numberValue(input) {
 
 function mainAnswer(cat) {
   const firstRadio = cat.querySelector(
-    'input[name="debt_increase"]:checked, input[name="spend_increase"]:checked'
+    'input[name="debt_increase"]:checked, input[name="spend_increase"]:checked, input[name="save_increase"]:checked'
   );
   return firstRadio ? firstRadio.value : null;
 }
@@ -376,13 +428,21 @@ document.querySelectorAll('.category').forEach(cat => {
 
 document.querySelector('form').addEventListener('submit', event => {
   let ok = true;
+  let needsGeneralWarning = false;
   document.querySelectorAll('.category').forEach(cat => {
-    if (!validateCategory(cat, true)) ok = false;
+    if (!validateCategory(cat, true)) {
+      ok = false;
+      const allocationWarning = cat.querySelector('.allocation .warning:not(.hidden)');
+      if (!allocationWarning) needsGeneralWarning = true;
+    }
   });
-  document.getElementById('page-warning').classList.toggle('hidden', ok);
+  document.getElementById('page-warning').classList.toggle('hidden', !needsGeneralWarning);
   if (!ok) {
     event.preventDefault();
-    document.getElementById('page-warning').scrollIntoView({ behavior:'smooth', block:'center' });
+    const target = needsGeneralWarning
+      ? document.getElementById('page-warning')
+      : document.querySelector('.allocation .warning:not(.hidden)');
+    target?.scrollIntoView({ behavior:'smooth', block:'center' });
   }
 });
 
