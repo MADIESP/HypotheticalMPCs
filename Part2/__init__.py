@@ -62,6 +62,26 @@ class Player(BasePlayer):
     )
     spend_cc_timing_specify = models.LongStringField(blank=True)
 
+    # Credit-card statement-balance follow-up (T5 actual-payment path).
+    cc_balance_in_line = models.StringField(
+        choices=[('in_line', 'This is in line with what I remember'), ('changed', 'Something else changed')],
+        widget=widgets.RadioSelect,
+        blank=True,
+    )
+    cc_balance_changed_explain = models.LongStringField(blank=True)
+    cc_balance_month2_direction = models.StringField(blank=True)
+    cc_balance_month2_amount = models.CurrencyField(min=0, blank=True)
+    cc_balance_month2_alternative = models.StringField(blank=True)
+    cc_balance_month2_alternative_amount = models.CurrencyField(min=0, blank=True)
+    cc_balance_today_direction = models.StringField(blank=True)
+    cc_balance_today_amount = models.CurrencyField(min=0, blank=True)
+    cc_balance_today_alternative = models.StringField(blank=True)
+    cc_balance_today_alternative_amount = models.CurrencyField(min=0, blank=True)
+    cc_balance_month2_changed_direction = models.StringField(blank=True)
+    cc_balance_month2_changed_amount = models.CurrencyField(min=0, blank=True)
+    cc_balance_today_changed_direction = models.StringField(blank=True)
+    cc_balance_today_changed_amount = models.CurrencyField(min=0, blank=True)
+
     spend_other_paylater_repaid = models.CurrencyField(min=0, blank=True)
     spend_other_paylater_fraction_paid = models.IntegerField(min=0, max=100, blank=True)
     spend_other_paylater_remaining_timing = models.StringField(
@@ -511,7 +531,7 @@ class InstructionsPart2T2(Page):
     def vars_for_template(player: Player):
         return dict(
             payment_label_with_amount=actual_payment_label_with_amount(player),
-            page_count=3,
+            page_count=5,
         )
 
 
@@ -1097,7 +1117,7 @@ class SpendingPaymentMethods(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            page_title="Part 2 - Page 2/3" if is_t5_actual_payment(player) else "Part 2 - Page 3/4",
+            page_title="Part 2 - Page 2/5" if is_t5_actual_payment(player) else "Part 2 - Page 3/4",
             spending_amount=int(player.field_maybe_none('spend_amount') or 0),
             is_t2_received=actual_stimulus_elicitation(player),
             payment_label_with_amount=actual_payment_label_with_amount(player),
@@ -1122,6 +1142,9 @@ class SpendingPaymentMethods(Page):
                 f"The amounts allocated across payment methods add up to ${int(payment_total)}, "
                 f"but your spending increase is ${int(spending_amount)}. Please make sure these amounts match."
             )
+
+        # Payment-method follow-ups are asked on their own later page.
+        return None
 
         credit_card_total = values['spend_pay_credit_card'] or 0
         other_paylater_total = sum([
@@ -1203,6 +1226,192 @@ class SpendingPaymentMethods(Page):
         save_paylater(other_paylater_total, 'spend_other_paylater')
 
 
+class CreditCardBalanceFollowup(Page):
+    form_model = 'player'
+    template_name = 'Part2/CreditCardBalanceFollowup.html'
+    form_fields = [
+        'cc_balance_in_line',
+        'cc_balance_changed_explain',
+        'cc_balance_month2_direction',
+        'cc_balance_month2_amount',
+        'cc_balance_month2_alternative',
+        'cc_balance_month2_alternative_amount',
+        'cc_balance_today_direction',
+        'cc_balance_today_amount',
+        'cc_balance_today_alternative',
+        'cc_balance_today_alternative_amount',
+        'cc_balance_month2_changed_direction',
+        'cc_balance_month2_changed_amount',
+        'cc_balance_today_changed_direction',
+        'cc_balance_today_changed_amount',
+    ]
+
+    @staticmethod
+    def balance_change(player):
+        """Positive means statement balances rose; negative means they fell."""
+        repayment = player.field_maybe_none('debt_cc') or 0
+        credit_card_spending = player.field_maybe_none('spend_pay_credit_card') or 0
+        return credit_card_spending - repayment
+
+    @staticmethod
+    def is_displayed(player: Player):
+        repayment = player.field_maybe_none('debt_cc') or 0
+        credit_card_spending = player.field_maybe_none('spend_pay_credit_card') or 0
+        return is_t5_actual_payment(player) and (repayment > 0 or credit_card_spending > 0)
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        change = CreditCardBalanceFollowup.balance_change(player)
+        direction = 'higher' if change > 0 else 'lower'
+        return dict(
+            page_title='Part 2 - Page 3/5',
+            repayment_amount=int(player.field_maybe_none('debt_cc') or 0),
+            credit_card_spending_amount=int(player.field_maybe_none('spend_pay_credit_card') or 0),
+            balance_change_amount=int(abs(change)),
+            direction=direction,
+            effect_verb='increased' if change > 0 else 'decreased',
+            opposite_direction='lower' if direction == 'higher' else 'higher',
+            opposite_direction_label='Lower' if direction == 'higher' else 'Higher',
+            is_unchanged=(change == 0),
+            payment_amount=int(participant_value(player, 'stimulus_amount', 0) or 0),
+        )
+
+    @staticmethod
+    def error_message(player, values):
+        response = values['cc_balance_in_line']
+        if response not in ['in_line', 'changed']:
+            return 'Please answer Question 1.'
+        if response == 'changed' and not (values['cc_balance_changed_explain'] or '').strip():
+            return 'Please briefly explain what else changed.'
+
+        if response == 'changed':
+            for period, label in [('month2', 'during the second month'), ('today', 'today')]:
+                direction = values[f'cc_balance_{period}_changed_direction']
+                amount = values[f'cc_balance_{period}_changed_amount']
+                if direction not in ['lower', 'same', 'higher', 'not_sure']:
+                    return f'Please answer the question about balances {label}.'
+                if direction == 'not_sure':
+                    continue
+                if direction != 'same' and (amount is None or amount <= 0):
+                    return f'Please enter by how much balances were {direction} {label}.'
+                if direction == 'same' and amount is not None:
+                    return f'Please leave the amount blank when balances were about the same {label}.'
+            return
+
+        change = CreditCardBalanceFollowup.balance_change(player)
+        if change == 0:
+            for period, label in [('month2', 'at the end of the second month'), ('today', 'today')]:
+                direction = values[f'cc_balance_{period}_direction']
+                alternative = values[f'cc_balance_{period}_alternative']
+                alternative_amount = values[f'cc_balance_{period}_alternative_amount']
+                if direction not in ['yes', 'no', 'not_sure']:
+                    return f'Please answer the question about {label}.'
+                if direction == 'not_sure':
+                    continue
+                if direction == 'no':
+                    if alternative not in ['lower', 'higher']:
+                        return f'Please answer whether balances were lower or higher {label}.'
+                    if alternative_amount is None or alternative_amount <= 0:
+                        return f'Please enter by how much balances were {alternative} {label}.'
+            return
+
+        expected_direction = 'higher' if change > 0 else 'lower'
+        opposite_direction = 'lower' if expected_direction == 'higher' else 'higher'
+
+        def validate_period(period, label):
+            direction = values[f'cc_balance_{period}_direction']
+            amount = values[f'cc_balance_{period}_amount']
+            alternative = values[f'cc_balance_{period}_alternative']
+            alternative_amount = values[f'cc_balance_{period}_alternative_amount']
+
+            if direction not in ['yes', 'no', 'not_sure']:
+                return f'Please answer the question about {label}.'
+            if direction == 'not_sure':
+                return None
+            if direction == 'yes':
+                if amount is None or amount <= 0:
+                    return f'Please enter by how much balances were {expected_direction} {label}.'
+                if alternative or alternative_amount is not None:
+                    return f'Please leave the alternative question blank for {label}.'
+            else:
+                if alternative not in ['same', opposite_direction]:
+                    return f'Please answer whether balances were about the same or {opposite_direction} {label}.'
+                if alternative == opposite_direction:
+                    if alternative_amount is None or alternative_amount <= 0:
+                        return f'Please enter by how much balances were {opposite_direction} {label}.'
+                elif alternative_amount is not None:
+                    return f'Please leave the amount blank when balances were about the same {label}.'
+
+        return validate_period('month2', 'at the end of the second month') or validate_period('today', 'today')
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if player.field_maybe_none('cc_balance_in_line') != 'changed':
+            player.cc_balance_changed_explain = None
+            for field in [
+                'cc_balance_month2_changed_direction', 'cc_balance_month2_changed_amount',
+                'cc_balance_today_changed_direction', 'cc_balance_today_changed_amount',
+            ]:
+                setattr(player, field, None)
+        else:
+            for field in [
+                'cc_balance_month2_direction', 'cc_balance_month2_amount',
+                'cc_balance_month2_alternative', 'cc_balance_month2_alternative_amount',
+                'cc_balance_today_direction', 'cc_balance_today_amount',
+                'cc_balance_today_alternative', 'cc_balance_today_alternative_amount',
+            ]:
+                setattr(player, field, None)
+
+
+class PaymentLaterFollowup(Page):
+    form_model = 'player'
+    template_name = 'Part2/PaymentLaterFollowup.html'
+    form_fields = [
+        'spend_other_paylater_repaid', 'spend_other_paylater_fraction_paid',
+        'spend_other_paylater_remaining_timing', 'spend_other_paylater_timing_specify',
+    ]
+
+    @staticmethod
+    def total(player):
+        return sum(player.field_maybe_none(field) or 0 for field in [
+            'spend_pay_bnpl', 'spend_pay_store_financing', 'spend_pay_bills_later',
+        ])
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return PaymentLaterFollowup.total(player) > 0
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            page_title='Part 2 - Page 4/5',
+            other_paylater_total=int(PaymentLaterFollowup.total(player)),
+            is_t2_received=actual_stimulus_elicitation(player),
+        )
+
+    @staticmethod
+    def error_message(player, values):
+        fraction = values['spend_other_paylater_fraction_paid']
+        timing = values['spend_other_paylater_remaining_timing']
+        specify = (values['spend_other_paylater_timing_specify'] or '').strip()
+        if fraction is None or not 0 <= fraction <= 100:
+            return 'Please enter a share between 0 and 100.'
+        if fraction < 100 and not timing:
+            return 'Please answer when you paid the remaining amount.'
+        if fraction < 100 and timing == 'not_sure' and not specify:
+            return 'Please specify.'
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        total = PaymentLaterFollowup.total(player)
+        fraction = player.field_maybe_none('spend_other_paylater_fraction_paid')
+        player.spend_other_paylater_repaid = total * fraction / 100
+        if fraction == 100:
+            player.spend_other_paylater_remaining_timing = None
+        if player.field_maybe_none('spend_other_paylater_remaining_timing') != 'not_sure':
+            player.spend_other_paylater_timing_specify = None
+
+
 class FeedbackElicitation(Page):
     form_model = 'player'
     form_fields = [
@@ -1275,7 +1484,7 @@ class FeedbackElicitationT2(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            feedback_page_title="Part 2 - Page 3/3" if is_t5_actual_payment(player) else "Part 2 - Page 4/4",
+            feedback_page_title="Part 2 - Page 5/5",
             payment_label=actual_payment_label(player),
             payment_label_with_amount=actual_payment_label_with_amount(player),
         )
@@ -1535,7 +1744,7 @@ class ProlificBack(Page):
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1, ElicitationT1, instructionsT2, ElicitationT0,Spending,DebtRepayment, Labor,NewDebt,SavingsInvestments,  ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 #
 
-page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, instructionsT2, ElicitationT1, ElicitationT0, ElicitationT2, SpendingPaymentMethods, FeedbackElicitation, FeedbackElicitationT2, End, ProlificBack]
+page_sequence = [InstructionsPart2, InstructionsPart2T2, instructionsT0, instructionsT1, instructionsT2, ElicitationT1, ElicitationT0, ElicitationT2, SpendingPaymentMethods, CreditCardBalanceFollowup, PaymentLaterFollowup, FeedbackElicitation, FeedbackElicitationT2, End, ProlificBack]
 #
 #page_sequence = [InstructionsPart2,InstructionsPart2T2, instructionsT0, instructionsT1,  instructionsT2, ElicitationT0,ElicitationT1, ElicitationT2, FeedbackElicitation , FeedbackElicitationT2,QuestionsDebtRepay,QuestionsDebtRepayT2, QuestionsDebtNew, QuestionsDebtNewT2,PaymentInterpretation,PaymentInterpretationT2, InstructionsScenarios, Robin, RobinT0, Charlie, CharlieT0, FeedbackScenario,End,ProlificBack]
 

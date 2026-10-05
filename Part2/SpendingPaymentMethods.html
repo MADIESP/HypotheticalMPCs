@@ -5,7 +5,7 @@
 .content-box { max-width:900px; margin:auto; padding:25px; }
 h2 { text-align:center; color:#c82333; margin-bottom:25px; }
 .intro { text-align:center; font-size:1.08em; line-height:1.5; margin-bottom:22px; }
-.main-question { text-align:center; font-weight:bold; font-size:1.18em; margin:24px 0 10px; }
+.main-question { text-align:center; font-size:1.18em; margin:24px 0 10px; }
 .allocate-note { text-align:center; font-style:italic; font-size:1.05em; margin-bottom:18px; }
 .method-box { border:1px solid #ddd; border-radius:6px; padding:18px; }
 .method-line { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:10px 0; }
@@ -13,6 +13,8 @@ h2 { text-align:center; color:#c82333; margin-bottom:25px; }
 .currency-input { display:flex; align-items:center; gap:4px; white-space:nowrap; }
 .currency-symbol { font-weight:600; }
 .amount-input { width:95px; padding:4px 6px; font-size:0.95em; }
+/* Follow-up questions are asked on their own conditional page. */
+.paylater-box { display:none !important; }
 	.balance-box { margin-top:22px; }
 	.balance-box.hidden { display:none; }
 	.mixed-heading { font-weight:bold; margin-bottom:10px; }
@@ -39,15 +41,16 @@ h2 { text-align:center; color:#c82333; margin-bottom:25px; }
 
   <p class="intro">
     {% if is_t2_received %}
-    You reported that the <b>{{ payment_label_with_amount }}</b>
-    caused you and your household to spend <b>${{ spending_amount }}</b> more on goods and services.
+    You reported that following the <b>{{ payment_label_with_amount }}</b>, you and your household spent
+    <b>${{ spending_amount }}</b> <b>more</b> on goods and services <b>compared to</b>
+    <b>what you would have done</b> <b>if you had not received it</b>.
     {% else %}
     You reported that the payment would cause you and your household to spend
     <b>${{ spending_amount }}</b> more on goods and services.
     {% endif %}
   </p>
 
-  <div class="main-question">What payment methods {% if is_t2_received %}did{% else %}would{% endif %} you use for these extra purchases?</div>
+  <div class="main-question">{% if is_t2_received %}From what you can remember, {% endif %}<b>what payment methods {% if is_t2_received %}did{% else %}would{% endif %} you use for these extra purchases?</b></div>
 
   <p class="allocate-note">
     Please allocate the <b>${{ spending_amount }}</b> across the payment methods below.
@@ -76,13 +79,8 @@ h2 { text-align:center; color:#c82333; margin-bottom:25px; }
       </div>
 
       <div class="method-line">
-        <div class="method-label">Buy-Now-Pay-Later</div>
+        <div class="method-label">Buy-Now-Pay-Later or store financing</div>
         <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_bnpl" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
-      </div>
-
-      <div class="method-line">
-	        <div class="method-label">Store financing other than Buy-Now-Pay-Later</div>
-        <span class="currency-input"><span class="currency-symbol">$</span><input type="number" name="spend_pay_store_financing" class="amount-input payment-method credit-like" min="0" step="1" inputmode="numeric"></span>
       </div>
 
       <div class="method-line">
@@ -305,7 +303,7 @@ document.querySelectorAll('.paylater-box textarea').forEach(input => {
 
 document.querySelector('form').addEventListener('submit', event => {
   const state = updatePage(true);
-  if (!state.allocationComplete || !state.followupsValid) {
+  if (!state.allocationComplete) {
     event.preventDefault();
   }
 });

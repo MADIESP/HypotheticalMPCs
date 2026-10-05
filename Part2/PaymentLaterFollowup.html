@@ -1,0 +1,53 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<style>
+.content-box { max-width: 860px; margin: auto; padding: 25px; }
+h2 { text-align: center; color: #c82333; margin-bottom: 25px; }
+.question { font-size: 1.08em; line-height: 1.5; }
+.timing-options label { display: block; font-weight: normal; margin: 8px 0; }
+.hidden { display: none; }
+.currency-input { display: flex; align-items: center; gap: 4px; }
+.amount-input { width: 95px; padding: 4px 6px; }
+.submit-row { text-align: center; margin-top: 28px; }
+</style>
+<div class="content-box">
+  <h2>{{ page_title }}</h2>
+  <form method="post" novalidate>
+    <p class="question">You reported that <b>${{ other_paylater_total }}</b> of the additional purchases {% if is_t2_received %}were{% else %}would be{% endif %} paid using Buy-Now-Pay-Later, store financing, or bills/invoices paid later.</p>
+    <p class="question"><b>a.</b> What share of this amount {% if is_t2_received %}did{% else %}would{% endif %} you pay using money from your checking account, savings account, or another household account by its due date?</p>
+    <p><i>Enter 0 if none {% if is_t2_received %}was{% else %}would be{% endif %} paid from these accounts by the due date.</i></p>
+    <span class="currency-input"><input type="number" name="spend_other_paylater_fraction_paid" id="id_spend_other_paylater_fraction_paid" class="amount-input" min="0" max="100" step="1" inputmode="numeric"><b>%</b></span>
+    <div id="timing-followup" class="hidden">
+      <p class="question"><b>b.</b> {% if is_t2_received %}When did you pay the remaining amount?{% else %}When do you think you would pay the remaining amount?{% endif %}</p>
+      <div class="timing-options">
+        <label><input type="radio" name="spend_other_paylater_remaining_timing" value="within_one_month"> Within one month after it is due</label>
+        <label><input type="radio" name="spend_other_paylater_remaining_timing" value="one_to_three_months"> 1 to 3 months after it is due</label>
+        <label><input type="radio" name="spend_other_paylater_remaining_timing" value="more_than_three_months"> More than 3 months after it is due</label>
+        <label><input type="radio" name="spend_other_paylater_remaining_timing" value="not_sure"> I am not sure</label>
+      </div>
+      <div id="specify-followup" class="hidden"><p class="question"><b>Please specify:</b></p><textarea name="spend_other_paylater_timing_specify" id="id_spend_other_paylater_timing_specify"></textarea></div>
+    </div>
+    <div class="submit-row"><button class="btn btn-danger">Submit</button></div>
+  </form>
+</div>
+<script>
+const fraction = document.getElementById('id_spend_other_paylater_fraction_paid');
+const timingFollowup = document.getElementById('timing-followup');
+const specifyFollowup = document.getElementById('specify-followup');
+function updateFollowups() {
+  const value = fraction.value === '' ? null : Number(fraction.value);
+  const showTiming = value !== null && value >= 0 && value < 100;
+  timingFollowup.classList.toggle('hidden', !showTiming);
+  if (!showTiming) {
+    document.querySelectorAll('input[name="spend_other_paylater_remaining_timing"]').forEach(input => input.checked = false);
+    document.getElementById('id_spend_other_paylater_timing_specify').value = '';
+  }
+  const timing = document.querySelector('input[name="spend_other_paylater_remaining_timing"]:checked')?.value;
+  specifyFollowup.classList.toggle('hidden', !(showTiming && timing === 'not_sure'));
+  if (timing !== 'not_sure') document.getElementById('id_spend_other_paylater_timing_specify').value = '';
+}
+fraction.addEventListener('input', updateFollowups);
+document.querySelectorAll('input[name="spend_other_paylater_remaining_timing"]').forEach(input => input.addEventListener('change', updateFollowups));
+updateFollowups();
+</script>
+{% endblock %}

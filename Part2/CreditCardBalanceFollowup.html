@@ -1,0 +1,211 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<style>
+  .content-box { max-width: 860px; margin: auto; padding: 25px; }
+  h2 { text-align: center; color: #c82333; margin-bottom: 25px; }
+  .question-block { margin: 28px 0; padding-top: 20px; border-top: 1px solid #ddd; }
+  .question-block:first-of-type { border-top: 0; padding-top: 0; }
+  .question { font-size: 1.08em; line-height: 1.55; }
+  .options label { display: block; margin: 10px 0; font-weight: normal; cursor: pointer; }
+  .followup { display: none; margin: 14px 0 0 24px; }
+  .followup.visible { display: block; }
+  .response-followups { display: none; }
+  .response-followups.visible { display: block; }
+  .amount { width: 110px; display: inline-block; margin-left: 5px; }
+  textarea { width: 100%; min-height: 85px; padding: 8px; }
+  .submit-row { text-align: center; margin-top: 30px; }
+</style>
+
+<div class="content-box">
+  <h2>{{ page_title }}</h2>
+
+  <p class="question">
+    You reported <b>repaying</b> <b>${{ repayment_amount }}</b> toward your <b>credit-card balances</b>.
+    You also reported paying <b>${{ credit_card_spending_amount }}</b> of your <b>additional purchases</b> by <b>credit card</b>.
+  </p>
+
+  <p class="question">
+    This means that the <b>total credit-card statement balances</b> you received <b>during the month following the ${{ payment_amount }} payment</b>
+    were about
+    {% if is_unchanged %}
+      <b>the same</b>
+    {% else %}
+      <b>${{ balance_change_amount }} {{ direction }}</b>
+    {% endif %}
+    than they <b>otherwise would have been</b>.
+  </p>
+
+  <form method="post" novalidate>
+    <div class="question-block">
+      <p class="question"><b>1.</b> Is this <b>in line with what you remember</b>, or did <b>anything else change</b> that could have affected those statements?</p>
+      <div class="options">
+        <label><input type="radio" name="cc_balance_in_line" value="in_line"> This is in line with what I remember</label>
+        <label><input type="radio" name="cc_balance_in_line" value="changed"> Something else changed</label>
+      </div>
+      <div id="changed-explain" class="followup">
+        <p><i>Please briefly explain what changed.</i></p>
+        <textarea name="cc_balance_changed_explain" id="id_cc_balance_changed_explain"></textarea>
+      </div>
+    </div>
+
+    <div id="in-line-followups" class="response-followups">
+    <div class="question-block period-block" data-period="month2">
+      {% if is_unchanged %}
+      <p class="question"><b>2.a)</b> During the <b>second month</b> following the ${{ payment_amount }} payment, were your household's total <b>credit-card statement balances still about the same</b> as they would have been without the payment?</p>
+      {% else %}
+      <p class="question"><b>2.a)</b> During the <b>second month</b> following the ${{ payment_amount }} payment, were your household's total <b>credit-card statement balances still {{ direction }}</b> than they would have been without the payment?</p>
+      {% endif %}
+      <div class="options">
+        <label><input type="radio" name="cc_balance_month2_direction" value="yes"> Yes</label>
+        <label><input type="radio" name="cc_balance_month2_direction" value="no"> No</label>
+      </div>
+      <div class="followup yes-followup">
+        {% if not is_unchanged %}
+        <p><b>By about how much</b> were they {{ direction }}?</p>
+        $ <input class="amount" type="number" name="cc_balance_month2_amount" min="0" step="1" inputmode="numeric">
+        {% endif %}
+      </div>
+      <div class="followup no-followup">
+        {% if is_unchanged %}
+        <p><b>2.b)</b> Were your household's total credit-card statement balances <b>lower</b> or <b>higher</b> than they would have been without the payment?</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_month2_alternative" value="lower"> Lower</label>
+          <label><input type="radio" name="cc_balance_month2_alternative" value="higher"> Higher</label>
+        </div>
+        {% else %}
+        <p><b>2.b)</b> Were your household's total credit-card statement balances <b>about the same</b> as they would have been without the payment, or <b>{{ opposite_direction }}</b>?</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_month2_alternative" value="same"> About the same</label>
+          <label><input type="radio" name="cc_balance_month2_alternative" value="{{ opposite_direction }}"> {{ opposite_direction_label }}</label>
+        </div>
+        {% endif %}
+        <div class="followup alternative-amount">
+          <p><b>By about how much</b> were they {% if is_unchanged %}<span class="chosen-direction"></span>{% else %}{{ opposite_direction }}{% endif %}?</p>
+          $ <input class="amount" type="number" name="cc_balance_month2_alternative_amount" min="0" step="1" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block period-block" data-period="today">
+      {% if is_unchanged %}
+      <p class="question"><b>3.a)</b> <b>Today</b>, are your household's total <b>credit-card statement balances still about the same</b> as they would have been without the payment?</p>
+      {% else %}
+      <p class="question"><b>3.a)</b> <b>Today</b>, are your household's total <b>credit-card statement balances still {{ direction }}</b> than they would have been without the payment?</p>
+      {% endif %}
+      <div class="options">
+        <label><input type="radio" name="cc_balance_today_direction" value="yes"> Yes</label>
+        <label><input type="radio" name="cc_balance_today_direction" value="no"> No</label>
+        <label><input type="radio" name="cc_balance_today_direction" value="not_sure"> I don't know</label>
+      </div>
+      <div class="followup yes-followup">
+        {% if not is_unchanged %}
+        <p><b>By about how much</b> are they {{ direction }}?</p>
+        $ <input class="amount" type="number" name="cc_balance_today_amount" min="0" step="1" inputmode="numeric">
+        {% endif %}
+      </div>
+      <div class="followup no-followup">
+        {% if is_unchanged %}
+        <p><b>3.b)</b> Are your household's total credit-card statement balances <b>lower</b> or <b>higher</b> than they would have been without the payment?</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_today_alternative" value="lower"> Lower</label>
+          <label><input type="radio" name="cc_balance_today_alternative" value="higher"> Higher</label>
+        </div>
+        {% else %}
+        <p><b>3.b)</b> Are your household's total credit-card statement balances <b>about the same</b> as they would have been without the payment, or <b>{{ opposite_direction }}</b>?</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_today_alternative" value="same"> About the same</label>
+          <label><input type="radio" name="cc_balance_today_alternative" value="{{ opposite_direction }}"> {{ opposite_direction_label }}</label>
+        </div>
+        {% endif %}
+        <div class="followup alternative-amount">
+          <p><b>By about how much</b> are they {% if is_unchanged %}<span class="chosen-direction"></span>{% else %}{{ opposite_direction }}{% endif %}?</p>
+          $ <input class="amount" type="number" name="cc_balance_today_alternative_amount" min="0" step="1" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div id="changed-followups" class="response-followups">
+      <div class="question-block changed-period-block" data-period="month2">
+        <p class="question"><b>2.</b> During the <b>second month</b> following the ${{ payment_amount }} payment, were your household's total <b>credit-card statement balances</b>:</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_month2_changed_direction" value="lower"> Lower than they would have been without the payment</label>
+          <label><input type="radio" name="cc_balance_month2_changed_direction" value="same"> About the same as they would have been without the payment</label>
+          <label><input type="radio" name="cc_balance_month2_changed_direction" value="higher"> Higher than they would have been without the payment</label>
+        </div>
+        <div class="followup changed-amount"><p><b>By about how much</b> were they <span class="chosen-direction"></span>?</p>$ <input class="amount" type="number" name="cc_balance_month2_changed_amount" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="question-block changed-period-block" data-period="today">
+        <p class="question"><b>3.</b> <b>Today</b>, are your household's total <b>credit-card statement balances</b>:</p>
+        <div class="options">
+          <label><input type="radio" name="cc_balance_today_changed_direction" value="lower"> Lower than they would have been without the payment</label>
+          <label><input type="radio" name="cc_balance_today_changed_direction" value="same"> About the same as they would have been without the payment</label>
+          <label><input type="radio" name="cc_balance_today_changed_direction" value="higher"> Higher than they would have been without the payment</label>
+          <label><input type="radio" name="cc_balance_today_changed_direction" value="not_sure"> I don't know</label>
+        </div>
+        <div class="followup changed-amount"><p><b>By about how much</b> are they <span class="chosen-direction"></span>?</p>$ <input class="amount" type="number" name="cc_balance_today_changed_amount" min="0" step="1" inputmode="numeric"></div>
+      </div>
+    </div>
+
+    <div class="submit-row"><button class="btn btn-danger">Submit</button></div>
+  </form>
+</div>
+
+<script>
+function toggleChangedExplanation() {
+  const selected = document.querySelector('input[name="cc_balance_in_line"]:checked');
+  const isChanged = selected?.value === 'changed';
+  const clearInputs = container => container.querySelectorAll('input, textarea').forEach(input => {
+    if (input.type === 'radio') input.checked = false;
+    else input.value = '';
+  });
+  if (isChanged) clearInputs(document.getElementById('in-line-followups'));
+  if (selected?.value === 'in_line') {
+    clearInputs(document.getElementById('changed-followups'));
+    document.getElementById('id_cc_balance_changed_explain').value = '';
+  }
+  document.getElementById('changed-explain').classList.toggle('visible', isChanged);
+  document.getElementById('in-line-followups').classList.toggle('visible', selected?.value === 'in_line');
+  document.getElementById('changed-followups').classList.toggle('visible', isChanged);
+}
+
+function updateChangedPeriod(block) {
+  const period = block.dataset.period;
+  const selected = block.querySelector(`input[name="cc_balance_${period}_changed_direction"]:checked`);
+  block.querySelector('.changed-amount').classList.toggle('visible', selected?.value === 'lower' || selected?.value === 'higher');
+  block.querySelector('.chosen-direction').textContent = selected?.value || '';
+  if (!['lower', 'higher'].includes(selected?.value)) {
+    block.querySelector('.changed-amount input').value = '';
+  }
+}
+
+function updatePeriod(block) {
+  const period = block.dataset.period;
+  const choice = block.querySelector(`input[name="cc_balance_${period}_direction"]:checked`);
+  block.querySelector('.yes-followup').classList.toggle('visible', choice?.value === 'yes');
+  block.querySelector('.no-followup').classList.toggle('visible', choice?.value === 'no');
+  if (choice?.value !== 'yes') block.querySelector('.yes-followup input').value = '';
+  if (choice?.value !== 'no') {
+    block.querySelectorAll('.no-followup input').forEach(input => {
+      if (input.type === 'radio') input.checked = false;
+      else input.value = '';
+    });
+  }
+  const alternative = block.querySelector(`input[name="cc_balance_${period}_alternative"]:checked`);
+  block.querySelector('.alternative-amount').classList.toggle('visible', alternative?.value !== undefined && alternative.value !== 'same');
+  block.querySelectorAll('.chosen-direction').forEach(el => el.textContent = alternative?.value || '');
+  if (!alternative || alternative.value === 'same') block.querySelector('.alternative-amount input').value = '';
+}
+
+document.querySelectorAll('input[name="cc_balance_in_line"]').forEach(input => input.addEventListener('change', toggleChangedExplanation));
+document.querySelectorAll('.period-block').forEach(block => {
+  block.querySelectorAll('input').forEach(input => input.addEventListener('change', () => updatePeriod(block)));
+  updatePeriod(block);
+});
+document.querySelectorAll('.changed-period-block').forEach(block => {
+  block.querySelectorAll('input').forEach(input => input.addEventListener('change', () => updateChangedPeriod(block)));
+  updateChangedPeriod(block);
+});
+toggleChangedExplanation();
+</script>
+{% endblock %}
